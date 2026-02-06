@@ -6,7 +6,7 @@ type LiveActivitiesService struct {
 	client *Client
 }
 
-func (s *LiveActivitiesService) StartLiveActivity(request generated.LiveActivityStartRequest) (generated.LiveActivityStartResponse, error) {
+func (s *LiveActivitiesService) StartLiveActivity(request generated.LiveActivityStartRequest) (*generated.LiveActivityStartResponse, error) {
 	response, _, err := s.client.apiClient.LiveActivitiesAPI.
 		StartLiveActivity(s.client.ctx).
 		LiveActivityStartRequest(request).
@@ -15,7 +15,7 @@ func (s *LiveActivitiesService) StartLiveActivity(request generated.LiveActivity
 	return response, err
 }
 
-func (s *LiveActivitiesService) UpdateLiveActivity(request generated.LiveActivityUpdateRequest) (generated.LiveActivityUpdateResponse, error) {
+func (s *LiveActivitiesService) UpdateLiveActivity(request generated.LiveActivityUpdateRequest) (*generated.LiveActivityUpdateResponse, error) {
 	response, _, err := s.client.apiClient.LiveActivitiesAPI.
 		UpdateLiveActivity(s.client.ctx).
 		LiveActivityUpdateRequest(request).
@@ -24,7 +24,7 @@ func (s *LiveActivitiesService) UpdateLiveActivity(request generated.LiveActivit
 	return response, err
 }
 
-func (s *LiveActivitiesService) EndLiveActivity(request generated.LiveActivityEndRequest) (generated.LiveActivityEndResponse, error) {
+func (s *LiveActivitiesService) EndLiveActivity(request generated.LiveActivityEndRequest) (*generated.LiveActivityEndResponse, error) {
 	response, _, err := s.client.apiClient.LiveActivitiesAPI.
 		EndLiveActivity(s.client.ctx).
 		LiveActivityEndRequest(request).
