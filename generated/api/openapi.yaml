@@ -1,0 +1,585 @@
+openapi: 3.1.0
+info:
+  description: Send push notifications and Live Activities to your own devices via
+    a single API key.
+  title: ActivitySmith API
+  version: 1.0.0
+servers:
+- url: https://activitysmith.com/api
+security:
+- apiKeyAuth: []
+tags:
+- name: PushNotifications
+- name: LiveActivities
+paths:
+  /push-notification:
+    post:
+      description: Sends a push notification to every paired device in your account.
+      operationId: sendPushNotification
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  title: Build Failed 🚨
+                  message: CI pipeline failed on main branch
+            schema:
+              $ref: '#/components/schemas/PushNotificationRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    success: true
+                    devices_notified: 3
+                    users_notified: 1
+                    timestamp: 2025-08-12T12:00:00.000Z
+              schema:
+                $ref: '#/components/schemas/PushNotificationResponse'
+          description: Push notification sent
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+              schema:
+                $ref: '#/components/schemas/sendPushNotification_429_response'
+          description: Rate limit exceeded
+      summary: Send a push notification
+      tags:
+      - PushNotifications
+  /live-activity/start:
+    post:
+      description: Starts a Live Activity on all registered devices and returns an
+        activity_id.
+      operationId: startLiveActivity
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  content_state:
+                    title: ActivitySmith API Deployment
+                    subtitle: start
+                    number_of_steps: 4
+                    current_step: 1
+                    type: segmented_progress
+                    color: yellow
+            schema:
+              $ref: '#/components/schemas/LiveActivityStartRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    success: true
+                    activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                    devices_notified: 2
+                    users_notified: 1
+                    timestamp: 2026-01-28T09:57:22.929Z
+              schema:
+                $ref: '#/components/schemas/LiveActivityStartResponse'
+          description: Live Activity started
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+                concurrent_live_activity_limit_reached:
+                  value:
+                    error: Live Activity limit reached
+                    message: Only 4 concurrent Live Activities are allowed per account
+                    limit: 4
+                    active: 4
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: Start a Live Activity
+      tags:
+      - LiveActivities
+  /live-activity/update:
+    post:
+      description: "Updates an existing Live Activity. If the per-activity token is\
+        \ not registered yet, the update is queued."
+      operationId: updateLiveActivity
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: ActivitySmith API Deployment
+                    subtitle: npm i & pm2
+                    current_step: 3
+            schema:
+              $ref: '#/components/schemas/LiveActivityUpdateRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                sent:
+                  value:
+                    success: true
+                    activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                    devices_notified: 2
+                    devices_queued: 0
+                    timestamp: 2026-01-28T09:57:26.056Z
+              schema:
+                $ref: '#/components/schemas/LiveActivityUpdateResponse'
+          description: Live Activity updated (or queued)
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: Update a Live Activity
+      tags:
+      - LiveActivities
+  /live-activity/end:
+    post:
+      description: Ends a Live Activity and archives its lifecycle.
+      operationId: endLiveActivity
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: ActivitySmith API Deployment
+                    subtitle: done
+                    current_step: 4
+                    auto_dismiss_minutes: 3
+            schema:
+              $ref: '#/components/schemas/LiveActivityEndRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    success: true
+                    activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                    devices_notified: 2
+                    devices_queued: 0
+                    timestamp: 2026-01-28T09:57:29.258Z
+              schema:
+                $ref: '#/components/schemas/LiveActivityEndResponse'
+          description: Live Activity ended
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: End a Live Activity
+      tags:
+      - LiveActivities
+components:
+  schemas:
+    ContentStateStart:
+      additionalProperties: false
+      description: "Start payload requires title, number_of_steps, current_step, and\
+        \ type."
+      example:
+        color: blue
+        step_color: lime
+        subtitle: subtitle
+        title: title
+        number_of_steps: 1
+        type: segmented_progress
+        current_step: 1
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        number_of_steps:
+          minimum: 1
+          type: integer
+        current_step:
+          minimum: 1
+          type: integer
+        type:
+          enum:
+          - segmented_progress
+          type: string
+        color:
+          default: blue
+          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+        step_color:
+          description: Optional. Overrides color for the current step.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+      required:
+      - current_step
+      - number_of_steps
+      - title
+      - type
+    ContentStateUpdate:
+      additionalProperties: false
+      description: Update payload. Required fields are title and current_step. number_of_steps
+        is optional.
+      example:
+        color: blue
+        step_color: lime
+        subtitle: subtitle
+        title: title
+        number_of_steps: 1
+        current_step: 1
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        number_of_steps:
+          minimum: 1
+          type: integer
+        current_step:
+          minimum: 1
+          type: integer
+        color:
+          default: blue
+          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+        step_color:
+          description: Optional. Overrides color for the current step.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+      required:
+      - current_step
+      - title
+    ContentStateEnd:
+      additionalProperties: false
+      description: End payload. Required fields are title and current_step. number_of_steps
+        is optional.
+      example:
+        color: blue
+        step_color: lime
+        subtitle: subtitle
+        auto_dismiss_minutes: 0
+        title: title
+        number_of_steps: 1
+        current_step: 1
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        number_of_steps:
+          minimum: 1
+          type: integer
+        current_step:
+          minimum: 1
+          type: integer
+        color:
+          default: blue
+          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+        step_color:
+          description: Optional. Overrides color for the current step.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+        auto_dismiss_minutes:
+          default: 3
+          description: Optional. Minutes before the ended Live Activity is dismissed.
+            Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live
+            Activities after ~4 hours max.
+          minimum: 0
+          type: integer
+      required:
+      - current_step
+      - title
+    PushNotificationRequest:
+      additionalProperties: false
+      example:
+        subtitle: subtitle
+        title: title
+        message: message
+      properties:
+        title:
+          type: string
+        message:
+          type: string
+        subtitle:
+          type: string
+      required:
+      - title
+    PushNotificationResponse:
+      additionalProperties: false
+      example:
+        success: true
+        users_notified: 6
+        devices_notified: 0
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        devices_notified:
+          type: integer
+        users_notified:
+          type: integer
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - success
+      - timestamp
+    LiveActivityStartRequest:
+      additionalProperties: false
+      example:
+        content_state:
+          color: blue
+          step_color: lime
+          subtitle: subtitle
+          title: title
+          number_of_steps: 1
+          type: segmented_progress
+          current_step: 1
+      properties:
+        content_state:
+          $ref: '#/components/schemas/ContentStateStart'
+      required:
+      - content_state
+    LiveActivityStartResponse:
+      additionalProperties: false
+      example:
+        success: true
+        users_notified: 6
+        activity_id: activity_id
+        devices_notified: 0
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        devices_notified:
+          type: integer
+        users_notified:
+          type: integer
+        activity_id:
+          type: string
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - activity_id
+      - success
+      - timestamp
+    RateLimitError:
+      additionalProperties: false
+      example:
+        error: error
+        message: message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    LiveActivityLimitError:
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        limit:
+          type: integer
+        active:
+          description: Current number of active Live Activities.
+          type: integer
+      required:
+      - active
+      - error
+      - limit
+      - message
+    LiveActivityUpdateRequest:
+      additionalProperties: false
+      example:
+        content_state:
+          color: blue
+          step_color: lime
+          subtitle: subtitle
+          title: title
+          number_of_steps: 1
+          current_step: 1
+        activity_id: activity_id
+      properties:
+        activity_id:
+          type: string
+        content_state:
+          $ref: '#/components/schemas/ContentStateUpdate'
+      required:
+      - activity_id
+      - content_state
+    LiveActivityUpdateResponse:
+      additionalProperties: false
+      example:
+        devices_queued: 0
+        success: true
+        activity_id: activity_id
+        devices_notified: 6
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        activity_id:
+          type: string
+        devices_queued:
+          type: integer
+        devices_notified:
+          type: integer
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - activity_id
+      - success
+      - timestamp
+    LiveActivityEndRequest:
+      additionalProperties: false
+      example:
+        content_state:
+          color: blue
+          step_color: lime
+          subtitle: subtitle
+          auto_dismiss_minutes: 0
+          title: title
+          number_of_steps: 1
+          current_step: 1
+        activity_id: activity_id
+      properties:
+        activity_id:
+          type: string
+        content_state:
+          $ref: '#/components/schemas/ContentStateEnd'
+      required:
+      - activity_id
+      - content_state
+    LiveActivityEndResponse:
+      additionalProperties: false
+      example:
+        devices_queued: 0
+        success: true
+        activity_id: activity_id
+        devices_notified: 6
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        activity_id:
+          type: string
+        devices_queued:
+          type: integer
+        devices_notified:
+          type: integer
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - activity_id
+      - success
+      - timestamp
+    sendPushNotification_429_response:
+      oneOf:
+      - $ref: '#/components/schemas/RateLimitError'
+      - $ref: '#/components/schemas/LiveActivityLimitError'
+  securitySchemes:
+    apiKeyAuth:
+      bearerFormat: API Key
+      description: "Use your ActivitySmith API key. Example: Authorization: Bearer\
+        \ <API_KEY>"
+      scheme: bearer
+      type: http
