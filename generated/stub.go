@@ -57,8 +57,8 @@ func (r ApiSendPushNotificationRequest) PushNotificationRequest(_ PushNotificati
 	return r
 }
 
-func (r ApiSendPushNotificationRequest) Execute() (PushNotificationResponse, any, error) {
-	return PushNotificationResponse{}, nil, nil
+func (r ApiSendPushNotificationRequest) Execute() (*PushNotificationResponse, any, error) {
+	return &PushNotificationResponse{}, nil, nil
 }
 
 func (s *LiveActivitiesAPIService) StartLiveActivity(_ context.Context) ApiStartLiveActivityRequest {
@@ -69,8 +69,8 @@ func (r ApiStartLiveActivityRequest) LiveActivityStartRequest(_ LiveActivityStar
 	return r
 }
 
-func (r ApiStartLiveActivityRequest) Execute() (LiveActivityStartResponse, any, error) {
-	return LiveActivityStartResponse{}, nil, nil
+func (r ApiStartLiveActivityRequest) Execute() (*LiveActivityStartResponse, any, error) {
+	return &LiveActivityStartResponse{}, nil, nil
 }
 
 func (s *LiveActivitiesAPIService) UpdateLiveActivity(_ context.Context) ApiUpdateLiveActivityRequest {
@@ -81,8 +81,8 @@ func (r ApiUpdateLiveActivityRequest) LiveActivityUpdateRequest(_ LiveActivityUp
 	return r
 }
 
-func (r ApiUpdateLiveActivityRequest) Execute() (LiveActivityUpdateResponse, any, error) {
-	return LiveActivityUpdateResponse{}, nil, nil
+func (r ApiUpdateLiveActivityRequest) Execute() (*LiveActivityUpdateResponse, any, error) {
+	return &LiveActivityUpdateResponse{}, nil, nil
 }
 
 func (s *LiveActivitiesAPIService) EndLiveActivity(_ context.Context) ApiEndLiveActivityRequest {
@@ -93,6 +93,6 @@ func (r ApiEndLiveActivityRequest) LiveActivityEndRequest(_ LiveActivityEndReque
 	return r
 }
 
-func (r ApiEndLiveActivityRequest) Execute() (LiveActivityEndResponse, any, error) {
-	return LiveActivityEndResponse{}, nil, nil
+func (r ApiEndLiveActivityRequest) Execute() (*LiveActivityEndResponse, any, error) {
+	return &LiveActivityEndResponse{}, nil, nil
 }
