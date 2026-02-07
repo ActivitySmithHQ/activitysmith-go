@@ -11,7 +11,6 @@ import (
 var ErrAPIKeyRequired = errors.New("activitysmith: apiKey is required")
 
 type Options struct {
-	BaseURL string
 	Context context.Context
 }
 
@@ -31,9 +30,6 @@ func New(apiKey string, opts *Options) (*Client, error) {
 	ctx := context.Background()
 
 	if opts != nil {
-		if opts.BaseURL != "" {
-			cfg.Servers = generated.ServerConfigurations{{URL: strings.TrimRight(opts.BaseURL, "/")}}
-		}
 		if opts.Context != nil {
 			ctx = opts.Context
 		}

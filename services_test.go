@@ -57,10 +57,11 @@ func TestNotificationsShortAndLegacyMethods(t *testing.T) {
 	server, requests := newAPITestServer(t)
 	defer server.Close()
 
-	client, err := New("test-api-key", &Options{BaseURL: server.URL})
+	client, err := New("test-api-key", nil)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
+	overrideHostForTests(client, server.URL)
 
 	payload := generated.PushNotificationRequest{Title: "Build Failed"}
 	if _, err := client.Notifications.Send(payload); err != nil {
@@ -91,10 +92,11 @@ func TestLiveActivitiesShortAndLegacyMethods(t *testing.T) {
 	server, requests := newAPITestServer(t)
 	defer server.Close()
 
-	client, err := New("test-api-key", &Options{BaseURL: server.URL})
+	client, err := New("test-api-key", nil)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
+	overrideHostForTests(client, server.URL)
 
 	startPayload := generated.LiveActivityStartRequest{
 		ContentState: generated.ContentStateStart{
@@ -163,5 +165,14 @@ func TestLiveActivitiesShortAndLegacyMethods(t *testing.T) {
 	wantJSON, _ := json.Marshal(wantPaths)
 	if string(gotJSON) != string(wantJSON) {
 		t.Fatalf("path order mismatch: got=%s want=%s", gotJSON, wantJSON)
+	}
+}
+
+func overrideHostForTests(client *Client, host string) {
+	serverConfig := generated.ServerConfigurations{{URL: host}}
+	cfg := client.APIClient().GetConfig()
+	cfg.Servers = serverConfig
+	for key := range cfg.OperationServers {
+		cfg.OperationServers[key] = serverConfig
 	}
 }
