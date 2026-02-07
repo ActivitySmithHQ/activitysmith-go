@@ -21,7 +21,7 @@ type Client struct {
 	LiveActivities *LiveActivitiesService
 }
 
-func New(apiKey string, opts *Options) (*Client, error) {
+func New(apiKey string, opts ...*Options) (*Client, error) {
 	if strings.TrimSpace(apiKey) == "" {
 		return nil, ErrAPIKeyRequired
 	}
@@ -29,10 +29,8 @@ func New(apiKey string, opts *Options) (*Client, error) {
 	cfg := generated.NewConfiguration()
 	ctx := context.Background()
 
-	if opts != nil {
-		if opts.Context != nil {
-			ctx = opts.Context
-		}
+	if len(opts) > 0 && opts[0] != nil && opts[0].Context != nil {
+		ctx = opts[0].Context
 	}
 
 	ctx = context.WithValue(ctx, generated.ContextAccessToken, apiKey)
