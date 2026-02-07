@@ -2,6 +2,15 @@ package activitysmith
 
 import "testing"
 
+var _ = (*NotificationsService).Send
+var _ = (*NotificationsService).SendPushNotification
+var _ = (*LiveActivitiesService).Start
+var _ = (*LiveActivitiesService).Update
+var _ = (*LiveActivitiesService).End
+var _ = (*LiveActivitiesService).StartLiveActivity
+var _ = (*LiveActivitiesService).UpdateLiveActivity
+var _ = (*LiveActivitiesService).EndLiveActivity
+
 func TestClientConstructs(t *testing.T) {
 	client, err := New("test-api-key", nil)
 	if err != nil {
