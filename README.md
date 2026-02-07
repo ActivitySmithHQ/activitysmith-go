@@ -31,7 +31,7 @@ func main() {
 	}
 
 	response, err := client.Notifications.
-		SendPushNotification(
+		Send(
 			generated.PushNotificationRequest{
 				Title:   "Build Failed",
 				Message: generated.PtrString("CI pipeline failed on main branch"),
@@ -47,11 +47,11 @@ func main() {
 
 ### Send a Push Notification
 
-Use `client.Notifications.SendPushNotification` with a `generated.PushNotificationRequest`. `Title` is required; `Message` and `Subtitle` are optional.
+Use `client.Notifications.Send` with a `generated.PushNotificationRequest`. `Title` is required; `Message` and `Subtitle` are optional.
 
 ```go
 response, err := client.Notifications.
-	SendPushNotification(
+	Send(
 		generated.PushNotificationRequest{
 			Title:   "Build Failed",
 			Message: generated.PtrString("CI pipeline failed on main branch"),
@@ -67,11 +67,11 @@ log.Println(response.GetDevicesNotified())
 
 ### Start a Live Activity
 
-Use `client.LiveActivities.StartLiveActivity` with a `generated.LiveActivityStartRequest`.
+Use `client.LiveActivities.Start` with a `generated.LiveActivityStartRequest`.
 
 ```go
 start, err := client.LiveActivities.
-	StartLiveActivity(
+	Start(
 		generated.LiveActivityStartRequest{
 			ContentState: generated.ContentStateStart{
 				Title:         "ActivitySmith API Deployment",
@@ -92,11 +92,11 @@ activityID := start.GetActivityId()
 
 ### Update a Live Activity
 
-Use `client.LiveActivities.UpdateLiveActivity` with the `activityID` from `StartLiveActivity`.
+Use `client.LiveActivities.Update` with the `activityID` from `Start`.
 
 ```go
 update, err := client.LiveActivities.
-	UpdateLiveActivity(
+	Update(
 		generated.LiveActivityUpdateRequest{
 			ActivityId: activityID,
 			ContentState: generated.ContentStateUpdate{
@@ -115,11 +115,11 @@ log.Println(update.GetDevicesNotified())
 
 ### End a Live Activity
 
-Use `client.LiveActivities.EndLiveActivity` to end the activity and optionally control dismissal time.
+Use `client.LiveActivities.End` to end the activity and optionally control dismissal time.
 
 ```go
 end, err := client.LiveActivities.
-	EndLiveActivity(
+	End(
 		generated.LiveActivityEndRequest{
 			ActivityId: activityID,
 			ContentState: generated.ContentStateEnd{
