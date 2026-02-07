@@ -34,7 +34,6 @@ func main() {
 		Send(
 			generated.PushNotificationRequest{
 				Title:   "Build Failed",
-				Message: generated.PtrString("CI pipeline failed on main branch"),
 			},
 		)
 	if err != nil {
@@ -47,14 +46,13 @@ func main() {
 
 ### Send a Push Notification
 
-Use `client.Notifications.Send` with a `generated.PushNotificationRequest`. `Title` is required; `Message` and `Subtitle` are optional.
+Use `client.Notifications.Send` with a `generated.PushNotificationRequest`. This example uses only required fields.
 
 ```go
 response, err := client.Notifications.
 	Send(
 		generated.PushNotificationRequest{
 			Title:   "Build Failed",
-			Message: generated.PtrString("CI pipeline failed on main branch"),
 		},
 	)
 if err != nil {
@@ -75,11 +73,9 @@ start, err := client.LiveActivities.
 		generated.LiveActivityStartRequest{
 			ContentState: generated.ContentStateStart{
 				Title:         "ActivitySmith API Deployment",
-				Subtitle:      generated.PtrString("start"),
 				NumberOfSteps: 4,
 				CurrentStep:   1,
 				Type:          "segmented_progress",
-				Color:         generated.PtrString("yellow"),
 			},
 		},
 	)
@@ -101,7 +97,6 @@ update, err := client.LiveActivities.
 			ActivityId: activityID,
 			ContentState: generated.ContentStateUpdate{
 				Title:       "ActivitySmith API Deployment",
-				Subtitle:    generated.PtrString("npm i & pm2"),
 				CurrentStep: 3,
 			},
 		},
@@ -115,7 +110,7 @@ log.Println(update.GetDevicesNotified())
 
 ### End a Live Activity
 
-Use `client.LiveActivities.End` to end the activity and optionally control dismissal time.
+Use `client.LiveActivities.End` to end the activity. This example uses only required fields.
 
 ```go
 end, err := client.LiveActivities.
@@ -124,9 +119,7 @@ end, err := client.LiveActivities.
 			ActivityId: activityID,
 			ContentState: generated.ContentStateEnd{
 				Title:              "ActivitySmith API Deployment",
-				Subtitle:           generated.PtrString("done"),
 				CurrentStep:        4,
-				AutoDismissMinutes: generated.PtrInt32(3),
 			},
 		},
 	)
