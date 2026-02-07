@@ -20,22 +20,22 @@ package main
 import (
 	"log"
 
-	activitysmith "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
 )
 
 func main() {
-	client, err := activitysmith.New("YOUR_API_KEY", nil)
+	activitysmith, err := activitysmithsdk.New("YOUR_API_KEY")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	response, err := client.Notifications.
-		Send(
-			generated.PushNotificationRequest{
-				Title:   "Build Failed",
-			},
-		)
+	input := activitysmithsdk.PushNotificationInput{
+		Title:   "Build Failed",
+		Message: "CI pipeline failed on main branch",
+	}
+
+	response, err := activitysmith.Notifications.
+		Send(input)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,15 +46,16 @@ func main() {
 
 ### Send a Push Notification
 
-Use `client.Notifications.Send` with a `generated.PushNotificationRequest`. This example uses only required fields.
+Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificationInput`.
 
 ```go
-response, err := client.Notifications.
-	Send(
-		generated.PushNotificationRequest{
-			Title:   "Build Failed",
-		},
-	)
+input := activitysmithsdk.PushNotificationInput{
+	Title:   "Build Failed",
+	Message: "CI pipeline failed on main branch",
+}
+
+response, err := activitysmith.Notifications.
+	Send(input)
 if err != nil {
 	log.Fatal(err)
 }
@@ -65,20 +66,20 @@ log.Println(response.GetDevicesNotified())
 
 ### Start a Live Activity
 
-Use `client.LiveActivities.Start` with a `generated.LiveActivityStartRequest`.
+Use `activitysmith.LiveActivities.Start` with an `activitysmithsdk.LiveActivityStartInput`.
 
 ```go
-start, err := client.LiveActivities.
-	Start(
-		generated.LiveActivityStartRequest{
-			ContentState: generated.ContentStateStart{
-				Title:         "ActivitySmith API Deployment",
-				NumberOfSteps: 4,
-				CurrentStep:   1,
-				Type:          "segmented_progress",
-			},
-		},
-	)
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:         "ActivitySmith API Deployment",
+	Subtitle:      "start",
+	NumberOfSteps: 4,
+	CurrentStep:   1,
+	Type:          "segmented_progress",
+	Color:         "yellow",
+}
+
+start, err := activitysmith.LiveActivities.
+	Start(startInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -88,19 +89,18 @@ activityID := start.GetActivityId()
 
 ### Update a Live Activity
 
-Use `client.LiveActivities.Update` with the `activityID` from `Start`.
+Use `activitysmith.LiveActivities.Update` with the `activityID` from `Start`.
 
 ```go
-update, err := client.LiveActivities.
-	Update(
-		generated.LiveActivityUpdateRequest{
-			ActivityId: activityID,
-			ContentState: generated.ContentStateUpdate{
-				Title:       "ActivitySmith API Deployment",
-				CurrentStep: 3,
-			},
-		},
-	)
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID:  activityID,
+	Title:       "ActivitySmith API Deployment",
+	Subtitle:    "npm i & pm2",
+	CurrentStep: 3,
+}
+
+update, err := activitysmith.LiveActivities.
+	Update(updateInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -110,19 +110,20 @@ log.Println(update.GetDevicesNotified())
 
 ### End a Live Activity
 
-Use `client.LiveActivities.End` to end the activity. This example uses only required fields.
+Use `activitysmith.LiveActivities.End` to end the activity.
+If `AutoDismissMinutes` is omitted, backend default `3` is used.
 
 ```go
-end, err := client.LiveActivities.
-	End(
-		generated.LiveActivityEndRequest{
-			ActivityId: activityID,
-			ContentState: generated.ContentStateEnd{
-				Title:              "ActivitySmith API Deployment",
-				CurrentStep:        4,
-			},
-		},
-	)
+endInput := activitysmithsdk.LiveActivityEndInput{
+	ActivityID:         activityID,
+	Title:              "ActivitySmith API Deployment",
+	Subtitle:           "done",
+	CurrentStep:        4,
+	AutoDismissMinutes: 3,
+}
+
+end, err := activitysmith.LiveActivities.
+	End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -136,8 +137,8 @@ SDK methods return `(response, error)`. Always check `error` on each call.
 
 ## API Surface
 
-- `client.Notifications`
-- `client.LiveActivities`
+- `activitysmith.Notifications`
+- `activitysmith.LiveActivities`
 
 ## Requirements
 

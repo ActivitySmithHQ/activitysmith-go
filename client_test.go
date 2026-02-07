@@ -12,7 +12,7 @@ var _ = (*LiveActivitiesService).UpdateLiveActivity
 var _ = (*LiveActivitiesService).EndLiveActivity
 
 func TestClientConstructs(t *testing.T) {
-	client, err := New("test-api-key", nil)
+	client, err := New("test-api-key")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -27,7 +27,7 @@ func TestClientConstructs(t *testing.T) {
 }
 
 func TestClientRequiresAPIKey(t *testing.T) {
-	_, err := New("", nil)
+	_, err := New("")
 	if !errorsIs(err, ErrAPIKeyRequired) {
 		t.Fatalf("expected ErrAPIKeyRequired, got %v", err)
 	}
