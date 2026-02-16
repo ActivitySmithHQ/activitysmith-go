@@ -13,7 +13,6 @@ package generated
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -25,7 +24,9 @@ type PushNotificationResponse struct {
 	Success bool `json:"success"`
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	UsersNotified *int32 `json:"users_notified,omitempty"`
+	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _PushNotificationResponse PushNotificationResponse
@@ -137,6 +138,38 @@ func (o *PushNotificationResponse) SetUsersNotified(v int32) {
 	o.UsersNotified = &v
 }
 
+// GetEffectiveChannelSlugs returns the EffectiveChannelSlugs field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetEffectiveChannelSlugs() []string {
+	if o == nil || IsNil(o.EffectiveChannelSlugs) {
+		var ret []string
+		return ret
+	}
+	return o.EffectiveChannelSlugs
+}
+
+// GetEffectiveChannelSlugsOk returns a tuple with the EffectiveChannelSlugs field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetEffectiveChannelSlugsOk() ([]string, bool) {
+	if o == nil || IsNil(o.EffectiveChannelSlugs) {
+		return nil, false
+	}
+	return o.EffectiveChannelSlugs, true
+}
+
+// HasEffectiveChannelSlugs returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasEffectiveChannelSlugs() bool {
+	if o != nil && !IsNil(o.EffectiveChannelSlugs) {
+		return true
+	}
+
+	return false
+}
+
+// SetEffectiveChannelSlugs gets a reference to the given []string and assigns it to the EffectiveChannelSlugs field.
+func (o *PushNotificationResponse) SetEffectiveChannelSlugs(v []string) {
+	o.EffectiveChannelSlugs = v
+}
+
 // GetTimestamp returns the Timestamp field value
 func (o *PushNotificationResponse) GetTimestamp() time.Time {
 	if o == nil {
@@ -178,7 +211,15 @@ func (o PushNotificationResponse) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UsersNotified) {
 		toSerialize["users_notified"] = o.UsersNotified
 	}
+	if !IsNil(o.EffectiveChannelSlugs) {
+		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
+	}
 	toSerialize["timestamp"] = o.Timestamp
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -207,15 +248,24 @@ func (o *PushNotificationResponse) UnmarshalJSON(data []byte) (err error) {
 
 	varPushNotificationResponse := _PushNotificationResponse{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPushNotificationResponse)
+	err = json.Unmarshal(data, &varPushNotificationResponse)
 
 	if err != nil {
 		return err
 	}
 
 	*o = PushNotificationResponse(varPushNotificationResponse)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "success")
+		delete(additionalProperties, "devices_notified")
+		delete(additionalProperties, "users_notified")
+		delete(additionalProperties, "effective_channel_slugs")
+		delete(additionalProperties, "timestamp")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

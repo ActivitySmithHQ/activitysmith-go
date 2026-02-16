@@ -15,39 +15,39 @@ import (
 	"fmt"
 )
 
-// checks if the RateLimitError type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &RateLimitError{}
+// checks if the ForbiddenError type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &ForbiddenError{}
 
-// RateLimitError struct for RateLimitError
-type RateLimitError struct {
+// ForbiddenError struct for ForbiddenError
+type ForbiddenError struct {
 	Error string `json:"error"`
 	Message string `json:"message"`
 	AdditionalProperties map[string]interface{}
 }
 
-type _RateLimitError RateLimitError
+type _ForbiddenError ForbiddenError
 
-// NewRateLimitError instantiates a new RateLimitError object
+// NewForbiddenError instantiates a new ForbiddenError object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRateLimitError(error_ string, message string) *RateLimitError {
-	this := RateLimitError{}
+func NewForbiddenError(error_ string, message string) *ForbiddenError {
+	this := ForbiddenError{}
 	this.Error = error_
 	this.Message = message
 	return &this
 }
 
-// NewRateLimitErrorWithDefaults instantiates a new RateLimitError object
+// NewForbiddenErrorWithDefaults instantiates a new ForbiddenError object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewRateLimitErrorWithDefaults() *RateLimitError {
-	this := RateLimitError{}
+func NewForbiddenErrorWithDefaults() *ForbiddenError {
+	this := ForbiddenError{}
 	return &this
 }
 
 // GetError returns the Error field value
-func (o *RateLimitError) GetError() string {
+func (o *ForbiddenError) GetError() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -58,7 +58,7 @@ func (o *RateLimitError) GetError() string {
 
 // GetErrorOk returns a tuple with the Error field value
 // and a boolean to check if the value has been set.
-func (o *RateLimitError) GetErrorOk() (*string, bool) {
+func (o *ForbiddenError) GetErrorOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -66,12 +66,12 @@ func (o *RateLimitError) GetErrorOk() (*string, bool) {
 }
 
 // SetError sets field value
-func (o *RateLimitError) SetError(v string) {
+func (o *ForbiddenError) SetError(v string) {
 	o.Error = v
 }
 
 // GetMessage returns the Message field value
-func (o *RateLimitError) GetMessage() string {
+func (o *ForbiddenError) GetMessage() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -82,7 +82,7 @@ func (o *RateLimitError) GetMessage() string {
 
 // GetMessageOk returns a tuple with the Message field value
 // and a boolean to check if the value has been set.
-func (o *RateLimitError) GetMessageOk() (*string, bool) {
+func (o *ForbiddenError) GetMessageOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -90,11 +90,11 @@ func (o *RateLimitError) GetMessageOk() (*string, bool) {
 }
 
 // SetMessage sets field value
-func (o *RateLimitError) SetMessage(v string) {
+func (o *ForbiddenError) SetMessage(v string) {
 	o.Message = v
 }
 
-func (o RateLimitError) MarshalJSON() ([]byte, error) {
+func (o ForbiddenError) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -102,7 +102,7 @@ func (o RateLimitError) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o RateLimitError) ToMap() (map[string]interface{}, error) {
+func (o ForbiddenError) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["error"] = o.Error
 	toSerialize["message"] = o.Message
@@ -114,7 +114,7 @@ func (o RateLimitError) ToMap() (map[string]interface{}, error) {
 	return toSerialize, nil
 }
 
-func (o *RateLimitError) UnmarshalJSON(data []byte) (err error) {
+func (o *ForbiddenError) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
@@ -137,15 +137,15 @@ func (o *RateLimitError) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varRateLimitError := _RateLimitError{}
+	varForbiddenError := _ForbiddenError{}
 
-	err = json.Unmarshal(data, &varRateLimitError)
+	err = json.Unmarshal(data, &varForbiddenError)
 
 	if err != nil {
 		return err
 	}
 
-	*o = RateLimitError(varRateLimitError)
+	*o = ForbiddenError(varForbiddenError)
 
 	additionalProperties := make(map[string]interface{})
 
@@ -158,38 +158,38 @@ func (o *RateLimitError) UnmarshalJSON(data []byte) (err error) {
 	return err
 }
 
-type NullableRateLimitError struct {
-	value *RateLimitError
+type NullableForbiddenError struct {
+	value *ForbiddenError
 	isSet bool
 }
 
-func (v NullableRateLimitError) Get() *RateLimitError {
+func (v NullableForbiddenError) Get() *ForbiddenError {
 	return v.value
 }
 
-func (v *NullableRateLimitError) Set(val *RateLimitError) {
+func (v *NullableForbiddenError) Set(val *ForbiddenError) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableRateLimitError) IsSet() bool {
+func (v NullableForbiddenError) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableRateLimitError) Unset() {
+func (v *NullableForbiddenError) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableRateLimitError(val *RateLimitError) *NullableRateLimitError {
-	return &NullableRateLimitError{value: val, isSet: true}
+func NewNullableForbiddenError(val *ForbiddenError) *NullableForbiddenError {
+	return &NullableForbiddenError{value: val, isSet: true}
 }
 
-func (v NullableRateLimitError) MarshalJSON() ([]byte, error) {
+func (v NullableForbiddenError) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableRateLimitError) UnmarshalJSON(src []byte) error {
+func (v *NullableForbiddenError) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

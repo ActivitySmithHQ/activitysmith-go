@@ -12,7 +12,6 @@ package generated
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -22,6 +21,9 @@ var _ MappedNullable = &LiveActivityStartRequest{}
 // LiveActivityStartRequest struct for LiveActivityStartRequest
 type LiveActivityStartRequest struct {
 	ContentState ContentStateStart `json:"content_state"`
+	Alert *AlertPayload `json:"alert,omitempty"`
+	Target *ChannelTarget `json:"target,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityStartRequest LiveActivityStartRequest
@@ -68,6 +70,70 @@ func (o *LiveActivityStartRequest) SetContentState(v ContentStateStart) {
 	o.ContentState = v
 }
 
+// GetAlert returns the Alert field value if set, zero value otherwise.
+func (o *LiveActivityStartRequest) GetAlert() AlertPayload {
+	if o == nil || IsNil(o.Alert) {
+		var ret AlertPayload
+		return ret
+	}
+	return *o.Alert
+}
+
+// GetAlertOk returns a tuple with the Alert field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartRequest) GetAlertOk() (*AlertPayload, bool) {
+	if o == nil || IsNil(o.Alert) {
+		return nil, false
+	}
+	return o.Alert, true
+}
+
+// HasAlert returns a boolean if a field has been set.
+func (o *LiveActivityStartRequest) HasAlert() bool {
+	if o != nil && !IsNil(o.Alert) {
+		return true
+	}
+
+	return false
+}
+
+// SetAlert gets a reference to the given AlertPayload and assigns it to the Alert field.
+func (o *LiveActivityStartRequest) SetAlert(v AlertPayload) {
+	o.Alert = &v
+}
+
+// GetTarget returns the Target field value if set, zero value otherwise.
+func (o *LiveActivityStartRequest) GetTarget() ChannelTarget {
+	if o == nil || IsNil(o.Target) {
+		var ret ChannelTarget
+		return ret
+	}
+	return *o.Target
+}
+
+// GetTargetOk returns a tuple with the Target field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartRequest) GetTargetOk() (*ChannelTarget, bool) {
+	if o == nil || IsNil(o.Target) {
+		return nil, false
+	}
+	return o.Target, true
+}
+
+// HasTarget returns a boolean if a field has been set.
+func (o *LiveActivityStartRequest) HasTarget() bool {
+	if o != nil && !IsNil(o.Target) {
+		return true
+	}
+
+	return false
+}
+
+// SetTarget gets a reference to the given ChannelTarget and assigns it to the Target field.
+func (o *LiveActivityStartRequest) SetTarget(v ChannelTarget) {
+	o.Target = &v
+}
+
 func (o LiveActivityStartRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -79,6 +145,17 @@ func (o LiveActivityStartRequest) MarshalJSON() ([]byte, error) {
 func (o LiveActivityStartRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["content_state"] = o.ContentState
+	if !IsNil(o.Alert) {
+		toSerialize["alert"] = o.Alert
+	}
+	if !IsNil(o.Target) {
+		toSerialize["target"] = o.Target
+	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -106,15 +183,22 @@ func (o *LiveActivityStartRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityStartRequest := _LiveActivityStartRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varLiveActivityStartRequest)
+	err = json.Unmarshal(data, &varLiveActivityStartRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityStartRequest(varLiveActivityStartRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "content_state")
+		delete(additionalProperties, "alert")
+		delete(additionalProperties, "target")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

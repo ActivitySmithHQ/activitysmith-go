@@ -12,7 +12,6 @@ package generated
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -26,6 +25,7 @@ type LiveActivityLimitError struct {
 	Limit int32 `json:"limit"`
 	// Current number of active Live Activities.
 	Active int32 `json:"active"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityLimitError LiveActivityLimitError
@@ -161,6 +161,11 @@ func (o LiveActivityLimitError) ToMap() (map[string]interface{}, error) {
 	toSerialize["message"] = o.Message
 	toSerialize["limit"] = o.Limit
 	toSerialize["active"] = o.Active
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -191,15 +196,23 @@ func (o *LiveActivityLimitError) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityLimitError := _LiveActivityLimitError{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varLiveActivityLimitError)
+	err = json.Unmarshal(data, &varLiveActivityLimitError)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityLimitError(varLiveActivityLimitError)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "error")
+		delete(additionalProperties, "message")
+		delete(additionalProperties, "limit")
+		delete(additionalProperties, "active")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

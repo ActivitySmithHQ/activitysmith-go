@@ -14,7 +14,8 @@ tags:
 paths:
   /push-notification:
     post:
-      description: Sends a push notification to every paired device in your account.
+      description: Sends a push notification to devices matched by API key scope and
+        optional target channels.
       operationId: sendPushNotification
       requestBody:
         content:
@@ -24,6 +25,14 @@ paths:
                 value:
                   title: Build Failed 🚨
                   message: CI pipeline failed on main branch
+              channel_targeted:
+                value:
+                  title: Build Failed 🚨
+                  message: CI pipeline failed on main branch
+                  target:
+                    channels:
+                    - devs
+                    - ops
             schema:
               $ref: '#/components/schemas/PushNotificationRequest'
         required: true
@@ -35,12 +44,57 @@ paths:
                 default:
                   value:
                     success: true
-                    devices_notified: 3
+                    devices_notified: 2
                     users_notified: 1
+                    timestamp: 2025-08-12T12:00:00.000Z
+                channel_targeted:
+                  value:
+                    success: true
+                    devices_notified: 2
+                    users_notified: 1
+                    effective_channel_slugs:
+                    - devs
+                    - ops
                     timestamp: 2025-08-12T12:00:00.000Z
               schema:
                 $ref: '#/components/schemas/PushNotificationResponse'
           description: Push notification sent
+        "400":
+          content:
+            application/json:
+              examples:
+                invalid_target:
+                  value:
+                    error: Invalid channel targeting
+                    message: target.channels must be an array of channel slugs
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad request (invalid payload or channel targeting input)
+        "403":
+          content:
+            application/json:
+              examples:
+                channel_scope_violation:
+                  value:
+                    error: Invalid channel targeting
+                    message: This API key can only target assigned channels. Requested
+                      channels include channels outside this key scope.
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: Forbidden (API key scope or channel assignment violation)
+        "404":
+          content:
+            application/json:
+              examples:
+                no_devices:
+                  value:
+                    error: No recipients found
+                    message: No devices matched the effective channel target
+                    effective_channel_slugs:
+                    - marketing
+              schema:
+                $ref: '#/components/schemas/NoRecipientsError'
+          description: No recipients found for effective channel target
         "429":
           content:
             application/json:
@@ -57,8 +111,8 @@ paths:
       - PushNotifications
   /live-activity/start:
     post:
-      description: Starts a Live Activity on all registered devices and returns an
-        activity_id.
+      description: Starts a Live Activity on devices matched by API key scope and
+        optional target channels.
       operationId: startLiveActivity
       requestBody:
         content:
@@ -73,6 +127,19 @@ paths:
                     current_step: 1
                     type: segmented_progress
                     color: yellow
+              channel_targeted:
+                value:
+                  content_state:
+                    title: ActivitySmith API Deployment
+                    subtitle: start
+                    number_of_steps: 4
+                    current_step: 1
+                    type: segmented_progress
+                    color: yellow
+                  target:
+                    channels:
+                    - devs
+                    - ops
             schema:
               $ref: '#/components/schemas/LiveActivityStartRequest'
         required: true
@@ -88,9 +155,56 @@ paths:
                     devices_notified: 2
                     users_notified: 1
                     timestamp: 2026-01-28T09:57:22.929Z
+                channel_targeted:
+                  value:
+                    success: true
+                    activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                    devices_notified: 2
+                    users_notified: 1
+                    effective_channel_slugs:
+                    - devs
+                    - ops
+                    timestamp: 2026-01-28T09:57:22.929Z
               schema:
                 $ref: '#/components/schemas/LiveActivityStartResponse'
           description: Live Activity started
+        "400":
+          content:
+            application/json:
+              examples:
+                invalid_target:
+                  value:
+                    error: Invalid channel targeting
+                    message: target.channels must be an array of channel slugs
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad request (invalid payload or channel targeting input)
+        "403":
+          content:
+            application/json:
+              examples:
+                channel_scope_violation:
+                  value:
+                    error: Invalid channel targeting
+                    message: This API key can only target assigned channels. Requested
+                      channels include channels outside this key scope.
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: Forbidden (API key scope or channel assignment violation)
+        "404":
+          content:
+            application/json:
+              examples:
+                no_devices:
+                  value:
+                    error: No recipients found
+                    message: No Live Activity devices matched the effective channel
+                      target
+                    effective_channel_slugs:
+                    - marketing
+              schema:
+                $ref: '#/components/schemas/NoRecipientsError'
+          description: No recipients found for effective channel target
         "429":
           content:
             application/json:
@@ -145,6 +259,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/LiveActivityUpdateResponse'
           description: Live Activity updated (or queued)
+        "403":
+          content:
+            application/json:
+              examples:
+                forbidden:
+                  value:
+                    error: Forbidden
+                    message: This API key cannot update this Live Activity
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: Forbidden (activity not owned by this API key account)
         "429":
           content:
             application/json:
@@ -193,6 +318,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/LiveActivityEndResponse'
           description: Live Activity ended
+        "403":
+          content:
+            application/json:
+              examples:
+                forbidden:
+                  value:
+                    error: Forbidden
+                    message: This API key cannot end this Live Activity
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: Forbidden (activity not owned by this API key account)
         "429":
           content:
             application/json:
@@ -210,7 +346,7 @@ paths:
 components:
   schemas:
     ContentStateStart:
-      additionalProperties: false
+      additionalProperties: true
       description: "Start payload requires title, number_of_steps, current_step, and\
         \ type."
       example:
@@ -269,7 +405,7 @@ components:
       - title
       - type
     ContentStateUpdate:
-      additionalProperties: false
+      additionalProperties: true
       description: Update payload. Required fields are title and current_step. number_of_steps
         is optional.
       example:
@@ -321,7 +457,7 @@ components:
       - current_step
       - title
     ContentStateEnd:
-      additionalProperties: false
+      additionalProperties: true
       description: End payload. Required fields are title and current_step. number_of_steps
         is optional.
       example:
@@ -380,27 +516,66 @@ components:
       required:
       - current_step
       - title
-    PushNotificationRequest:
-      additionalProperties: false
+    AlertPayload:
+      additionalProperties: true
       example:
-        subtitle: subtitle
         title: title
-        message: message
+        body: body
       properties:
         title:
           type: string
-        message:
+        body:
           type: string
-        subtitle:
-          type: string
+    ChannelTarget:
+      additionalProperties: true
+      example:
+        channels:
+        - channels
+        - channels
+      properties:
+        channels:
+          description: "Channel slugs. When omitted, API key scope determines recipients."
+          items:
+            type: string
+          minItems: 1
+          type: array
+      required:
+      - channels
+    PushNotificationRequest:
+      additionalProperties: {}
+      example:
+        badge: 0
+        payload:
+          key: ""
+        subtitle: subtitle
+        sound: sound
+        title: title
+        message: message
+        target:
+          channels:
+          - channels
+          - channels
+      properties:
+        title: {}
+        message: {}
+        subtitle: {}
+        payload:
+          additionalProperties: true
+        badge: {}
+        sound: {}
+        target:
+          $ref: '#/components/schemas/ChannelTarget'
       required:
       - title
     PushNotificationResponse:
-      additionalProperties: false
+      additionalProperties: true
       example:
         success: true
         users_notified: 6
         devices_notified: 0
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
@@ -409,6 +584,10 @@ components:
           type: integer
         users_notified:
           type: integer
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
         timestamp:
           format: date-time
           type: string
@@ -416,7 +595,7 @@ components:
       - success
       - timestamp
     LiveActivityStartRequest:
-      additionalProperties: false
+      additionalProperties: true
       example:
         content_state:
           color: blue
@@ -426,18 +605,32 @@ components:
           number_of_steps: 1
           type: segmented_progress
           current_step: 1
+        alert:
+          title: title
+          body: body
+        target:
+          channels:
+          - channels
+          - channels
       properties:
         content_state:
           $ref: '#/components/schemas/ContentStateStart'
+        alert:
+          $ref: '#/components/schemas/AlertPayload'
+        target:
+          $ref: '#/components/schemas/ChannelTarget'
       required:
       - content_state
     LiveActivityStartResponse:
-      additionalProperties: false
+      additionalProperties: true
       example:
         success: true
         users_notified: 6
         activity_id: activity_id
         devices_notified: 0
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
@@ -448,6 +641,10 @@ components:
           type: integer
         activity_id:
           type: string
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
         timestamp:
           format: date-time
           type: string
@@ -455,8 +652,54 @@ components:
       - activity_id
       - success
       - timestamp
+    BadRequestError:
+      additionalProperties: true
+      example:
+        error: error
+        message: message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    ForbiddenError:
+      additionalProperties: true
+      example:
+        error: error
+        message: message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    NoRecipientsError:
+      additionalProperties: true
+      example:
+        error: error
+        message: message
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
+      required:
+      - error
+      - message
     RateLimitError:
-      additionalProperties: false
+      additionalProperties: true
       example:
         error: error
         message: message
@@ -469,7 +712,7 @@ components:
       - error
       - message
     LiveActivityLimitError:
-      additionalProperties: false
+      additionalProperties: true
       properties:
         error:
           type: string
@@ -486,7 +729,7 @@ components:
       - limit
       - message
     LiveActivityUpdateRequest:
-      additionalProperties: false
+      additionalProperties: true
       example:
         content_state:
           color: blue
@@ -505,7 +748,7 @@ components:
       - activity_id
       - content_state
     LiveActivityUpdateResponse:
-      additionalProperties: false
+      additionalProperties: true
       example:
         devices_queued: 0
         success: true
@@ -529,7 +772,7 @@ components:
       - success
       - timestamp
     LiveActivityEndRequest:
-      additionalProperties: false
+      additionalProperties: true
       example:
         content_state:
           color: blue
@@ -549,7 +792,7 @@ components:
       - activity_id
       - content_state
     LiveActivityEndResponse:
-      additionalProperties: false
+      additionalProperties: true
       example:
         devices_queued: 0
         success: true

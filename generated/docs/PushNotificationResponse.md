@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **Success** | **bool** |  | 
 **DevicesNotified** | Pointer to **int32** |  | [optional] 
 **UsersNotified** | Pointer to **int32** |  | [optional] 
+**EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Timestamp** | **time.Time** |  | 
 
 ## Methods
@@ -97,6 +98,31 @@ SetUsersNotified sets UsersNotified field to given value.
 `func (o *PushNotificationResponse) HasUsersNotified() bool`
 
 HasUsersNotified returns a boolean if a field has been set.
+
+### GetEffectiveChannelSlugs
+
+`func (o *PushNotificationResponse) GetEffectiveChannelSlugs() []string`
+
+GetEffectiveChannelSlugs returns the EffectiveChannelSlugs field if non-nil, zero value otherwise.
+
+### GetEffectiveChannelSlugsOk
+
+`func (o *PushNotificationResponse) GetEffectiveChannelSlugsOk() (*[]string, bool)`
+
+GetEffectiveChannelSlugsOk returns a tuple with the EffectiveChannelSlugs field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEffectiveChannelSlugs
+
+`func (o *PushNotificationResponse) SetEffectiveChannelSlugs(v []string)`
+
+SetEffectiveChannelSlugs sets EffectiveChannelSlugs field to given value.
+
+### HasEffectiveChannelSlugs
+
+`func (o *PushNotificationResponse) HasEffectiveChannelSlugs() bool`
+
+HasEffectiveChannelSlugs returns a boolean if a field has been set.
 
 ### GetTimestamp
 

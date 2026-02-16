@@ -13,7 +13,6 @@ package generated
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -26,7 +25,9 @@ type LiveActivityStartResponse struct {
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	UsersNotified *int32 `json:"users_notified,omitempty"`
 	ActivityId string `json:"activity_id"`
+	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityStartResponse LiveActivityStartResponse
@@ -163,6 +164,38 @@ func (o *LiveActivityStartResponse) SetActivityId(v string) {
 	o.ActivityId = v
 }
 
+// GetEffectiveChannelSlugs returns the EffectiveChannelSlugs field value if set, zero value otherwise.
+func (o *LiveActivityStartResponse) GetEffectiveChannelSlugs() []string {
+	if o == nil || IsNil(o.EffectiveChannelSlugs) {
+		var ret []string
+		return ret
+	}
+	return o.EffectiveChannelSlugs
+}
+
+// GetEffectiveChannelSlugsOk returns a tuple with the EffectiveChannelSlugs field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartResponse) GetEffectiveChannelSlugsOk() ([]string, bool) {
+	if o == nil || IsNil(o.EffectiveChannelSlugs) {
+		return nil, false
+	}
+	return o.EffectiveChannelSlugs, true
+}
+
+// HasEffectiveChannelSlugs returns a boolean if a field has been set.
+func (o *LiveActivityStartResponse) HasEffectiveChannelSlugs() bool {
+	if o != nil && !IsNil(o.EffectiveChannelSlugs) {
+		return true
+	}
+
+	return false
+}
+
+// SetEffectiveChannelSlugs gets a reference to the given []string and assigns it to the EffectiveChannelSlugs field.
+func (o *LiveActivityStartResponse) SetEffectiveChannelSlugs(v []string) {
+	o.EffectiveChannelSlugs = v
+}
+
 // GetTimestamp returns the Timestamp field value
 func (o *LiveActivityStartResponse) GetTimestamp() time.Time {
 	if o == nil {
@@ -205,7 +238,15 @@ func (o LiveActivityStartResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["users_notified"] = o.UsersNotified
 	}
 	toSerialize["activity_id"] = o.ActivityId
+	if !IsNil(o.EffectiveChannelSlugs) {
+		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
+	}
 	toSerialize["timestamp"] = o.Timestamp
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -235,15 +276,25 @@ func (o *LiveActivityStartResponse) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityStartResponse := _LiveActivityStartResponse{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varLiveActivityStartResponse)
+	err = json.Unmarshal(data, &varLiveActivityStartResponse)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityStartResponse(varLiveActivityStartResponse)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "success")
+		delete(additionalProperties, "devices_notified")
+		delete(additionalProperties, "users_notified")
+		delete(additionalProperties, "activity_id")
+		delete(additionalProperties, "effective_channel_slugs")
+		delete(additionalProperties, "timestamp")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

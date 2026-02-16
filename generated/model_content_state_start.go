@@ -12,7 +12,6 @@ package generated
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -30,6 +29,7 @@ type ContentStateStart struct {
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step.
 	StepColor *string `json:"step_color,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ContentStateStart ContentStateStart
@@ -274,6 +274,11 @@ func (o ContentStateStart) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.StepColor) {
 		toSerialize["step_color"] = o.StepColor
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -304,15 +309,26 @@ func (o *ContentStateStart) UnmarshalJSON(data []byte) (err error) {
 
 	varContentStateStart := _ContentStateStart{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varContentStateStart)
+	err = json.Unmarshal(data, &varContentStateStart)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ContentStateStart(varContentStateStart)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "title")
+		delete(additionalProperties, "subtitle")
+		delete(additionalProperties, "number_of_steps")
+		delete(additionalProperties, "current_step")
+		delete(additionalProperties, "type")
+		delete(additionalProperties, "color")
+		delete(additionalProperties, "step_color")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }
