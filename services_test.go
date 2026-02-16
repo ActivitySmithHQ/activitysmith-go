@@ -182,6 +182,7 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 		Title:    "Deploy",
 		Message:  "Build complete",
 		Subtitle: "production",
+		Channels: []string{"devs", "ops"},
 	}
 	if _, err := client.Notifications.Send(pushInput); err != nil {
 		t.Fatalf("Send returned error: %v", err)
@@ -194,6 +195,7 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 		CurrentStep:   1,
 		Type:          "segmented_progress",
 		Color:         "yellow",
+		Channels:      []string{"devs", "ops"},
 	}
 	if _, err := client.LiveActivities.Start(startInput); err != nil {
 		t.Fatalf("Start returned error: %v", err)
@@ -236,12 +238,18 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	if !strings.Contains(bodies[0], `"subtitle":"production"`) {
 		t.Fatalf("push body missing subtitle: %s", bodies[0])
 	}
+	if !strings.Contains(bodies[0], `"channels":["devs","ops"]`) {
+		t.Fatalf("push body missing target channels: %s", bodies[0])
+	}
 
 	if !strings.Contains(bodies[1], `"subtitle":"start"`) {
 		t.Fatalf("start body missing subtitle: %s", bodies[1])
 	}
 	if !strings.Contains(bodies[1], `"color":"yellow"`) {
 		t.Fatalf("start body missing color: %s", bodies[1])
+	}
+	if !strings.Contains(bodies[1], `"channels":["devs","ops"]`) {
+		t.Fatalf("start body missing target channels: %s", bodies[1])
 	}
 
 	if !strings.Contains(bodies[2], `"subtitle":"testing"`) {

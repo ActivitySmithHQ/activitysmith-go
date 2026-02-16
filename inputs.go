@@ -7,6 +7,7 @@ type PushNotificationInput struct {
 	Title    string
 	Message  string
 	Subtitle string
+	Channels []string
 }
 
 func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest {
@@ -18,6 +19,9 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	}
 	if in.Subtitle != "" {
 		req.SetSubtitle(in.Subtitle)
+	}
+	if len(in.Channels) > 0 {
+		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
 	}
 	return req
 }
@@ -31,6 +35,7 @@ type LiveActivityStartInput struct {
 	Subtitle      string
 	Color         string
 	StepColor     string
+	Channels      []string
 }
 
 func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartRequest {
@@ -50,6 +55,9 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	}
 	if in.StepColor != "" {
 		req.ContentState.SetStepColor(in.StepColor)
+	}
+	if len(in.Channels) > 0 {
+		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
 	}
 	return req
 }

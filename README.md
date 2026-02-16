@@ -52,6 +52,7 @@ Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificatio
 input := activitysmithsdk.PushNotificationInput{
 	Title:   "Build Failed",
 	Message: "CI pipeline failed on main branch",
+	Channels: []string{"devs", "ops"}, // Optional
 }
 
 response, err := activitysmith.Notifications.
@@ -76,6 +77,7 @@ startInput := activitysmithsdk.LiveActivityStartInput{
 	CurrentStep:   1,
 	Type:          "segmented_progress",
 	Color:         "yellow",
+	Channels:      []string{"devs", "ops"}, // Optional
 }
 
 start, err := activitysmith.LiveActivities.
