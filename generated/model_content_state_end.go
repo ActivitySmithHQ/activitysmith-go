@@ -12,7 +12,6 @@ package generated
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -31,6 +30,7 @@ type ContentStateEnd struct {
 	StepColor *string `json:"step_color,omitempty"`
 	// Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max.
 	AutoDismissMinutes *int32 `json:"auto_dismiss_minutes,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ContentStateEnd ContentStateEnd
@@ -297,6 +297,11 @@ func (o ContentStateEnd) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AutoDismissMinutes) {
 		toSerialize["auto_dismiss_minutes"] = o.AutoDismissMinutes
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -325,15 +330,26 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 
 	varContentStateEnd := _ContentStateEnd{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varContentStateEnd)
+	err = json.Unmarshal(data, &varContentStateEnd)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ContentStateEnd(varContentStateEnd)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "title")
+		delete(additionalProperties, "subtitle")
+		delete(additionalProperties, "number_of_steps")
+		delete(additionalProperties, "current_step")
+		delete(additionalProperties, "color")
+		delete(additionalProperties, "step_color")
+		delete(additionalProperties, "auto_dismiss_minutes")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -7,6 +7,10 @@ Name | Type | Description | Notes
 **Title** | **string** |  | 
 **Message** | Pointer to **string** |  | [optional] 
 **Subtitle** | Pointer to **string** |  | [optional] 
+**Payload** | Pointer to **map[string]interface{}** |  | [optional] 
+**Badge** | Pointer to **int32** |  | [optional] 
+**Sound** | Pointer to **string** |  | [optional] 
+**Target** | Pointer to [**ChannelTarget**](ChannelTarget.md) |  | [optional] 
 
 ## Methods
 
@@ -96,6 +100,106 @@ SetSubtitle sets Subtitle field to given value.
 `func (o *PushNotificationRequest) HasSubtitle() bool`
 
 HasSubtitle returns a boolean if a field has been set.
+
+### GetPayload
+
+`func (o *PushNotificationRequest) GetPayload() map[string]interface{}`
+
+GetPayload returns the Payload field if non-nil, zero value otherwise.
+
+### GetPayloadOk
+
+`func (o *PushNotificationRequest) GetPayloadOk() (*map[string]interface{}, bool)`
+
+GetPayloadOk returns a tuple with the Payload field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPayload
+
+`func (o *PushNotificationRequest) SetPayload(v map[string]interface{})`
+
+SetPayload sets Payload field to given value.
+
+### HasPayload
+
+`func (o *PushNotificationRequest) HasPayload() bool`
+
+HasPayload returns a boolean if a field has been set.
+
+### GetBadge
+
+`func (o *PushNotificationRequest) GetBadge() int32`
+
+GetBadge returns the Badge field if non-nil, zero value otherwise.
+
+### GetBadgeOk
+
+`func (o *PushNotificationRequest) GetBadgeOk() (*int32, bool)`
+
+GetBadgeOk returns a tuple with the Badge field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetBadge
+
+`func (o *PushNotificationRequest) SetBadge(v int32)`
+
+SetBadge sets Badge field to given value.
+
+### HasBadge
+
+`func (o *PushNotificationRequest) HasBadge() bool`
+
+HasBadge returns a boolean if a field has been set.
+
+### GetSound
+
+`func (o *PushNotificationRequest) GetSound() string`
+
+GetSound returns the Sound field if non-nil, zero value otherwise.
+
+### GetSoundOk
+
+`func (o *PushNotificationRequest) GetSoundOk() (*string, bool)`
+
+GetSoundOk returns a tuple with the Sound field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSound
+
+`func (o *PushNotificationRequest) SetSound(v string)`
+
+SetSound sets Sound field to given value.
+
+### HasSound
+
+`func (o *PushNotificationRequest) HasSound() bool`
+
+HasSound returns a boolean if a field has been set.
+
+### GetTarget
+
+`func (o *PushNotificationRequest) GetTarget() ChannelTarget`
+
+GetTarget returns the Target field if non-nil, zero value otherwise.
+
+### GetTargetOk
+
+`func (o *PushNotificationRequest) GetTargetOk() (*ChannelTarget, bool)`
+
+GetTargetOk returns a tuple with the Target field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTarget
+
+`func (o *PushNotificationRequest) SetTarget(v ChannelTarget)`
+
+SetTarget sets Target field to given value.
+
+### HasTarget
+
+`func (o *PushNotificationRequest) HasTarget() bool`
+
+HasTarget returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

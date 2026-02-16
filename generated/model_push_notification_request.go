@@ -12,7 +12,6 @@ package generated
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -24,6 +23,11 @@ type PushNotificationRequest struct {
 	Title string `json:"title"`
 	Message *string `json:"message,omitempty"`
 	Subtitle *string `json:"subtitle,omitempty"`
+	Payload map[string]interface{} `json:"payload,omitempty"`
+	Badge *int32 `json:"badge,omitempty"`
+	Sound *string `json:"sound,omitempty"`
+	Target *ChannelTarget `json:"target,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _PushNotificationRequest PushNotificationRequest
@@ -134,6 +138,134 @@ func (o *PushNotificationRequest) SetSubtitle(v string) {
 	o.Subtitle = &v
 }
 
+// GetPayload returns the Payload field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetPayload() map[string]interface{} {
+	if o == nil || IsNil(o.Payload) {
+		var ret map[string]interface{}
+		return ret
+	}
+	return o.Payload
+}
+
+// GetPayloadOk returns a tuple with the Payload field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetPayloadOk() (map[string]interface{}, bool) {
+	if o == nil || IsNil(o.Payload) {
+		return map[string]interface{}{}, false
+	}
+	return o.Payload, true
+}
+
+// HasPayload returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasPayload() bool {
+	if o != nil && !IsNil(o.Payload) {
+		return true
+	}
+
+	return false
+}
+
+// SetPayload gets a reference to the given map[string]interface{} and assigns it to the Payload field.
+func (o *PushNotificationRequest) SetPayload(v map[string]interface{}) {
+	o.Payload = v
+}
+
+// GetBadge returns the Badge field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetBadge() int32 {
+	if o == nil || IsNil(o.Badge) {
+		var ret int32
+		return ret
+	}
+	return *o.Badge
+}
+
+// GetBadgeOk returns a tuple with the Badge field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetBadgeOk() (*int32, bool) {
+	if o == nil || IsNil(o.Badge) {
+		return nil, false
+	}
+	return o.Badge, true
+}
+
+// HasBadge returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasBadge() bool {
+	if o != nil && !IsNil(o.Badge) {
+		return true
+	}
+
+	return false
+}
+
+// SetBadge gets a reference to the given int32 and assigns it to the Badge field.
+func (o *PushNotificationRequest) SetBadge(v int32) {
+	o.Badge = &v
+}
+
+// GetSound returns the Sound field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetSound() string {
+	if o == nil || IsNil(o.Sound) {
+		var ret string
+		return ret
+	}
+	return *o.Sound
+}
+
+// GetSoundOk returns a tuple with the Sound field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetSoundOk() (*string, bool) {
+	if o == nil || IsNil(o.Sound) {
+		return nil, false
+	}
+	return o.Sound, true
+}
+
+// HasSound returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasSound() bool {
+	if o != nil && !IsNil(o.Sound) {
+		return true
+	}
+
+	return false
+}
+
+// SetSound gets a reference to the given string and assigns it to the Sound field.
+func (o *PushNotificationRequest) SetSound(v string) {
+	o.Sound = &v
+}
+
+// GetTarget returns the Target field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetTarget() ChannelTarget {
+	if o == nil || IsNil(o.Target) {
+		var ret ChannelTarget
+		return ret
+	}
+	return *o.Target
+}
+
+// GetTargetOk returns a tuple with the Target field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetTargetOk() (*ChannelTarget, bool) {
+	if o == nil || IsNil(o.Target) {
+		return nil, false
+	}
+	return o.Target, true
+}
+
+// HasTarget returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasTarget() bool {
+	if o != nil && !IsNil(o.Target) {
+		return true
+	}
+
+	return false
+}
+
+// SetTarget gets a reference to the given ChannelTarget and assigns it to the Target field.
+func (o *PushNotificationRequest) SetTarget(v ChannelTarget) {
+	o.Target = &v
+}
+
 func (o PushNotificationRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -151,6 +283,23 @@ func (o PushNotificationRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Subtitle) {
 		toSerialize["subtitle"] = o.Subtitle
 	}
+	if !IsNil(o.Payload) {
+		toSerialize["payload"] = o.Payload
+	}
+	if !IsNil(o.Badge) {
+		toSerialize["badge"] = o.Badge
+	}
+	if !IsNil(o.Sound) {
+		toSerialize["sound"] = o.Sound
+	}
+	if !IsNil(o.Target) {
+		toSerialize["target"] = o.Target
+	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -178,15 +327,26 @@ func (o *PushNotificationRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varPushNotificationRequest := _PushNotificationRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPushNotificationRequest)
+	err = json.Unmarshal(data, &varPushNotificationRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = PushNotificationRequest(varPushNotificationRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "title")
+		delete(additionalProperties, "message")
+		delete(additionalProperties, "subtitle")
+		delete(additionalProperties, "payload")
+		delete(additionalProperties, "badge")
+		delete(additionalProperties, "sound")
+		delete(additionalProperties, "target")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

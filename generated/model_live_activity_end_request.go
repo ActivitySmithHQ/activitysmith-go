@@ -12,7 +12,6 @@ package generated
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -23,6 +22,7 @@ var _ MappedNullable = &LiveActivityEndRequest{}
 type LiveActivityEndRequest struct {
 	ActivityId string `json:"activity_id"`
 	ContentState ContentStateEnd `json:"content_state"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityEndRequest LiveActivityEndRequest
@@ -106,6 +106,11 @@ func (o LiveActivityEndRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["activity_id"] = o.ActivityId
 	toSerialize["content_state"] = o.ContentState
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -134,15 +139,21 @@ func (o *LiveActivityEndRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityEndRequest := _LiveActivityEndRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varLiveActivityEndRequest)
+	err = json.Unmarshal(data, &varLiveActivityEndRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityEndRequest(varLiveActivityEndRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "activity_id")
+		delete(additionalProperties, "content_state")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

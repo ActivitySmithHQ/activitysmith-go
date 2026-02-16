@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **DevicesNotified** | Pointer to **int32** |  | [optional] 
 **UsersNotified** | Pointer to **int32** |  | [optional] 
 **ActivityId** | **string** |  | 
+**EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Timestamp** | **time.Time** |  | 
 
 ## Methods
@@ -118,6 +119,31 @@ and a boolean to check if the value has been set.
 
 SetActivityId sets ActivityId field to given value.
 
+
+### GetEffectiveChannelSlugs
+
+`func (o *LiveActivityStartResponse) GetEffectiveChannelSlugs() []string`
+
+GetEffectiveChannelSlugs returns the EffectiveChannelSlugs field if non-nil, zero value otherwise.
+
+### GetEffectiveChannelSlugsOk
+
+`func (o *LiveActivityStartResponse) GetEffectiveChannelSlugsOk() (*[]string, bool)`
+
+GetEffectiveChannelSlugsOk returns a tuple with the EffectiveChannelSlugs field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEffectiveChannelSlugs
+
+`func (o *LiveActivityStartResponse) SetEffectiveChannelSlugs(v []string)`
+
+SetEffectiveChannelSlugs sets EffectiveChannelSlugs field to given value.
+
+### HasEffectiveChannelSlugs
+
+`func (o *LiveActivityStartResponse) HasEffectiveChannelSlugs() bool`
+
+HasEffectiveChannelSlugs returns a boolean if a field has been set.
 
 ### GetTimestamp
 
