@@ -23,12 +23,12 @@ paths:
             examples:
               default:
                 value:
-                  title: Build Failed 🚨
-                  message: CI pipeline failed on main branch
+                  title: New subscription 💸
+                  message: Customer upgraded to Pro plan
               channel_targeted:
                 value:
-                  title: Build Failed 🚨
-                  message: CI pipeline failed on main branch
+                  title: New subscription 💸
+                  message: Customer upgraded to Pro plan
                   target:
                     channels:
                     - devs
@@ -121,18 +121,18 @@ paths:
               default:
                 value:
                   content_state:
-                    title: ActivitySmith API Deployment
-                    subtitle: start
-                    number_of_steps: 4
+                    title: Nightly database backup
+                    subtitle: create snapshot
+                    number_of_steps: 3
                     current_step: 1
                     type: segmented_progress
                     color: yellow
               channel_targeted:
                 value:
                   content_state:
-                    title: ActivitySmith API Deployment
-                    subtitle: start
-                    number_of_steps: 4
+                    title: Nightly database backup
+                    subtitle: create snapshot
+                    number_of_steps: 3
                     current_step: 1
                     type: segmented_progress
                     color: yellow
@@ -238,9 +238,9 @@ paths:
                 value:
                   activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
                   content_state:
-                    title: ActivitySmith API Deployment
-                    subtitle: npm i & pm2
-                    current_step: 3
+                    title: Nightly database backup
+                    subtitle: upload archive
+                    current_step: 2
             schema:
               $ref: '#/components/schemas/LiveActivityUpdateRequest'
         required: true
@@ -296,10 +296,10 @@ paths:
                 value:
                   activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
                   content_state:
-                    title: ActivitySmith API Deployment
-                    subtitle: done
-                    current_step: 4
-                    auto_dismiss_minutes: 3
+                    title: Nightly database backup
+                    subtitle: verify restore
+                    current_step: 3
+                    auto_dismiss_minutes: 2
             schema:
               $ref: '#/components/schemas/LiveActivityEndRequest'
         required: true
@@ -822,7 +822,7 @@ components:
   securitySchemes:
     apiKeyAuth:
       bearerFormat: API Key
-      description: "Use your ActivitySmith API key. Example: Authorization: Bearer\
-        \ <API_KEY>"
+      description: "Required. Include `Authorization: Bearer ask_123456789` in every\
+        \ request. Replace `ask_123456789` with your API key."
       scheme: bearer
       type: http

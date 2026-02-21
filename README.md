@@ -30,8 +30,8 @@ func main() {
 	}
 
 	input := activitysmithsdk.PushNotificationInput{
-		Title:   "Build Failed",
-		Message: "CI pipeline failed on main branch",
+		Title:   "New subscription 💸",
+		Message: "Customer upgraded to Pro plan",
 	}
 
 	response, err := activitysmith.Notifications.
@@ -50,8 +50,8 @@ Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificatio
 
 ```go
 input := activitysmithsdk.PushNotificationInput{
-	Title:   "Build Failed",
-	Message: "CI pipeline failed on main branch",
+	Title:   "New subscription 💸",
+	Message: "Customer upgraded to Pro plan",
 	Channels: []string{"devs", "ops"}, // Optional
 }
 
@@ -71,9 +71,9 @@ Use `activitysmith.LiveActivities.Start` with an `activitysmithsdk.LiveActivityS
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:         "ActivitySmith API Deployment",
-	Subtitle:      "start",
-	NumberOfSteps: 4,
+	Title:         "Nightly database backup",
+	Subtitle:      "create snapshot",
+	NumberOfSteps: 3,
 	CurrentStep:   1,
 	Type:          "segmented_progress",
 	Color:         "yellow",
@@ -96,9 +96,9 @@ Use `activitysmith.LiveActivities.Update` with the `activityID` from `Start`.
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID:  activityID,
-	Title:       "ActivitySmith API Deployment",
-	Subtitle:    "npm i & pm2",
-	CurrentStep: 3,
+	Title:       "Nightly database backup",
+	Subtitle:    "upload archive",
+	CurrentStep: 2,
 }
 
 update, err := activitysmith.LiveActivities.
@@ -118,10 +118,10 @@ If `AutoDismissMinutes` is omitted, backend default `3` is used.
 ```go
 endInput := activitysmithsdk.LiveActivityEndInput{
 	ActivityID:         activityID,
-	Title:              "ActivitySmith API Deployment",
-	Subtitle:           "done",
-	CurrentStep:        4,
-	AutoDismissMinutes: 3,
+	Title:              "Nightly database backup",
+	Subtitle:           "verify restore",
+	CurrentStep: 3,
+	AutoDismissMinutes: 2,
 }
 
 end, err := activitysmith.LiveActivities.
