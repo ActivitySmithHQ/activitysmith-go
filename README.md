@@ -46,6 +46,10 @@ func main() {
 
 ### Send a Push Notification
 
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png" alt="Push notification example" width="680" />
+</p>
+
 Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificationInput`.
 
 ```go
@@ -66,6 +70,10 @@ log.Println(response.GetDevicesNotified())
 ```
 
 ### Start a Live Activity
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start live activity example" width="680" />
+</p>
 
 Use `activitysmith.LiveActivities.Start` with an `activitysmithsdk.LiveActivityStartInput`.
 
@@ -91,6 +99,10 @@ activityID := start.GetActivityId()
 
 ### Update a Live Activity
 
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Update live activity example" width="680" />
+</p>
+
 Use `activitysmith.LiveActivities.Update` with the `activityID` from `Start`.
 
 ```go
@@ -111,6 +123,10 @@ log.Println(update.GetDevicesNotified())
 ```
 
 ### End a Live Activity
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End live activity example" width="680" />
+</p>
 
 Use `activitysmith.LiveActivities.End` to end the activity.
 If `AutoDismissMinutes` is omitted, backend default `3` is used.
