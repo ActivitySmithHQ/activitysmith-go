@@ -21,6 +21,7 @@ import (
 	"log"
 
 	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
 
 func main() {
@@ -50,17 +51,36 @@ func main() {
   <img src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png" alt="Push notification example" width="680" />
 </p>
 
-Use `activitysmith.Notifications.Send` with an `activitysmithsdk.PushNotificationInput`.
+Use `activitysmith.Notifications.Send` with either `activitysmithsdk.PushNotificationInput` (basic) or `generated.PushNotificationRequest` (advanced fields like `redirection` and `actions`).
 
 ```go
-input := activitysmithsdk.PushNotificationInput{
-	Title:   "New subscription 💸",
-	Message: "Customer upgraded to Pro plan",
-	Channels: []string{"devs", "ops"}, // Optional
-}
+request := generated.NewPushNotificationRequest("New subscription 💸")
+request.SetMessage("Customer upgraded to Pro plan")
+request.SetRedirection("https://crm.example.com/customers/cus_9f3a1d")
+request.SetTarget(generated.ChannelTarget{Channels: []string{"sales", "customer-success"}}) // Optional
 
-response, err := activitysmith.Notifications.
-	Send(input)
+crmAction := generated.NewPushNotificationAction(
+	"Open CRM Profile",
+	generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL,
+	"https://crm.example.com/customers/cus_9f3a1d",
+)
+
+onboardingAction := generated.NewPushNotificationAction(
+	"Start Onboarding Workflow",
+	generated.PUSHNOTIFICATIONACTIONTYPE_WEBHOOK,
+	"https://hooks.example.com/activitysmith/onboarding/start",
+)
+onboardingAction.SetBody(map[string]interface{}{
+	"customer_id": "cus_9f3a1d",
+	"plan": "pro",
+})
+
+request.SetActions([]generated.PushNotificationAction{
+	*crmAction,
+	*onboardingAction,
+})
+
+response, err := activitysmith.Notifications.Send(request)
 if err != nil {
 	log.Fatal(err)
 }
