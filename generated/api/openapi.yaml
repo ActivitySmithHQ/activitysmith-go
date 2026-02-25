@@ -15,7 +15,8 @@ paths:
   /push-notification:
     post:
       description: Sends a push notification to devices matched by API key scope and
-        optional target channels.
+        optional target channels. Supports optional redirection URL (tap) and up to
+        4 interactive actions (long-press on iOS).
       operationId: sendPushNotification
       requestBody:
         content:
@@ -33,6 +34,35 @@ paths:
                     channels:
                     - devs
                     - ops
+              redirection:
+                value:
+                  title: Incident Resolved ✅
+                  message: All systems operational
+                  redirection: https://status.example.com/incidents/abc-123
+              actions_open_url:
+                value:
+                  title: Release Candidate Ready 🚀
+                  message: v2.14.0-rc.1 deployed to staging
+                  actions:
+                  - title: View CI Run
+                    type: open_url
+                    url: https://github.com/activitysmithhq/backend/actions/runs/1234567890
+                  - title: Release Notes
+                    type: open_url
+                    url: https://github.com/activitysmithhq/backend/releases/tag/v2.14.0-rc.1
+              actions_webhook:
+                value:
+                  title: Build Failed 🚨
+                  message: Tap and hold for remediation actions
+                  redirection: https://ci.example.com/builds/8842
+                  actions:
+                  - title: Retry Build
+                    type: webhook
+                    url: https://hooks.example.com/activitysmith/build-retry
+                    method: POST
+                    body:
+                      build_id: "8842"
+                      source: push_action
             schema:
               $ref: '#/components/schemas/PushNotificationRequest'
         required: true
@@ -541,6 +571,45 @@ components:
           type: array
       required:
       - channels
+    PushNotificationActionType:
+      enum:
+      - open_url
+      - webhook
+      type: string
+    PushNotificationWebhookMethod:
+      default: POST
+      enum:
+      - GET
+      - POST
+      type: string
+    PushNotificationAction:
+      additionalProperties: {}
+      example:
+        method: POST
+        title: title
+        type: open_url
+        body:
+          key: ""
+        url: https://openapi-generator.tech
+      properties:
+        title:
+          description: Button title displayed in iOS expanded notification UI.
+        type:
+          $ref: '#/components/schemas/PushNotificationActionType'
+        url:
+          description: HTTPS URL. For open_url it is opened in browser. For webhook
+            it is called by ActivitySmith backend.
+          format: uri
+          pattern: ^https://
+        method:
+          $ref: '#/components/schemas/PushNotificationWebhookMethod'
+        body:
+          additionalProperties: true
+          description: Optional webhook payload body. Used only when type=webhook.
+      required:
+      - title
+      - type
+      - url
     PushNotificationRequest:
       additionalProperties: {}
       example:
@@ -551,6 +620,32 @@ components:
         sound: sound
         title: title
         message: message
+        redirection: https://openapi-generator.tech
+        actions:
+        - method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
         target:
           channels:
           - channels
@@ -559,6 +654,15 @@ components:
         title: {}
         message: {}
         subtitle: {}
+        redirection:
+          description: Optional HTTPS URL opened when user taps the notification body.
+          format: uri
+          pattern: ^https://
+        actions:
+          description: Optional interactive actions shown on iOS long-press.
+          items:
+            $ref: '#/components/schemas/PushNotificationAction'
+          maxItems: 4
         payload:
           additionalProperties: true
         badge: {}
