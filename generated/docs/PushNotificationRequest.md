@@ -7,6 +7,8 @@ Name | Type | Description | Notes
 **Title** | **string** |  | 
 **Message** | Pointer to **string** |  | [optional] 
 **Subtitle** | Pointer to **string** |  | [optional] 
+**Redirection** | Pointer to **string** | Optional HTTPS URL opened when user taps the notification body. | [optional] 
+**Actions** | Pointer to [**[]PushNotificationAction**](PushNotificationAction.md) | Optional interactive actions shown on iOS long-press. | [optional] 
 **Payload** | Pointer to **map[string]interface{}** |  | [optional] 
 **Badge** | Pointer to **int32** |  | [optional] 
 **Sound** | Pointer to **string** |  | [optional] 
@@ -100,6 +102,56 @@ SetSubtitle sets Subtitle field to given value.
 `func (o *PushNotificationRequest) HasSubtitle() bool`
 
 HasSubtitle returns a boolean if a field has been set.
+
+### GetRedirection
+
+`func (o *PushNotificationRequest) GetRedirection() string`
+
+GetRedirection returns the Redirection field if non-nil, zero value otherwise.
+
+### GetRedirectionOk
+
+`func (o *PushNotificationRequest) GetRedirectionOk() (*string, bool)`
+
+GetRedirectionOk returns a tuple with the Redirection field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetRedirection
+
+`func (o *PushNotificationRequest) SetRedirection(v string)`
+
+SetRedirection sets Redirection field to given value.
+
+### HasRedirection
+
+`func (o *PushNotificationRequest) HasRedirection() bool`
+
+HasRedirection returns a boolean if a field has been set.
+
+### GetActions
+
+`func (o *PushNotificationRequest) GetActions() []PushNotificationAction`
+
+GetActions returns the Actions field if non-nil, zero value otherwise.
+
+### GetActionsOk
+
+`func (o *PushNotificationRequest) GetActionsOk() (*[]PushNotificationAction, bool)`
+
+GetActionsOk returns a tuple with the Actions field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetActions
+
+`func (o *PushNotificationRequest) SetActions(v []PushNotificationAction)`
+
+SetActions sets Actions field to given value.
+
+### HasActions
+
+`func (o *PushNotificationRequest) HasActions() bool`
+
+HasActions returns a boolean if a field has been set.
 
 ### GetPayload
 
