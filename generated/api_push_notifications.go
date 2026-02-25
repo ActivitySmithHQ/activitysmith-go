@@ -40,7 +40,7 @@ func (r ApiSendPushNotificationRequest) Execute() (*PushNotificationResponse, *h
 /*
 SendPushNotification Send a push notification
 
-Sends a push notification to devices matched by API key scope and optional target channels.
+Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL (tap) and up to 4 interactive actions (long-press on iOS).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiSendPushNotificationRequest

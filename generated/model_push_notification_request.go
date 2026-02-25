@@ -23,6 +23,10 @@ type PushNotificationRequest struct {
 	Title string `json:"title"`
 	Message *string `json:"message,omitempty"`
 	Subtitle *string `json:"subtitle,omitempty"`
+	// Optional HTTPS URL opened when user taps the notification body.
+	Redirection *string `json:"redirection,omitempty" validate:"regexp=^https:\\/\\/"`
+	// Optional interactive actions shown on iOS long-press.
+	Actions []PushNotificationAction `json:"actions,omitempty"`
 	Payload map[string]interface{} `json:"payload,omitempty"`
 	Badge *int32 `json:"badge,omitempty"`
 	Sound *string `json:"sound,omitempty"`
@@ -136,6 +140,70 @@ func (o *PushNotificationRequest) HasSubtitle() bool {
 // SetSubtitle gets a reference to the given string and assigns it to the Subtitle field.
 func (o *PushNotificationRequest) SetSubtitle(v string) {
 	o.Subtitle = &v
+}
+
+// GetRedirection returns the Redirection field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetRedirection() string {
+	if o == nil || IsNil(o.Redirection) {
+		var ret string
+		return ret
+	}
+	return *o.Redirection
+}
+
+// GetRedirectionOk returns a tuple with the Redirection field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetRedirectionOk() (*string, bool) {
+	if o == nil || IsNil(o.Redirection) {
+		return nil, false
+	}
+	return o.Redirection, true
+}
+
+// HasRedirection returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasRedirection() bool {
+	if o != nil && !IsNil(o.Redirection) {
+		return true
+	}
+
+	return false
+}
+
+// SetRedirection gets a reference to the given string and assigns it to the Redirection field.
+func (o *PushNotificationRequest) SetRedirection(v string) {
+	o.Redirection = &v
+}
+
+// GetActions returns the Actions field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetActions() []PushNotificationAction {
+	if o == nil || IsNil(o.Actions) {
+		var ret []PushNotificationAction
+		return ret
+	}
+	return o.Actions
+}
+
+// GetActionsOk returns a tuple with the Actions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetActionsOk() ([]PushNotificationAction, bool) {
+	if o == nil || IsNil(o.Actions) {
+		return nil, false
+	}
+	return o.Actions, true
+}
+
+// HasActions returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasActions() bool {
+	if o != nil && !IsNil(o.Actions) {
+		return true
+	}
+
+	return false
+}
+
+// SetActions gets a reference to the given []PushNotificationAction and assigns it to the Actions field.
+func (o *PushNotificationRequest) SetActions(v []PushNotificationAction) {
+	o.Actions = v
 }
 
 // GetPayload returns the Payload field value if set, zero value otherwise.
@@ -283,6 +351,12 @@ func (o PushNotificationRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Subtitle) {
 		toSerialize["subtitle"] = o.Subtitle
 	}
+	if !IsNil(o.Redirection) {
+		toSerialize["redirection"] = o.Redirection
+	}
+	if !IsNil(o.Actions) {
+		toSerialize["actions"] = o.Actions
+	}
 	if !IsNil(o.Payload) {
 		toSerialize["payload"] = o.Payload
 	}
@@ -341,6 +415,8 @@ func (o *PushNotificationRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "title")
 		delete(additionalProperties, "message")
 		delete(additionalProperties, "subtitle")
+		delete(additionalProperties, "redirection")
+		delete(additionalProperties, "actions")
 		delete(additionalProperties, "payload")
 		delete(additionalProperties, "badge")
 		delete(additionalProperties, "sound")
