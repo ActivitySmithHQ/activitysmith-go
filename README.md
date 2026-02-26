@@ -68,44 +68,6 @@ log.Println(response.GetSuccess())
 log.Println(response.GetDevicesNotified())
 ```
 
-Optional push features (`channels`, `redirection`, `actions`):
-
-```go
-request := generated.NewPushNotificationRequest("New subscription 💸")
-request.SetMessage("Customer upgraded to Pro plan")
-request.SetRedirection("https://crm.example.com/customers/cus_9f3a1d")
-request.SetTarget(generated.ChannelTarget{Channels: []string{"sales", "customer-success"}}) // Optional
-
-crmAction := generated.NewPushNotificationAction(
-	"Open CRM Profile",
-	generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL,
-	"https://crm.example.com/customers/cus_9f3a1d",
-)
-
-onboardingAction := generated.NewPushNotificationAction(
-	"Start Onboarding Workflow",
-	generated.PUSHNOTIFICATIONACTIONTYPE_WEBHOOK,
-	"https://hooks.example.com/activitysmith/onboarding/start",
-)
-onboardingAction.SetBody(map[string]interface{}{
-	"customer_id": "cus_9f3a1d",
-	"plan": "pro",
-})
-
-request.SetActions([]generated.PushNotificationAction{
-	*crmAction,
-	*onboardingAction,
-})
-
-response, err := activitysmith.Notifications.Send(request)
-if err != nil {
-	log.Fatal(err)
-}
-
-log.Println(response.GetSuccess())
-log.Println(response.GetDevicesNotified())
-```
-
 ### Start a Live Activity
 
 <p align="center">
@@ -186,14 +148,68 @@ if err != nil {
 log.Println(end.GetSuccess())
 ```
 
+## Channels
+
+Channels are used to target specific team members or devices. Can be used for both push notifications and live activities.
+
+```go
+request := generated.NewPushNotificationRequest("New subscription 💸")
+request.SetMessage("Customer upgraded to Pro plan")
+request.SetTarget(generated.ChannelTarget{Channels: []string{"sales", "customer-success"}}) // Optional
+
+response, err := activitysmith.Notifications.Send(request)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(response.GetSuccess())
+log.Println(response.GetDevicesNotified())
+```
+
+## Push Notification Redirection and Actions
+
+Push notification redirection and actions are optional and can be used to redirect the user to a specific URL when they tap the notification or to trigger a specific action when they long-press the notification.
+Webhooks are executed by ActivitySmith backend.
+
+```go
+request := generated.NewPushNotificationRequest("New subscription 💸")
+request.SetMessage("Customer upgraded to Pro plan")
+request.SetRedirection("https://crm.example.com/customers/cus_9f3a1d") // Optional
+
+crmAction := generated.NewPushNotificationAction(
+	"Open CRM Profile",
+	generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL,
+	"https://crm.example.com/customers/cus_9f3a1d",
+)
+
+onboardingAction := generated.NewPushNotificationAction(
+	"Start Onboarding Workflow",
+	generated.PUSHNOTIFICATIONACTIONTYPE_WEBHOOK,
+	"https://hooks.example.com/activitysmith/onboarding/start",
+)
+onboardingAction.SetMethod(generated.PUSHNOTIFICATIONACTIONMETHOD_POST)
+onboardingAction.SetBody(map[string]interface{}{
+	"customer_id": "cus_9f3a1d",
+	"plan": "pro",
+})
+
+request.SetActions([]generated.PushNotificationAction{
+	*crmAction,
+	*onboardingAction,
+}) // Optional (max 4)
+
+response, err := activitysmith.Notifications.Send(request)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(response.GetSuccess())
+log.Println(response.GetDevicesNotified())
+```
+
 ## Error Handling
 
 SDK methods return `(response, error)`. Always check `error` on each call.
-
-## API Surface
-
-- `activitysmith.Notifications`
-- `activitysmith.LiveActivities`
 
 ## Requirements
 
