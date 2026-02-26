@@ -54,6 +54,23 @@ func main() {
 Use `activitysmith.Notifications.Send` with either `activitysmithsdk.PushNotificationInput` (basic) or `generated.PushNotificationRequest` (advanced fields like `redirection` and `actions`).
 
 ```go
+input := activitysmithsdk.PushNotificationInput{
+	Title:   "New subscription 💸",
+	Message: "Customer upgraded to Pro plan",
+}
+
+response, err := activitysmith.Notifications.Send(input)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(response.GetSuccess())
+log.Println(response.GetDevicesNotified())
+```
+
+Optional push features (`channels`, `redirection`, `actions`):
+
+```go
 request := generated.NewPushNotificationRequest("New subscription 💸")
 request.SetMessage("Customer upgraded to Pro plan")
 request.SetRedirection("https://crm.example.com/customers/cus_9f3a1d")
