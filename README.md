@@ -68,15 +68,35 @@ log.Println(response.GetSuccess())
 log.Println(response.GetDevicesNotified())
 ```
 
-### Start a Live Activity
+## Live Activities
+
+Live Activities come in two UI types, but the lifecycle stays the same:
+start the activity, keep the returned `activityID`, update it as state changes,
+then end it when the work is done.
+
+- `segmented_progress`: best for jobs tracked in steps
+- `progress`: best for jobs tracked as a percentage or numeric range
+
+### Shared flow
+
+1. Call `activitysmith.LiveActivities.Start(...)`.
+2. Save the returned `activityID`.
+3. Call `activitysmith.LiveActivities.Update(...)` as progress changes.
+4. Call `activitysmith.LiveActivities.End(...)` when the work is finished.
+
+### Segmented Progress Type
+
+Use `segmented_progress` when progress is easier to follow as steps instead of a
+raw percentage. It fits jobs like backups, deployments, ETL pipelines, and
+checklists where "step 2 of 3" is more useful than "67%".
+`NumberOfSteps` is dynamic, so you can increase or decrease it later if the
+workflow changes.
+
+#### Start
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start live activity example" width="680" />
+  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Segmented progress start example" width="680" />
 </p>
-
-Use `activitysmith.LiveActivities.Start` with an `activitysmithsdk.LiveActivityStartInput`.
-For `segmented_progress`, include `NumberOfSteps` and `CurrentStep`.
-For `progress`, include `Type: "progress"` plus `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)`.
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
@@ -89,8 +109,7 @@ startInput := activitysmithsdk.LiveActivityStartInput{
 	Channels:      []string{"devs", "ops"}, // Optional
 }
 
-start, err := activitysmith.LiveActivities.
-	Start(startInput)
+start, err := activitysmith.LiveActivities.Start(startInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -98,41 +117,22 @@ if err != nil {
 activityID := start.GetActivityId()
 ```
 
-Progress example:
-
-```go
-startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:    "Model fine-tuning",
-	Subtitle: "uploading shards",
-	Type:     "progress",
-	Color:    "purple",
-	Channels: []string{"ml", "ops"}, // Optional
-}.WithPercentage(67)
-
-start, err := activitysmith.LiveActivities.Start(startInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-### Update a Live Activity
+#### Update
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Update live activity example" width="680" />
+  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress update example" width="680" />
 </p>
-
-Use `activitysmith.LiveActivities.Update` with the `activityID` from `Start`.
 
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID:  activityID,
-	Title:       "Nightly database backup",
-	Subtitle:    "upload archive",
-	CurrentStep: 2,
+	ActivityID:    activityID,
+	Title:         "Nightly database backup",
+	Subtitle:      "upload archive",
+	NumberOfSteps: 4,
+	CurrentStep:   2,
 }
 
-update, err := activitysmith.LiveActivities.
-	Update(updateInput)
+update, err := activitysmith.LiveActivities.Update(updateInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -140,42 +140,23 @@ if err != nil {
 log.Println(update.GetDevicesNotified())
 ```
 
-Progress update example:
-
-```go
-updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID: activityID,
-	Title:      "Model fine-tuning",
-	Type:       "progress",
-	Subtitle:   "processing batches",
-}.WithValue(241).WithUpperLimit(360)
-
-update, err := activitysmith.LiveActivities.Update(updateInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-### End a Live Activity
+#### End
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End live activity example" width="680" />
+  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="Segmented progress end example" width="680" />
 </p>
-
-Use `activitysmith.LiveActivities.End` to end the activity.
-If `AutoDismissMinutes` is omitted, backend default `3` is used.
 
 ```go
 endInput := activitysmithsdk.LiveActivityEndInput{
 	ActivityID:         activityID,
 	Title:              "Nightly database backup",
 	Subtitle:           "verify restore",
-	CurrentStep: 3,
+	NumberOfSteps:      4,
+	CurrentStep:        4,
 	AutoDismissMinutes: 2,
 }
 
-end, err := activitysmith.LiveActivities.
-	End(endInput)
+end, err := activitysmith.LiveActivities.End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
@@ -183,20 +164,78 @@ if err != nil {
 log.Println(end.GetSuccess())
 ```
 
-Progress end example:
+### Progress Type
+
+Use `progress` when the state is naturally continuous. It fits charging,
+downloads, sync jobs, uploads, timers, and any flow where a percentage or
+numeric range is the clearest signal.
+
+#### Start
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/progress-live-activity-start.png" alt="Progress start example" width="680" />
+</p>
+
+```go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:      "EV Charging",
+	Subtitle:   "Added 30 mi range",
+	Type:       "progress",
+	Percentage: 15,
+	Color:      "lime",
+}
+
+start, err := activitysmith.LiveActivities.Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
+#### Update
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/progress-live-activity-update.png" alt="Progress update example" width="680" />
+</p>
+
+```go
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID:  activityID,
+	Title:       "EV Charging",
+	Subtitle:    "Added 120 mi range",
+	Percentage:  60,
+}
+
+update, err := activitysmith.LiveActivities.Update(updateInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(update.GetDevicesNotified())
+```
+
+#### End
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/progress-live-activity-end.png" alt="Progress end example" width="680" />
+</p>
 
 ```go
 endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID: activityID,
-	Title:      "Model fine-tuning",
-	Type:       "progress",
-	Subtitle:   "complete",
-}.WithPercentage(100).WithAutoDismissMinutes(2)
+	ActivityID:         activityID,
+	Title:              "EV Charging",
+	Subtitle:           "Added 200 mi range",
+	Percentage:         100,
+	AutoDismissMinutes: 2,
+}
 
 end, err := activitysmith.LiveActivities.End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
+
+log.Println(end.GetSuccess())
 ```
 
 ## Channels
