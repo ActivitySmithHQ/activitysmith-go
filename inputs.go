@@ -40,12 +40,13 @@ type LiveActivityStartInput struct {
 
 func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartRequest {
 	req := generated.LiveActivityStartRequest{
-		ContentState: generated.ContentStateStart{
-			Title:         in.Title,
-			NumberOfSteps: in.NumberOfSteps,
-			CurrentStep:   in.CurrentStep,
-			Type:          in.Type,
-		},
+		ContentState: *generated.NewContentStateStart(in.Title, in.Type),
+	}
+	if in.NumberOfSteps != 0 {
+		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
+	}
+	if in.CurrentStep != 0 {
+		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
@@ -78,10 +79,10 @@ type LiveActivityUpdateInput struct {
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
 	req := generated.LiveActivityUpdateRequest{
 		ActivityId: in.ActivityID,
-		ContentState: generated.ContentStateUpdate{
-			Title:       in.Title,
-			CurrentStep: in.CurrentStep,
-		},
+		ContentState: *generated.NewContentStateUpdate(in.Title),
+	}
+	if in.CurrentStep != 0 {
+		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
@@ -123,10 +124,10 @@ type LiveActivityEndInput struct {
 func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	req := generated.LiveActivityEndRequest{
 		ActivityId: in.ActivityID,
-		ContentState: generated.ContentStateEnd{
-			Title:       in.Title,
-			CurrentStep: in.CurrentStep,
-		},
+		ContentState: *generated.NewContentStateEnd(in.Title),
+	}
+	if in.CurrentStep != 0 {
+		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
