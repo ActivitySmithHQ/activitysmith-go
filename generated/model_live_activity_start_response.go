@@ -19,7 +19,7 @@ import (
 // checks if the LiveActivityStartResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityStartResponse{}
 
-// LiveActivityStartResponse struct for LiveActivityStartResponse
+// LiveActivityStartResponse Returned after a Live Activity starts. Save activity_id and use it for all later updates and for the final end call.
 type LiveActivityStartResponse struct {
 	Success bool `json:"success"`
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`

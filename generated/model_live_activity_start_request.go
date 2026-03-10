@@ -18,7 +18,7 @@ import (
 // checks if the LiveActivityStartRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityStartRequest{}
 
-// LiveActivityStartRequest struct for LiveActivityStartRequest
+// LiveActivityStartRequest Start a new Live Activity. The response includes activity_id for later update and end calls.
 type LiveActivityStartRequest struct {
 	ContentState ContentStateStart `json:"content_state"`
 	Alert *AlertPayload `json:"alert,omitempty"`

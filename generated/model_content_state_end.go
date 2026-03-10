@@ -18,11 +18,11 @@ import (
 // checks if the ContentStateEnd type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateEnd{}
 
-// ContentStateEnd End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when ending an existing activity.
+// ContentStateEnd End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
 type ContentStateEnd struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
-	// Total number of steps. Use for type=segmented_progress.
+	// Total number of steps. Use for type=segmented_progress. Optional on end, and safe to change if the final workflow used more or fewer steps than originally planned.
 	NumberOfSteps *int32 `json:"number_of_steps,omitempty"`
 	// Current step. Use for type=segmented_progress.
 	CurrentStep *int32 `json:"current_step,omitempty"`

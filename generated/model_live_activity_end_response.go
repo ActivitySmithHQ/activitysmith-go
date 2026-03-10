@@ -19,7 +19,7 @@ import (
 // checks if the LiveActivityEndResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityEndResponse{}
 
-// LiveActivityEndResponse struct for LiveActivityEndResponse
+// LiveActivityEndResponse Returned after a Live Activity end event is sent or queued.
 type LiveActivityEndResponse struct {
 	Success bool `json:"success"`
 	ActivityId string `json:"activity_id"`
