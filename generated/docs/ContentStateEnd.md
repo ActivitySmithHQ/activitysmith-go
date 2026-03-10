@@ -6,17 +6,21 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Title** | **string** |  | 
 **Subtitle** | Pointer to **string** |  | [optional] 
-**NumberOfSteps** | Pointer to **int32** |  | [optional] 
-**CurrentStep** | **int32** |  | 
+**NumberOfSteps** | Pointer to **int32** | Total number of steps. Use for type&#x3D;segmented_progress. | [optional] 
+**CurrentStep** | Pointer to **int32** | Current step. Use for type&#x3D;segmented_progress. | [optional] 
+**Percentage** | Pointer to **float32** | Progress percentage (0–100). Use for type&#x3D;progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
+**Value** | Pointer to **float32** | Current progress value. Use with upper_limit for type&#x3D;progress. | [optional] 
+**UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for type&#x3D;progress. | [optional] 
+**Type** | Pointer to **string** | Optional. When omitted, the API uses the existing Live Activity type. | [optional] 
 **Color** | Pointer to **string** | Optional. Accent color for the Live Activity. Defaults to blue. | [optional] [default to "blue"]
-**StepColor** | Pointer to **string** | Optional. Overrides color for the current step. | [optional] 
+**StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to type&#x3D;segmented_progress. | [optional] 
 **AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max. | [optional] [default to 3]
 
 ## Methods
 
 ### NewContentStateEnd
 
-`func NewContentStateEnd(title string, currentStep int32, ) *ContentStateEnd`
+`func NewContentStateEnd(title string, ) *ContentStateEnd`
 
 NewContentStateEnd instantiates a new ContentStateEnd object
 This constructor will assign default values to properties that have it defined,
@@ -120,6 +124,111 @@ and a boolean to check if the value has been set.
 
 SetCurrentStep sets CurrentStep field to given value.
 
+### HasCurrentStep
+
+`func (o *ContentStateEnd) HasCurrentStep() bool`
+
+HasCurrentStep returns a boolean if a field has been set.
+
+### GetPercentage
+
+`func (o *ContentStateEnd) GetPercentage() float32`
+
+GetPercentage returns the Percentage field if non-nil, zero value otherwise.
+
+### GetPercentageOk
+
+`func (o *ContentStateEnd) GetPercentageOk() (*float32, bool)`
+
+GetPercentageOk returns a tuple with the Percentage field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPercentage
+
+`func (o *ContentStateEnd) SetPercentage(v float32)`
+
+SetPercentage sets Percentage field to given value.
+
+### HasPercentage
+
+`func (o *ContentStateEnd) HasPercentage() bool`
+
+HasPercentage returns a boolean if a field has been set.
+
+### GetValue
+
+`func (o *ContentStateEnd) GetValue() float32`
+
+GetValue returns the Value field if non-nil, zero value otherwise.
+
+### GetValueOk
+
+`func (o *ContentStateEnd) GetValueOk() (*float32, bool)`
+
+GetValueOk returns a tuple with the Value field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetValue
+
+`func (o *ContentStateEnd) SetValue(v float32)`
+
+SetValue sets Value field to given value.
+
+### HasValue
+
+`func (o *ContentStateEnd) HasValue() bool`
+
+HasValue returns a boolean if a field has been set.
+
+### GetUpperLimit
+
+`func (o *ContentStateEnd) GetUpperLimit() float32`
+
+GetUpperLimit returns the UpperLimit field if non-nil, zero value otherwise.
+
+### GetUpperLimitOk
+
+`func (o *ContentStateEnd) GetUpperLimitOk() (*float32, bool)`
+
+GetUpperLimitOk returns a tuple with the UpperLimit field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUpperLimit
+
+`func (o *ContentStateEnd) SetUpperLimit(v float32)`
+
+SetUpperLimit sets UpperLimit field to given value.
+
+### HasUpperLimit
+
+`func (o *ContentStateEnd) HasUpperLimit() bool`
+
+HasUpperLimit returns a boolean if a field has been set.
+
+### GetType
+
+`func (o *ContentStateEnd) GetType() string`
+
+GetType returns the Type field if non-nil, zero value otherwise.
+
+### GetTypeOk
+
+`func (o *ContentStateEnd) GetTypeOk() (*string, bool)`
+
+GetTypeOk returns a tuple with the Type field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetType
+
+`func (o *ContentStateEnd) SetType(v string)`
+
+SetType sets Type field to given value.
+
+### HasType
+
+`func (o *ContentStateEnd) HasType() bool`
+
+HasType returns a boolean if a field has been set.
 
 ### GetColor
 

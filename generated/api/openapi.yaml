@@ -157,6 +157,14 @@ paths:
                     current_step: 1
                     type: segmented_progress
                     color: yellow
+              progress:
+                value:
+                  content_state:
+                    title: EV Charging
+                    subtitle: Added 30 mi range
+                    percentage: 15
+                    type: progress
+                    color: lime
               channel_targeted:
                 value:
                   content_state:
@@ -264,13 +272,20 @@ paths:
         content:
           application/json:
             examples:
-              default:
+              segmented_progress:
                 value:
                   activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
                   content_state:
                     title: Nightly database backup
                     subtitle: upload archive
                     current_step: 2
+              progress:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: EV Charging
+                    subtitle: Added 120 mi range
+                    percentage: 60
             schema:
               $ref: '#/components/schemas/LiveActivityUpdateRequest'
         required: true
@@ -322,13 +337,22 @@ paths:
         content:
           application/json:
             examples:
-              default:
+              segmented_progress:
                 value:
                   activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
                   content_state:
                     title: Nightly database backup
                     subtitle: verify restore
+                    number_of_steps: 3
                     current_step: 3
+                    auto_dismiss_minutes: 2
+              progress:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: EV Charging
+                    subtitle: Added 200 mi range
+                    percentage: 100
                     auto_dismiss_minutes: 2
             schema:
               $ref: '#/components/schemas/LiveActivityEndRequest'
@@ -377,15 +401,19 @@ components:
   schemas:
     ContentStateStart:
       additionalProperties: true
-      description: "Start payload requires title, number_of_steps, current_step, and\
-        \ type."
+      description: Start payload requires title and type. For segmented_progress include
+        number_of_steps and current_step. For progress include percentage or value
+        with upper_limit.
       example:
         color: blue
         step_color: lime
         subtitle: subtitle
+        percentage: 14.658129805029452
+        upper_limit: 5.637376656633329
         title: title
         number_of_steps: 1
         type: segmented_progress
+        value: 5.962133916683182
         current_step: 1
       properties:
         title:
@@ -393,14 +421,29 @@ components:
         subtitle:
           type: string
         number_of_steps:
+          description: Total number of steps. Use for type=segmented_progress.
           minimum: 1
           type: integer
         current_step:
+          description: Current step. Use for type=segmented_progress.
           minimum: 1
           type: integer
+        percentage:
+          description: Progress percentage (0–100). Use for type=progress. Takes precedence
+            over value/upper_limit if both are provided.
+          maximum: 100
+          minimum: 0
+          type: number
+        value:
+          description: Current progress value. Use with upper_limit for type=progress.
+          type: number
+        upper_limit:
+          description: Maximum progress value. Use with value for type=progress.
+          type: number
         type:
           enum:
           - segmented_progress
+          - progress
           type: string
         color:
           default: blue
@@ -417,7 +460,8 @@ components:
           - yellow
           type: string
         step_color:
-          description: Optional. Overrides color for the current step.
+          description: Optional. Overrides color for the current step. Only applies
+            to type=segmented_progress.
           enum:
           - lime
           - green
@@ -430,20 +474,23 @@ components:
           - yellow
           type: string
       required:
-      - current_step
-      - number_of_steps
       - title
       - type
     ContentStateUpdate:
       additionalProperties: true
-      description: Update payload. Required fields are title and current_step. number_of_steps
-        is optional.
+      description: Update payload requires title. For segmented_progress include current_step
+        and optionally number_of_steps. For progress include percentage or value with
+        upper_limit. Type is optional when updating an existing activity.
       example:
         color: blue
         step_color: lime
         subtitle: subtitle
+        percentage: 14.658129805029452
+        upper_limit: 5.637376656633329
         title: title
         number_of_steps: 1
+        type: segmented_progress
+        value: 5.962133916683182
         current_step: 1
       properties:
         title:
@@ -451,11 +498,32 @@ components:
         subtitle:
           type: string
         number_of_steps:
+          description: Total number of steps. Use for type=segmented_progress.
           minimum: 1
           type: integer
         current_step:
+          description: Current step. Use for type=segmented_progress.
           minimum: 1
           type: integer
+        percentage:
+          description: Progress percentage (0–100). Use for type=progress. Takes precedence
+            over value/upper_limit if both are provided.
+          maximum: 100
+          minimum: 0
+          type: number
+        value:
+          description: Current progress value. Use with upper_limit for type=progress.
+          type: number
+        upper_limit:
+          description: Maximum progress value. Use with value for type=progress.
+          type: number
+        type:
+          description: "Optional. When omitted, the API uses the existing Live Activity\
+            \ type."
+          enum:
+          - segmented_progress
+          - progress
+          type: string
         color:
           default: blue
           description: Optional. Accent color for the Live Activity. Defaults to blue.
@@ -471,7 +539,8 @@ components:
           - yellow
           type: string
         step_color:
-          description: Optional. Overrides color for the current step.
+          description: Optional. Overrides color for the current step. Only applies
+            to type=segmented_progress.
           enum:
           - lime
           - green
@@ -484,19 +553,23 @@ components:
           - yellow
           type: string
       required:
-      - current_step
       - title
     ContentStateEnd:
       additionalProperties: true
-      description: End payload. Required fields are title and current_step. number_of_steps
-        is optional.
+      description: End payload requires title. For segmented_progress include current_step
+        and optionally number_of_steps. For progress include percentage or value with
+        upper_limit. Type is optional when ending an existing activity.
       example:
         color: blue
         step_color: lime
         subtitle: subtitle
+        percentage: 14.658129805029452
         auto_dismiss_minutes: 0
+        upper_limit: 5.637376656633329
         title: title
         number_of_steps: 1
+        type: segmented_progress
+        value: 5.962133916683182
         current_step: 1
       properties:
         title:
@@ -504,11 +577,32 @@ components:
         subtitle:
           type: string
         number_of_steps:
+          description: Total number of steps. Use for type=segmented_progress.
           minimum: 1
           type: integer
         current_step:
+          description: Current step. Use for type=segmented_progress.
           minimum: 1
           type: integer
+        percentage:
+          description: Progress percentage (0–100). Use for type=progress. Takes precedence
+            over value/upper_limit if both are provided.
+          maximum: 100
+          minimum: 0
+          type: number
+        value:
+          description: Current progress value. Use with upper_limit for type=progress.
+          type: number
+        upper_limit:
+          description: Maximum progress value. Use with value for type=progress.
+          type: number
+        type:
+          description: "Optional. When omitted, the API uses the existing Live Activity\
+            \ type."
+          enum:
+          - segmented_progress
+          - progress
+          type: string
         color:
           default: blue
           description: Optional. Accent color for the Live Activity. Defaults to blue.
@@ -524,7 +618,8 @@ components:
           - yellow
           type: string
         step_color:
-          description: Optional. Overrides color for the current step.
+          description: Optional. Overrides color for the current step. Only applies
+            to type=segmented_progress.
           enum:
           - lime
           - green
@@ -544,7 +639,6 @@ components:
           minimum: 0
           type: integer
       required:
-      - current_step
       - title
     AlertPayload:
       additionalProperties: true
@@ -705,9 +799,12 @@ components:
           color: blue
           step_color: lime
           subtitle: subtitle
+          percentage: 14.658129805029452
+          upper_limit: 5.637376656633329
           title: title
           number_of_steps: 1
           type: segmented_progress
+          value: 5.962133916683182
           current_step: 1
         alert:
           title: title
@@ -839,8 +936,12 @@ components:
           color: blue
           step_color: lime
           subtitle: subtitle
+          percentage: 14.658129805029452
+          upper_limit: 5.637376656633329
           title: title
           number_of_steps: 1
+          type: segmented_progress
+          value: 5.962133916683182
           current_step: 1
         activity_id: activity_id
       properties:
@@ -882,9 +983,13 @@ components:
           color: blue
           step_color: lime
           subtitle: subtitle
+          percentage: 14.658129805029452
           auto_dismiss_minutes: 0
+          upper_limit: 5.637376656633329
           title: title
           number_of_steps: 1
+          type: segmented_progress
+          value: 5.962133916683182
           current_step: 1
         activity_id: activity_id
       properties:

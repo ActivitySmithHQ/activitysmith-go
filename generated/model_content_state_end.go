@@ -18,15 +18,25 @@ import (
 // checks if the ContentStateEnd type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateEnd{}
 
-// ContentStateEnd End payload. Required fields are title and current_step. number_of_steps is optional.
+// ContentStateEnd End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when ending an existing activity.
 type ContentStateEnd struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
+	// Total number of steps. Use for type=segmented_progress.
 	NumberOfSteps *int32 `json:"number_of_steps,omitempty"`
-	CurrentStep int32 `json:"current_step"`
+	// Current step. Use for type=segmented_progress.
+	CurrentStep *int32 `json:"current_step,omitempty"`
+	// Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
+	Percentage *float32 `json:"percentage,omitempty"`
+	// Current progress value. Use with upper_limit for type=progress.
+	Value *float32 `json:"value,omitempty"`
+	// Maximum progress value. Use with value for type=progress.
+	UpperLimit *float32 `json:"upper_limit,omitempty"`
+	// Optional. When omitted, the API uses the existing Live Activity type.
+	Type *string `json:"type,omitempty"`
 	// Optional. Accent color for the Live Activity. Defaults to blue.
 	Color *string `json:"color,omitempty"`
-	// Optional. Overrides color for the current step.
+	// Optional. Overrides color for the current step. Only applies to type=segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
 	// Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max.
 	AutoDismissMinutes *int32 `json:"auto_dismiss_minutes,omitempty"`
@@ -39,10 +49,9 @@ type _ContentStateEnd ContentStateEnd
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewContentStateEnd(title string, currentStep int32) *ContentStateEnd {
+func NewContentStateEnd(title string) *ContentStateEnd {
 	this := ContentStateEnd{}
 	this.Title = title
-	this.CurrentStep = currentStep
 	var color string = "blue"
 	this.Color = &color
 	var autoDismissMinutes int32 = 3
@@ -150,28 +159,164 @@ func (o *ContentStateEnd) SetNumberOfSteps(v int32) {
 	o.NumberOfSteps = &v
 }
 
-// GetCurrentStep returns the CurrentStep field value
+// GetCurrentStep returns the CurrentStep field value if set, zero value otherwise.
 func (o *ContentStateEnd) GetCurrentStep() int32 {
-	if o == nil {
+	if o == nil || IsNil(o.CurrentStep) {
 		var ret int32
 		return ret
 	}
-
-	return o.CurrentStep
+	return *o.CurrentStep
 }
 
-// GetCurrentStepOk returns a tuple with the CurrentStep field value
+// GetCurrentStepOk returns a tuple with the CurrentStep field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *ContentStateEnd) GetCurrentStepOk() (*int32, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.CurrentStep) {
 		return nil, false
 	}
-	return &o.CurrentStep, true
+	return o.CurrentStep, true
 }
 
-// SetCurrentStep sets field value
+// HasCurrentStep returns a boolean if a field has been set.
+func (o *ContentStateEnd) HasCurrentStep() bool {
+	if o != nil && !IsNil(o.CurrentStep) {
+		return true
+	}
+
+	return false
+}
+
+// SetCurrentStep gets a reference to the given int32 and assigns it to the CurrentStep field.
 func (o *ContentStateEnd) SetCurrentStep(v int32) {
-	o.CurrentStep = v
+	o.CurrentStep = &v
+}
+
+// GetPercentage returns the Percentage field value if set, zero value otherwise.
+func (o *ContentStateEnd) GetPercentage() float32 {
+	if o == nil || IsNil(o.Percentage) {
+		var ret float32
+		return ret
+	}
+	return *o.Percentage
+}
+
+// GetPercentageOk returns a tuple with the Percentage field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateEnd) GetPercentageOk() (*float32, bool) {
+	if o == nil || IsNil(o.Percentage) {
+		return nil, false
+	}
+	return o.Percentage, true
+}
+
+// HasPercentage returns a boolean if a field has been set.
+func (o *ContentStateEnd) HasPercentage() bool {
+	if o != nil && !IsNil(o.Percentage) {
+		return true
+	}
+
+	return false
+}
+
+// SetPercentage gets a reference to the given float32 and assigns it to the Percentage field.
+func (o *ContentStateEnd) SetPercentage(v float32) {
+	o.Percentage = &v
+}
+
+// GetValue returns the Value field value if set, zero value otherwise.
+func (o *ContentStateEnd) GetValue() float32 {
+	if o == nil || IsNil(o.Value) {
+		var ret float32
+		return ret
+	}
+	return *o.Value
+}
+
+// GetValueOk returns a tuple with the Value field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateEnd) GetValueOk() (*float32, bool) {
+	if o == nil || IsNil(o.Value) {
+		return nil, false
+	}
+	return o.Value, true
+}
+
+// HasValue returns a boolean if a field has been set.
+func (o *ContentStateEnd) HasValue() bool {
+	if o != nil && !IsNil(o.Value) {
+		return true
+	}
+
+	return false
+}
+
+// SetValue gets a reference to the given float32 and assigns it to the Value field.
+func (o *ContentStateEnd) SetValue(v float32) {
+	o.Value = &v
+}
+
+// GetUpperLimit returns the UpperLimit field value if set, zero value otherwise.
+func (o *ContentStateEnd) GetUpperLimit() float32 {
+	if o == nil || IsNil(o.UpperLimit) {
+		var ret float32
+		return ret
+	}
+	return *o.UpperLimit
+}
+
+// GetUpperLimitOk returns a tuple with the UpperLimit field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateEnd) GetUpperLimitOk() (*float32, bool) {
+	if o == nil || IsNil(o.UpperLimit) {
+		return nil, false
+	}
+	return o.UpperLimit, true
+}
+
+// HasUpperLimit returns a boolean if a field has been set.
+func (o *ContentStateEnd) HasUpperLimit() bool {
+	if o != nil && !IsNil(o.UpperLimit) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpperLimit gets a reference to the given float32 and assigns it to the UpperLimit field.
+func (o *ContentStateEnd) SetUpperLimit(v float32) {
+	o.UpperLimit = &v
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *ContentStateEnd) GetType() string {
+	if o == nil || IsNil(o.Type) {
+		var ret string
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateEnd) GetTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *ContentStateEnd) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given string and assigns it to the Type field.
+func (o *ContentStateEnd) SetType(v string) {
+	o.Type = &v
 }
 
 // GetColor returns the Color field value if set, zero value otherwise.
@@ -287,7 +432,21 @@ func (o ContentStateEnd) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.NumberOfSteps) {
 		toSerialize["number_of_steps"] = o.NumberOfSteps
 	}
-	toSerialize["current_step"] = o.CurrentStep
+	if !IsNil(o.CurrentStep) {
+		toSerialize["current_step"] = o.CurrentStep
+	}
+	if !IsNil(o.Percentage) {
+		toSerialize["percentage"] = o.Percentage
+	}
+	if !IsNil(o.Value) {
+		toSerialize["value"] = o.Value
+	}
+	if !IsNil(o.UpperLimit) {
+		toSerialize["upper_limit"] = o.UpperLimit
+	}
+	if !IsNil(o.Type) {
+		toSerialize["type"] = o.Type
+	}
 	if !IsNil(o.Color) {
 		toSerialize["color"] = o.Color
 	}
@@ -311,7 +470,6 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"title",
-		"current_step",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -345,6 +503,10 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "subtitle")
 		delete(additionalProperties, "number_of_steps")
 		delete(additionalProperties, "current_step")
+		delete(additionalProperties, "percentage")
+		delete(additionalProperties, "value")
+		delete(additionalProperties, "upper_limit")
+		delete(additionalProperties, "type")
 		delete(additionalProperties, "color")
 		delete(additionalProperties, "step_color")
 		delete(additionalProperties, "auto_dismiss_minutes")
