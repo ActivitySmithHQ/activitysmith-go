@@ -141,14 +141,15 @@ paths:
       - PushNotifications
   /live-activity/start:
     post:
-      description: Starts a Live Activity on devices matched by API key scope and
-        optional target channels.
+      description: "Starts a Live Activity on devices matched by API key scope and\
+        \ optional target channels. For segmented_progress activities, number_of_steps\
+        \ can be changed later during update or end calls if the workflow changes."
       operationId: startLiveActivity
       requestBody:
         content:
           application/json:
             examples:
-              default:
+              segmented_progress:
                 value:
                   content_state:
                     title: Nightly database backup
@@ -165,7 +166,7 @@ paths:
                     percentage: 15
                     type: progress
                     color: lime
-              channel_targeted:
+              segmented_progress_channel_targeted:
                 value:
                   content_state:
                     title: Nightly database backup
@@ -186,14 +187,14 @@ paths:
           content:
             application/json:
               examples:
-                default:
+                segmented_progress:
                   value:
                     success: true
                     activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
                     devices_notified: 2
                     users_notified: 1
                     timestamp: 2026-01-28T09:57:22.929Z
-                channel_targeted:
+                segmented_progress_channel_targeted:
                   value:
                     success: true
                     activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
@@ -266,7 +267,8 @@ paths:
   /live-activity/update:
     post:
       description: "Updates an existing Live Activity. If the per-activity token is\
-        \ not registered yet, the update is queued."
+        \ not registered yet, the update is queued. For segmented_progress activities,\
+        \ you can increase or decrease number_of_steps here as the workflow changes."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -278,6 +280,7 @@ paths:
                   content_state:
                     title: Nightly database backup
                     subtitle: upload archive
+                    number_of_steps: 4
                     current_step: 2
               progress:
                 value:
@@ -331,7 +334,9 @@ paths:
       - LiveActivities
   /live-activity/end:
     post:
-      description: Ends a Live Activity and archives its lifecycle.
+      description: "Ends a Live Activity and archives its lifecycle. For segmented_progress\
+        \ activities, you can send the latest number_of_steps here if the workflow\
+        \ changed after start."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -343,8 +348,8 @@ paths:
                   content_state:
                     title: Nightly database backup
                     subtitle: verify restore
-                    number_of_steps: 3
-                    current_step: 3
+                    number_of_steps: 4
+                    current_step: 4
                     auto_dismiss_minutes: 2
               progress:
                 value:
@@ -362,7 +367,7 @@ paths:
           content:
             application/json:
               examples:
-                default:
+                segmented_progress:
                   value:
                     success: true
                     activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
@@ -401,9 +406,10 @@ components:
   schemas:
     ContentStateStart:
       additionalProperties: true
-      description: Start payload requires title and type. For segmented_progress include
-        number_of_steps and current_step. For progress include percentage or value
-        with upper_limit.
+      description: "Start payload requires title and type. For segmented_progress\
+        \ include number_of_steps and current_step. For progress include percentage\
+        \ or value with upper_limit. For segmented_progress, number_of_steps is not\
+        \ locked and can be changed in later update or end calls."
       example:
         color: blue
         step_color: lime
@@ -421,7 +427,9 @@ components:
         subtitle:
           type: string
         number_of_steps:
-          description: Total number of steps. Use for type=segmented_progress.
+          description: Total number of steps. Use for type=segmented_progress. This
+            value can be increased or decreased later when updating or ending the
+            same activity.
           minimum: 1
           type: integer
         current_step:
@@ -480,7 +488,8 @@ components:
       additionalProperties: true
       description: Update payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. Type is optional when updating an existing activity.
+        upper_limit. Type is optional when updating an existing activity. You can
+        increase or decrease number_of_steps during updates.
       example:
         color: blue
         step_color: lime
@@ -498,7 +507,8 @@ components:
         subtitle:
           type: string
         number_of_steps:
-          description: Total number of steps. Use for type=segmented_progress.
+          description: "Total number of steps. Use for type=segmented_progress. Optional\
+            \ on update, and safe to change if the workflow gains or loses steps."
           minimum: 1
           type: integer
         current_step:
@@ -558,7 +568,8 @@ components:
       additionalProperties: true
       description: End payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. Type is optional when ending an existing activity.
+        upper_limit. Type is optional when ending an existing activity. You can send
+        an updated number_of_steps here if the workflow changed after start.
       example:
         color: blue
         step_color: lime
@@ -577,7 +588,9 @@ components:
         subtitle:
           type: string
         number_of_steps:
-          description: Total number of steps. Use for type=segmented_progress.
+          description: "Total number of steps. Use for type=segmented_progress. Optional\
+            \ on end, and safe to change if the final workflow used more or fewer\
+            \ steps than originally planned."
           minimum: 1
           type: integer
         current_step:
@@ -794,6 +807,8 @@ components:
       - timestamp
     LiveActivityStartRequest:
       additionalProperties: true
+      description: Start a new Live Activity. The response includes activity_id for
+        later update and end calls.
       example:
         content_state:
           color: blue
@@ -824,6 +839,8 @@ components:
       - content_state
     LiveActivityStartResponse:
       additionalProperties: true
+      description: Returned after a Live Activity starts. Save activity_id and use
+        it for all later updates and for the final end call.
       example:
         success: true
         users_notified: 6
@@ -931,6 +948,7 @@ components:
       - message
     LiveActivityUpdateRequest:
       additionalProperties: true
+      description: Update an existing Live Activity by activity_id.
       example:
         content_state:
           color: blue
@@ -954,6 +972,7 @@ components:
       - content_state
     LiveActivityUpdateResponse:
       additionalProperties: true
+      description: Returned after a Live Activity update is sent or queued.
       example:
         devices_queued: 0
         success: true
@@ -978,6 +997,7 @@ components:
       - timestamp
     LiveActivityEndRequest:
       additionalProperties: true
+      description: End an existing Live Activity by activity_id.
       example:
         content_state:
           color: blue
@@ -1002,6 +1022,7 @@ components:
       - content_state
     LiveActivityEndResponse:
       additionalProperties: true
+      description: Returned after a Live Activity end event is sent or queued.
       example:
         devices_queued: 0
         success: true

@@ -18,7 +18,7 @@ import (
 // checks if the LiveActivityUpdateRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityUpdateRequest{}
 
-// LiveActivityUpdateRequest struct for LiveActivityUpdateRequest
+// LiveActivityUpdateRequest Update an existing Live Activity by activity_id.
 type LiveActivityUpdateRequest struct {
 	ActivityId string `json:"activity_id"`
 	ContentState ContentStateUpdate `json:"content_state"`

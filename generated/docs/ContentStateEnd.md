@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Title** | **string** |  | 
 **Subtitle** | Pointer to **string** |  | [optional] 
-**NumberOfSteps** | Pointer to **int32** | Total number of steps. Use for type&#x3D;segmented_progress. | [optional] 
+**NumberOfSteps** | Pointer to **int32** | Total number of steps. Use for type&#x3D;segmented_progress. Optional on end, and safe to change if the final workflow used more or fewer steps than originally planned. | [optional] 
 **CurrentStep** | Pointer to **int32** | Current step. Use for type&#x3D;segmented_progress. | [optional] 
 **Percentage** | Pointer to **float32** | Progress percentage (0–100). Use for type&#x3D;progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
 **Value** | Pointer to **float32** | Current progress value. Use with upper_limit for type&#x3D;progress. | [optional] 

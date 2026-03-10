@@ -18,7 +18,7 @@ import (
 // checks if the LiveActivityEndRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityEndRequest{}
 
-// LiveActivityEndRequest struct for LiveActivityEndRequest
+// LiveActivityEndRequest End an existing Live Activity by activity_id.
 type LiveActivityEndRequest struct {
 	ActivityId string `json:"activity_id"`
 	ContentState ContentStateEnd `json:"content_state"`
