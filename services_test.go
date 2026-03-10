@@ -99,27 +99,20 @@ func TestLiveActivitiesShortAndLegacyMethods(t *testing.T) {
 	overrideHostForTests(client, server.URL)
 
 	startPayload := generated.LiveActivityStartRequest{
-		ContentState: generated.ContentStateStart{
-			Title:         "Deploy",
-			NumberOfSteps: 4,
-			CurrentStep:   1,
-			Type:          "segmented_progress",
-		},
+		ContentState: *generated.NewContentStateStart("Deploy", "segmented_progress"),
 	}
+	startPayload.ContentState.SetNumberOfSteps(4)
+	startPayload.ContentState.SetCurrentStep(1)
 	updatePayload := generated.LiveActivityUpdateRequest{
 		ActivityId: "act-1",
-		ContentState: generated.ContentStateUpdate{
-			Title:       "Deploy",
-			CurrentStep: 2,
-		},
+		ContentState: *generated.NewContentStateUpdate("Deploy"),
 	}
+	updatePayload.ContentState.SetCurrentStep(2)
 	endPayload := generated.LiveActivityEndRequest{
 		ActivityId: "act-1",
-		ContentState: generated.ContentStateEnd{
-			Title:       "Deploy",
-			CurrentStep: 4,
-		},
+		ContentState: *generated.NewContentStateEnd("Deploy"),
 	}
+	endPayload.ContentState.SetCurrentStep(4)
 
 	if _, err := client.LiveActivities.Start(startPayload); err != nil {
 		t.Fatalf("Start returned error: %v", err)

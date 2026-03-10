@@ -31,7 +31,7 @@ import (
 )
 
 func main() {
-	liveActivityEndRequest := *openapiclient.NewLiveActivityEndRequest("ActivityId_example", *openapiclient.NewContentStateEnd("Title_example", int32(123))) // LiveActivityEndRequest | 
+	liveActivityEndRequest := *openapiclient.NewLiveActivityEndRequest("ActivityId_example", *openapiclient.NewContentStateEnd("Title_example")) // LiveActivityEndRequest | 
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
@@ -97,7 +97,7 @@ import (
 )
 
 func main() {
-	liveActivityStartRequest := *openapiclient.NewLiveActivityStartRequest(*openapiclient.NewContentStateStart("Title_example", int32(123), int32(123), "Type_example")) // LiveActivityStartRequest | 
+	liveActivityStartRequest := *openapiclient.NewLiveActivityStartRequest(*openapiclient.NewContentStateStart("Title_example", "Type_example")) // LiveActivityStartRequest | 
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
@@ -163,7 +163,7 @@ import (
 )
 
 func main() {
-	liveActivityUpdateRequest := *openapiclient.NewLiveActivityUpdateRequest("ActivityId_example", *openapiclient.NewContentStateUpdate("Title_example", int32(123))) // LiveActivityUpdateRequest | 
+	liveActivityUpdateRequest := *openapiclient.NewLiveActivityUpdateRequest("ActivityId_example", *openapiclient.NewContentStateUpdate("Title_example")) // LiveActivityUpdateRequest | 
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
