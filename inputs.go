@@ -31,22 +31,39 @@ type LiveActivityStartInput struct {
 	Title         string
 	NumberOfSteps int32
 	CurrentStep   int32
+	Percentage    float32
+	Value         float32
+	UpperLimit    float32
 	Type          string
 	Subtitle      string
 	Color         string
 	StepColor     string
 	Channels      []string
+
+	numberOfStepsSet bool
+	percentageSet    bool
+	valueSet         bool
+	upperLimitSet    bool
 }
 
 func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartRequest {
 	req := generated.LiveActivityStartRequest{
 		ContentState: *generated.NewContentStateStart(in.Title, in.Type),
 	}
-	if in.NumberOfSteps != 0 {
+	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
 	}
 	if in.CurrentStep != 0 {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
+	}
+	if in.Percentage != 0 || in.percentageSet {
+		req.ContentState.SetPercentage(in.Percentage)
+	}
+	if in.Value != 0 || in.valueSet {
+		req.ContentState.SetValue(in.Value)
+	}
+	if in.UpperLimit != 0 || in.upperLimitSet {
+		req.ContentState.SetUpperLimit(in.UpperLimit)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
@@ -63,17 +80,52 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	return req
 }
 
+// WithNumberOfSteps forces inclusion of number_of_steps, including explicit zero.
+func (in LiveActivityStartInput) WithNumberOfSteps(v int32) LiveActivityStartInput {
+	in.NumberOfSteps = v
+	in.numberOfStepsSet = true
+	return in
+}
+
+// WithPercentage forces inclusion of percentage, including explicit zero.
+func (in LiveActivityStartInput) WithPercentage(v float32) LiveActivityStartInput {
+	in.Percentage = v
+	in.percentageSet = true
+	return in
+}
+
+// WithValue forces inclusion of value, including explicit zero.
+func (in LiveActivityStartInput) WithValue(v float32) LiveActivityStartInput {
+	in.Value = v
+	in.valueSet = true
+	return in
+}
+
+// WithUpperLimit forces inclusion of upper_limit, including explicit zero.
+func (in LiveActivityStartInput) WithUpperLimit(v float32) LiveActivityStartInput {
+	in.UpperLimit = v
+	in.upperLimitSet = true
+	return in
+}
+
 // LiveActivityUpdateInput is a handwritten DX input with plain optional values.
 type LiveActivityUpdateInput struct {
 	ActivityID    string
 	Title         string
 	CurrentStep   int32
+	Percentage    float32
+	Value         float32
+	UpperLimit    float32
+	Type          string
 	Subtitle      string
 	Color         string
 	StepColor     string
 	NumberOfSteps int32
 
 	numberOfStepsSet bool
+	percentageSet    bool
+	valueSet         bool
+	upperLimitSet    bool
 }
 
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
@@ -83,6 +135,18 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	}
 	if in.CurrentStep != 0 {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
+	}
+	if in.Percentage != 0 || in.percentageSet {
+		req.ContentState.SetPercentage(in.Percentage)
+	}
+	if in.Value != 0 || in.valueSet {
+		req.ContentState.SetValue(in.Value)
+	}
+	if in.UpperLimit != 0 || in.upperLimitSet {
+		req.ContentState.SetUpperLimit(in.UpperLimit)
+	}
+	if in.Type != "" {
+		req.ContentState.SetType(in.Type)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
@@ -106,18 +170,46 @@ func (in LiveActivityUpdateInput) WithNumberOfSteps(v int32) LiveActivityUpdateI
 	return in
 }
 
+// WithPercentage forces inclusion of percentage, including explicit zero.
+func (in LiveActivityUpdateInput) WithPercentage(v float32) LiveActivityUpdateInput {
+	in.Percentage = v
+	in.percentageSet = true
+	return in
+}
+
+// WithValue forces inclusion of value, including explicit zero.
+func (in LiveActivityUpdateInput) WithValue(v float32) LiveActivityUpdateInput {
+	in.Value = v
+	in.valueSet = true
+	return in
+}
+
+// WithUpperLimit forces inclusion of upper_limit, including explicit zero.
+func (in LiveActivityUpdateInput) WithUpperLimit(v float32) LiveActivityUpdateInput {
+	in.UpperLimit = v
+	in.upperLimitSet = true
+	return in
+}
+
 // LiveActivityEndInput is a handwritten DX input with plain optional values.
 type LiveActivityEndInput struct {
-	ActivityID          string
-	Title               string
-	CurrentStep         int32
-	Subtitle            string
-	Color               string
-	StepColor           string
-	NumberOfSteps       int32
-	AutoDismissMinutes  int32
+	ActivityID         string
+	Title              string
+	CurrentStep        int32
+	Percentage         float32
+	Value              float32
+	UpperLimit         float32
+	Type               string
+	Subtitle           string
+	Color              string
+	StepColor          string
+	NumberOfSteps      int32
+	AutoDismissMinutes int32
 
 	numberOfStepsSet      bool
+	percentageSet         bool
+	valueSet              bool
+	upperLimitSet         bool
 	autoDismissMinutesSet bool
 }
 
@@ -128,6 +220,18 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	}
 	if in.CurrentStep != 0 {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
+	}
+	if in.Percentage != 0 || in.percentageSet {
+		req.ContentState.SetPercentage(in.Percentage)
+	}
+	if in.Value != 0 || in.valueSet {
+		req.ContentState.SetValue(in.Value)
+	}
+	if in.UpperLimit != 0 || in.upperLimitSet {
+		req.ContentState.SetUpperLimit(in.UpperLimit)
+	}
+	if in.Type != "" {
+		req.ContentState.SetType(in.Type)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
@@ -151,6 +255,27 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 func (in LiveActivityEndInput) WithNumberOfSteps(v int32) LiveActivityEndInput {
 	in.NumberOfSteps = v
 	in.numberOfStepsSet = true
+	return in
+}
+
+// WithPercentage forces inclusion of percentage, including explicit zero.
+func (in LiveActivityEndInput) WithPercentage(v float32) LiveActivityEndInput {
+	in.Percentage = v
+	in.percentageSet = true
+	return in
+}
+
+// WithValue forces inclusion of value, including explicit zero.
+func (in LiveActivityEndInput) WithValue(v float32) LiveActivityEndInput {
+	in.Value = v
+	in.valueSet = true
+	return in
+}
+
+// WithUpperLimit forces inclusion of upper_limit, including explicit zero.
+func (in LiveActivityEndInput) WithUpperLimit(v float32) LiveActivityEndInput {
+	in.UpperLimit = v
+	in.upperLimitSet = true
 	return in
 }
 

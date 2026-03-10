@@ -75,6 +75,8 @@ log.Println(response.GetDevicesNotified())
 </p>
 
 Use `activitysmith.LiveActivities.Start` with an `activitysmithsdk.LiveActivityStartInput`.
+For `segmented_progress`, include `NumberOfSteps` and `CurrentStep`.
+For `progress`, include `Type: "progress"` plus `WithPercentage(...)` or `WithValue(...).WithUpperLimit(...)`.
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
@@ -94,6 +96,23 @@ if err != nil {
 }
 
 activityID := start.GetActivityId()
+```
+
+Progress example:
+
+```go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:    "Model fine-tuning",
+	Subtitle: "uploading shards",
+	Type:     "progress",
+	Color:    "purple",
+	Channels: []string{"ml", "ops"}, // Optional
+}.WithPercentage(67)
+
+start, err := activitysmith.LiveActivities.Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
 ```
 
 ### Update a Live Activity
@@ -121,6 +140,22 @@ if err != nil {
 log.Println(update.GetDevicesNotified())
 ```
 
+Progress update example:
+
+```go
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID: activityID,
+	Title:      "Model fine-tuning",
+	Type:       "progress",
+	Subtitle:   "processing batches",
+}.WithValue(241).WithUpperLimit(360)
+
+update, err := activitysmith.LiveActivities.Update(updateInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
 ### End a Live Activity
 
 <p align="center">
@@ -146,6 +181,22 @@ if err != nil {
 }
 
 log.Println(end.GetSuccess())
+```
+
+Progress end example:
+
+```go
+endInput := activitysmithsdk.LiveActivityEndInput{
+	ActivityID: activityID,
+	Title:      "Model fine-tuning",
+	Type:       "progress",
+	Subtitle:   "complete",
+}.WithPercentage(100).WithAutoDismissMinutes(2)
+
+end, err := activitysmith.LiveActivities.End(endInput)
+if err != nil {
+	log.Fatal(err)
+}
 ```
 
 ## Channels

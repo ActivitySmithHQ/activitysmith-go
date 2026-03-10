@@ -98,21 +98,24 @@ func TestLiveActivitiesShortAndLegacyMethods(t *testing.T) {
 	}
 	overrideHostForTests(client, server.URL)
 
+	startState := generated.NewContentStateStart("Deploy", "segmented_progress")
+	startState.SetNumberOfSteps(4)
+	startState.SetCurrentStep(1)
 	startPayload := generated.LiveActivityStartRequest{
-		ContentState: *generated.NewContentStateStart("Deploy", "segmented_progress"),
+		ContentState: *startState,
 	}
-	startPayload.ContentState.SetNumberOfSteps(4)
-	startPayload.ContentState.SetCurrentStep(1)
+	updateState := generated.NewContentStateUpdate("Deploy")
+	updateState.SetCurrentStep(2)
 	updatePayload := generated.LiveActivityUpdateRequest{
-		ActivityId: "act-1",
-		ContentState: *generated.NewContentStateUpdate("Deploy"),
+		ActivityId:   "act-1",
+		ContentState: *updateState,
 	}
-	updatePayload.ContentState.SetCurrentStep(2)
+	endState := generated.NewContentStateEnd("Deploy")
+	endState.SetCurrentStep(4)
 	endPayload := generated.LiveActivityEndRequest{
-		ActivityId: "act-1",
-		ContentState: *generated.NewContentStateEnd("Deploy"),
+		ActivityId:   "act-1",
+		ContentState: *endState,
 	}
-	endPayload.ContentState.SetCurrentStep(4)
 
 	if _, err := client.LiveActivities.Start(startPayload); err != nil {
 		t.Fatalf("Start returned error: %v", err)
@@ -287,6 +290,80 @@ func TestEndInputCanExplicitlySendZeroAutoDismissMinutes(t *testing.T) {
 	body := (*requests)[0].Body
 	if !strings.Contains(body, `"auto_dismiss_minutes":0`) {
 		t.Fatalf("end body missing explicit zero auto_dismiss_minutes: %s", body)
+	}
+}
+
+func TestProgressInputsSerializeProgressFieldsWithoutSegmentedFields(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	startInput := LiveActivityStartInput{
+		Title:    "Render export",
+		Subtitle: "encoding frames",
+		Type:     "progress",
+		Color:    "purple",
+	}.WithPercentage(67)
+
+	updateInput := LiveActivityUpdateInput{
+		ActivityID: "act-1",
+		Title:      "Render export",
+		Type:       "progress",
+	}.WithValue(241).WithUpperLimit(360)
+
+	endInput := LiveActivityEndInput{
+		ActivityID: "act-1",
+		Title:      "Render export",
+		Type:       "progress",
+	}.WithPercentage(100).WithAutoDismissMinutes(0)
+
+	if _, err := client.LiveActivities.Start(startInput); err != nil {
+		t.Fatalf("Start returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.Update(updateInput); err != nil {
+		t.Fatalf("Update returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.End(endInput); err != nil {
+		t.Fatalf("End returned error: %v", err)
+	}
+
+	if len(*requests) != 3 {
+		t.Fatalf("expected 3 requests, got %d", len(*requests))
+	}
+
+	startBody := (*requests)[0].Body
+	if !strings.Contains(startBody, `"type":"progress"`) {
+		t.Fatalf("start body missing progress type: %s", startBody)
+	}
+	if !strings.Contains(startBody, `"percentage":67`) {
+		t.Fatalf("start body missing percentage: %s", startBody)
+	}
+	if strings.Contains(startBody, `"current_step"`) || strings.Contains(startBody, `"number_of_steps"`) {
+		t.Fatalf("start body should not include segmented fields: %s", startBody)
+	}
+
+	updateBody := (*requests)[1].Body
+	if !strings.Contains(updateBody, `"value":241`) || !strings.Contains(updateBody, `"upper_limit":360`) {
+		t.Fatalf("update body missing progress value fields: %s", updateBody)
+	}
+	if strings.Contains(updateBody, `"current_step"`) || strings.Contains(updateBody, `"number_of_steps"`) {
+		t.Fatalf("update body should not include segmented fields: %s", updateBody)
+	}
+
+	endBody := (*requests)[2].Body
+	if !strings.Contains(endBody, `"percentage":100`) {
+		t.Fatalf("end body missing percentage: %s", endBody)
+	}
+	if !strings.Contains(endBody, `"auto_dismiss_minutes":0`) {
+		t.Fatalf("end body missing explicit zero auto_dismiss_minutes: %s", endBody)
+	}
+	if strings.Contains(endBody, `"current_step"`) || strings.Contains(endBody, `"number_of_steps"`) {
+		t.Fatalf("end body should not include segmented fields: %s", endBody)
 	}
 }
 
