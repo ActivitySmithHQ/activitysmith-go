@@ -7,8 +7,9 @@ Name | Type | Description | Notes
 **Title** | **string** |  | 
 **Message** | Pointer to **string** |  | [optional] 
 **Subtitle** | Pointer to **string** |  | [optional] 
-**Redirection** | Pointer to **string** | Optional HTTPS URL opened when user taps the notification body. | [optional] 
-**Actions** | Pointer to [**[]PushNotificationAction**](PushNotificationAction.md) | Optional interactive actions shown on iOS long-press. | [optional] 
+**Media** | Pointer to **string** | Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If &#x60;redirection&#x60; is omitted, tapping the notification opens this URL. Cannot be combined with &#x60;actions&#x60;. | [optional] 
+**Redirection** | Pointer to **string** | Optional HTTPS URL opened when user taps the notification body. Overrides the default tap target from &#x60;media&#x60; when both are provided. | [optional] 
+**Actions** | Pointer to [**[]PushNotificationAction**](PushNotificationAction.md) | Optional interactive actions shown when users expand the notification. Cannot be combined with &#x60;media&#x60;. | [optional] 
 **Payload** | Pointer to **map[string]interface{}** |  | [optional] 
 **Badge** | Pointer to **int32** |  | [optional] 
 **Sound** | Pointer to **string** |  | [optional] 
@@ -102,6 +103,31 @@ SetSubtitle sets Subtitle field to given value.
 `func (o *PushNotificationRequest) HasSubtitle() bool`
 
 HasSubtitle returns a boolean if a field has been set.
+
+### GetMedia
+
+`func (o *PushNotificationRequest) GetMedia() string`
+
+GetMedia returns the Media field if non-nil, zero value otherwise.
+
+### GetMediaOk
+
+`func (o *PushNotificationRequest) GetMediaOk() (*string, bool)`
+
+GetMediaOk returns a tuple with the Media field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMedia
+
+`func (o *PushNotificationRequest) SetMedia(v string)`
+
+SetMedia sets Media field to given value.
+
+### HasMedia
+
+`func (o *PushNotificationRequest) HasMedia() bool`
+
+HasMedia returns a boolean if a field has been set.
 
 ### GetRedirection
 

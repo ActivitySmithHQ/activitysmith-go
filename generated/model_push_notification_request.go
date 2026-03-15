@@ -23,9 +23,11 @@ type PushNotificationRequest struct {
 	Title string `json:"title"`
 	Message *string `json:"message,omitempty"`
 	Subtitle *string `json:"subtitle,omitempty"`
-	// Optional HTTPS URL opened when user taps the notification body.
+	// Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
+	Media *string `json:"media,omitempty" validate:"regexp=^https:\\/\\/"`
+	// Optional HTTPS URL opened when user taps the notification body. Overrides the default tap target from `media` when both are provided.
 	Redirection *string `json:"redirection,omitempty" validate:"regexp=^https:\\/\\/"`
-	// Optional interactive actions shown on iOS long-press.
+	// Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
 	Actions []PushNotificationAction `json:"actions,omitempty"`
 	Payload map[string]interface{} `json:"payload,omitempty"`
 	Badge *int32 `json:"badge,omitempty"`
@@ -140,6 +142,38 @@ func (o *PushNotificationRequest) HasSubtitle() bool {
 // SetSubtitle gets a reference to the given string and assigns it to the Subtitle field.
 func (o *PushNotificationRequest) SetSubtitle(v string) {
 	o.Subtitle = &v
+}
+
+// GetMedia returns the Media field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetMedia() string {
+	if o == nil || IsNil(o.Media) {
+		var ret string
+		return ret
+	}
+	return *o.Media
+}
+
+// GetMediaOk returns a tuple with the Media field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetMediaOk() (*string, bool) {
+	if o == nil || IsNil(o.Media) {
+		return nil, false
+	}
+	return o.Media, true
+}
+
+// HasMedia returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasMedia() bool {
+	if o != nil && !IsNil(o.Media) {
+		return true
+	}
+
+	return false
+}
+
+// SetMedia gets a reference to the given string and assigns it to the Media field.
+func (o *PushNotificationRequest) SetMedia(v string) {
+	o.Media = &v
 }
 
 // GetRedirection returns the Redirection field value if set, zero value otherwise.
@@ -351,6 +385,9 @@ func (o PushNotificationRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Subtitle) {
 		toSerialize["subtitle"] = o.Subtitle
 	}
+	if !IsNil(o.Media) {
+		toSerialize["media"] = o.Media
+	}
 	if !IsNil(o.Redirection) {
 		toSerialize["redirection"] = o.Redirection
 	}
@@ -415,6 +452,7 @@ func (o *PushNotificationRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "title")
 		delete(additionalProperties, "message")
 		delete(additionalProperties, "subtitle")
+		delete(additionalProperties, "media")
 		delete(additionalProperties, "redirection")
 		delete(additionalProperties, "actions")
 		delete(additionalProperties, "payload")
