@@ -14,9 +14,10 @@ tags:
 paths:
   /push-notification:
     post:
-      description: Sends a push notification to devices matched by API key scope and
-        optional target channels. Supports optional redirection URL (tap) and up to
-        4 interactive actions (long-press on iOS).
+      description: "Sends a push notification to devices matched by API key scope\
+        \ and optional target channels. Supports optional redirection URL, optional\
+        \ media preview or playback when the notification is expanded, and up to 4\
+        \ interactive actions. `media` cannot be combined with `actions`."
       operationId: sendPushNotification
       requestBody:
         content:
@@ -39,6 +40,17 @@ paths:
                   title: Incident Resolved ✅
                   message: All systems operational
                   redirection: https://status.example.com/incidents/abc-123
+              media_preview:
+                value:
+                  title: Homepage ready
+                  message: Your agent finished the redesign.
+                  media: https://cdn.example.com/output/homepage.png
+              media_preview_with_redirection:
+                value:
+                  title: Homepage ready
+                  message: Your agent finished the redesign.
+                  media: https://cdn.example.com/output/homepage.png
+                  redirection: https://github.com/acme/web/pull/482
               actions_open_url:
                 value:
                   title: Release Candidate Ready 🚀
@@ -725,6 +737,7 @@ components:
           key: ""
         subtitle: subtitle
         sound: sound
+        media: https://openapi-generator.tech
         title: title
         message: message
         redirection: https://openapi-generator.tech
@@ -761,12 +774,21 @@ components:
         title: {}
         message: {}
         subtitle: {}
+        media:
+          description: "Optional HTTPS URL for an image, audio file, or video that\
+            \ users can preview or play when they expand the notification. If `redirection`\
+            \ is omitted, tapping the notification opens this URL. Cannot be combined\
+            \ with `actions`."
+          format: uri
+          pattern: ^https://
         redirection:
           description: Optional HTTPS URL opened when user taps the notification body.
+            Overrides the default tap target from `media` when both are provided.
           format: uri
           pattern: ^https://
         actions:
-          description: Optional interactive actions shown on iOS long-press.
+          description: Optional interactive actions shown when users expand the notification.
+            Cannot be combined with `media`.
           items:
             $ref: '#/components/schemas/PushNotificationAction'
           maxItems: 4
