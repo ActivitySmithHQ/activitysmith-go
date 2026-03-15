@@ -51,7 +51,7 @@ func main() {
   <img src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png" alt="Push notification example" width="680" />
 </p>
 
-Use `activitysmith.Notifications.Send` with either `activitysmithsdk.PushNotificationInput` (basic) or `generated.PushNotificationRequest` (advanced fields like `redirection` and `actions`).
+Use `activitysmith.Notifications.Send` with either `activitysmithsdk.PushNotificationInput` for common notification fields or `generated.PushNotificationRequest` if you want full control over the generated model.
 
 ```go
 input := activitysmithsdk.PushNotificationInput{
@@ -255,6 +255,42 @@ if err != nil {
 log.Println(response.GetSuccess())
 log.Println(response.GetDevicesNotified())
 ```
+
+## Rich Push Notifications with Media
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png" alt="Rich push notification with image" width="680" />
+</p>
+
+```go
+input := activitysmithsdk.PushNotificationInput{
+	Title:       "Homepage ready",
+	Message:     "Your agent finished the redesign.",
+	Media:       "https://cdn.example.com/output/homepage-v2.png",
+	Redirection: "https://github.com/acme/web/pull/482",
+}
+
+response, err := activitysmith.Notifications.Send(input)
+if err != nil {
+	log.Fatal(err)
+}
+
+log.Println(response.GetSuccess())
+log.Println(response.GetDevicesNotified())
+```
+
+Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png" alt="Rich push notification with audio" width="680" />
+</p>
+
+What will work:
+
+- direct image URL: `.jpg`, `.png`, `.gif`, etc.
+- direct audio file URL: `.mp3`, `.m4a`, etc.
+- direct video file URL: `.mp4`, `.mov`, etc.
+- URL that responds with a proper media `Content-Type`, even if the path has no extension
 
 ## Push Notification Redirection and Actions
 
