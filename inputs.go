@@ -4,10 +4,13 @@ import "github.com/ActivitySmithHQ/activitysmith-go/generated"
 
 // PushNotificationInput is a handwritten DX input with plain optional values.
 type PushNotificationInput struct {
-	Title    string
-	Message  string
-	Subtitle string
-	Channels []string
+	Title       string
+	Message     string
+	Subtitle    string
+	Media       string
+	Redirection string
+	Actions     []generated.PushNotificationAction
+	Channels    []string
 }
 
 func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest {
@@ -19,6 +22,15 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	}
 	if in.Subtitle != "" {
 		req.SetSubtitle(in.Subtitle)
+	}
+	if in.Media != "" {
+		req.SetMedia(in.Media)
+	}
+	if in.Redirection != "" {
+		req.SetRedirection(in.Redirection)
+	}
+	if len(in.Actions) > 0 {
+		req.SetActions(append([]generated.PushNotificationAction{}, in.Actions...))
 	}
 	if len(in.Channels) > 0 {
 		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
@@ -130,7 +142,7 @@ type LiveActivityUpdateInput struct {
 
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
 	req := generated.LiveActivityUpdateRequest{
-		ActivityId: in.ActivityID,
+		ActivityId:   in.ActivityID,
 		ContentState: *generated.NewContentStateUpdate(in.Title),
 	}
 	if in.CurrentStep != 0 {
@@ -215,7 +227,7 @@ type LiveActivityEndInput struct {
 
 func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	req := generated.LiveActivityEndRequest{
-		ActivityId: in.ActivityID,
+		ActivityId:   in.ActivityID,
 		ContentState: *generated.NewContentStateEnd(in.Title),
 	}
 	if in.CurrentStep != 0 {

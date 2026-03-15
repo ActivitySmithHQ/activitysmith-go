@@ -175,10 +175,12 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	overrideHostForTests(client, server.URL)
 
 	pushInput := PushNotificationInput{
-		Title:    "Deploy",
-		Message:  "Build complete",
-		Subtitle: "production",
-		Channels: []string{"devs", "ops"},
+		Title:       "Deploy",
+		Message:     "Build complete",
+		Subtitle:    "production",
+		Media:       "https://cdn.example.com/output/homepage.png",
+		Redirection: "https://github.com/acme/web/pull/482",
+		Channels:    []string{"devs", "ops"},
 	}
 	if _, err := client.Notifications.Send(pushInput); err != nil {
 		t.Fatalf("Send returned error: %v", err)
@@ -233,6 +235,12 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	}
 	if !strings.Contains(bodies[0], `"subtitle":"production"`) {
 		t.Fatalf("push body missing subtitle: %s", bodies[0])
+	}
+	if !strings.Contains(bodies[0], `"media":"https://cdn.example.com/output/homepage.png"`) {
+		t.Fatalf("push body missing media: %s", bodies[0])
+	}
+	if !strings.Contains(bodies[0], `"redirection":"https://github.com/acme/web/pull/482"`) {
+		t.Fatalf("push body missing redirection: %s", bodies[0])
 	}
 	if !strings.Contains(bodies[0], `"channels":["devs","ops"]`) {
 		t.Fatalf("push body missing target channels: %s", bodies[0])
@@ -388,6 +396,38 @@ func TestServicesRejectUnsupportedInputTypes(t *testing.T) {
 	}
 	if _, err := client.LiveActivities.End(123); err == nil {
 		t.Fatal("expected error for unsupported end input type")
+	}
+}
+
+func TestNotificationsRejectMediaAndActionsCombination(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	action := generated.NewPushNotificationAction("Open", generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL, "https://example.com")
+	if _, err := client.Notifications.Send(PushNotificationInput{
+		Title:   "Build Failed",
+		Media:   "https://cdn.example.com/output/homepage.png",
+		Actions: []generated.PushNotificationAction{*action},
+	}); err == nil || err.Error() != ErrPushNotificationMediaActionsConflict.Error() {
+		t.Fatalf("expected ErrPushNotificationMediaActionsConflict, got %v", err)
+	}
+
+	request := generated.PushNotificationRequest{Title: "Build Failed"}
+	request.SetMedia("https://cdn.example.com/output/homepage.png")
+	request.SetActions([]generated.PushNotificationAction{*action})
+
+	if _, err := client.Notifications.Send(request); err == nil || err.Error() != ErrPushNotificationMediaActionsConflict.Error() {
+		t.Fatalf("expected ErrPushNotificationMediaActionsConflict for generated request, got %v", err)
+	}
+
+	if len(*requests) != 0 {
+		t.Fatalf("expected no API calls, got %d", len(*requests))
 	}
 }
 
