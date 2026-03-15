@@ -2,6 +2,7 @@ package activitysmith
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
@@ -30,25 +31,49 @@ func (s *NotificationsService) SendPushNotification(request generated.PushNotifi
 }
 
 func normalizePushNotificationRequest(input any) (generated.PushNotificationRequest, error) {
+	var request generated.PushNotificationRequest
+
 	switch v := input.(type) {
 	case PushNotificationInput:
-		return v.toGenerated(), nil
+		request = v.toGenerated()
 	case *PushNotificationInput:
 		if v == nil {
 			return generated.PushNotificationRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
 		}
-		return v.toGenerated(), nil
+		request = v.toGenerated()
 	case generated.PushNotificationRequest:
-		return v, nil
+		request = v
 	case *generated.PushNotificationRequest:
 		if v == nil {
 			return generated.PushNotificationRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
 		}
-		return *v, nil
+		request = *v
 	default:
 		return generated.PushNotificationRequest{}, fmt.Errorf(
 			"activitysmith: unsupported push notification input type %T",
 			input,
 		)
 	}
+
+	if err := validatePushNotificationRequest(request); err != nil {
+		return generated.PushNotificationRequest{}, err
+	}
+
+	return request, nil
+}
+
+func validatePushNotificationRequest(request generated.PushNotificationRequest) error {
+	if request.Media == nil {
+		return nil
+	}
+
+	if strings.TrimSpace(*request.Media) == "" {
+		return nil
+	}
+
+	if len(request.Actions) > 0 {
+		return ErrPushNotificationMediaActionsConflict
+	}
+
+	return nil
 }

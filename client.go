@@ -9,6 +9,7 @@ import (
 )
 
 var ErrAPIKeyRequired = errors.New("activitysmith: apiKey is required")
+var ErrPushNotificationMediaActionsConflict = errors.New("activitysmith: media cannot be combined with actions")
 
 type Options struct {
 	Context context.Context
@@ -27,6 +28,7 @@ func New(apiKey string, opts ...*Options) (*Client, error) {
 	}
 
 	cfg := generated.NewConfiguration()
+	cfg.UserAgent = "activitysmith-go/" + Version
 	ctx := context.Background()
 
 	if len(opts) > 0 && opts[0] != nil && opts[0].Context != nil {
