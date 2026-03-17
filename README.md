@@ -12,7 +12,7 @@ See [API reference](https://activitysmith.com/docs/api-reference/introduction).
 go get github.com/ActivitySmithHQ/activitysmith-go
 ```
 
-## Usage
+## Setup
 
 ```go
 package main
@@ -29,18 +29,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	input := activitysmithsdk.PushNotificationInput{
-		Title:   "New subscription 💸",
-		Message: "Customer upgraded to Pro plan",
-	}
-
-	_, err = activitysmith.Notifications.
-		Send(input)
-	if err != nil {
-		log.Fatal(err)
-	}
+	_ = activitysmith
 }
 ```
+
+## Push Notifications
 
 ### Send a Push Notification
 
@@ -57,6 +50,81 @@ input := activitysmithsdk.PushNotificationInput{
 }
 
 _, err := activitysmith.Notifications.Send(input)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+### Rich Push Notifications with Media
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png" alt="Rich push notification with image" width="680" />
+</p>
+
+```go
+input := activitysmithsdk.PushNotificationInput{
+	Title:       "Homepage ready",
+	Message:     "Your agent finished the redesign.",
+	Media:       "https://cdn.example.com/output/homepage-v2.png",
+	Redirection: "https://github.com/acme/web/pull/482",
+}
+
+_, err := activitysmith.Notifications.Send(input)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png" alt="Rich push notification with audio" width="680" />
+</p>
+
+What will work:
+
+- direct image URL: `.jpg`, `.png`, `.gif`, etc.
+- direct audio file URL: `.mp3`, `.m4a`, etc.
+- direct video file URL: `.mp4`, `.mov`, etc.
+- URL that responds with a proper media `Content-Type`, even if the path has no extension
+
+### Actionable Push Notifications
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/actionable-push-notifications-2.png" alt="Actionable push notification example" width="680" />
+</p>
+
+Actionable push notifications can open a URL on tap or trigger actions when someone long-presses the notification.
+Webhooks are executed by the ActivitySmith backend.
+
+```go
+request := generated.NewPushNotificationRequest("New subscription 💸")
+request.SetMessage("Customer upgraded to Pro plan")
+request.SetRedirection("https://crm.example.com/customers/cus_9f3a1d") // Optional
+
+crmAction := generated.NewPushNotificationAction(
+	"Open CRM Profile",
+	generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL,
+	"https://crm.example.com/customers/cus_9f3a1d",
+)
+
+onboardingAction := generated.NewPushNotificationAction(
+	"Start Onboarding Workflow",
+	generated.PUSHNOTIFICATIONACTIONTYPE_WEBHOOK,
+	"https://hooks.example.com/activitysmith/onboarding/start",
+)
+onboardingAction.SetMethod(generated.PUSHNOTIFICATIONACTIONMETHOD_POST)
+onboardingAction.SetBody(map[string]interface{}{
+	"customer_id": "cus_9f3a1d",
+	"plan": "pro",
+})
+
+request.SetActions([]generated.PushNotificationAction{
+	*crmAction,
+	*onboardingAction,
+}) // Optional (max 4)
+
+_, err := activitysmith.Notifications.Send(request)
 if err != nil {
 	log.Fatal(err)
 }
@@ -232,81 +300,6 @@ Channels are used to target specific team members or devices. Can be used for bo
 request := generated.NewPushNotificationRequest("New subscription 💸")
 request.SetMessage("Customer upgraded to Pro plan")
 request.SetTarget(generated.ChannelTarget{Channels: []string{"sales", "customer-success"}}) // Optional
-
-_, err := activitysmith.Notifications.Send(request)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-## Rich Push Notifications with Media
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png" alt="Rich push notification with image" width="680" />
-</p>
-
-```go
-input := activitysmithsdk.PushNotificationInput{
-	Title:       "Homepage ready",
-	Message:     "Your agent finished the redesign.",
-	Media:       "https://cdn.example.com/output/homepage-v2.png",
-	Redirection: "https://github.com/acme/web/pull/482",
-}
-
-_, err := activitysmith.Notifications.Send(input)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png" alt="Rich push notification with audio" width="680" />
-</p>
-
-What will work:
-
-- direct image URL: `.jpg`, `.png`, `.gif`, etc.
-- direct audio file URL: `.mp3`, `.m4a`, etc.
-- direct video file URL: `.mp4`, `.mov`, etc.
-- URL that responds with a proper media `Content-Type`, even if the path has no extension
-
-## Actionable Push Notifications
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/actionable-push-notifications-2.png" alt="Actionable push notification example" width="680" />
-</p>
-
-Actionable push notifications can open a URL on tap or trigger actions when someone long-presses the notification.
-Webhooks are executed by the ActivitySmith backend.
-
-```go
-request := generated.NewPushNotificationRequest("New subscription 💸")
-request.SetMessage("Customer upgraded to Pro plan")
-request.SetRedirection("https://crm.example.com/customers/cus_9f3a1d") // Optional
-
-crmAction := generated.NewPushNotificationAction(
-	"Open CRM Profile",
-	generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL,
-	"https://crm.example.com/customers/cus_9f3a1d",
-)
-
-onboardingAction := generated.NewPushNotificationAction(
-	"Start Onboarding Workflow",
-	generated.PUSHNOTIFICATIONACTIONTYPE_WEBHOOK,
-	"https://hooks.example.com/activitysmith/onboarding/start",
-)
-onboardingAction.SetMethod(generated.PUSHNOTIFICATIONACTIONMETHOD_POST)
-onboardingAction.SetBody(map[string]interface{}{
-	"customer_id": "cus_9f3a1d",
-	"plan": "pro",
-})
-
-request.SetActions([]generated.PushNotificationAction{
-	*crmAction,
-	*onboardingAction,
-}) // Optional (max 4)
 
 _, err := activitysmith.Notifications.Send(request)
 if err != nil {
