@@ -21,7 +21,6 @@ import (
 	"log"
 
 	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
-	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
 
 func main() {
@@ -35,13 +34,11 @@ func main() {
 		Message: "Customer upgraded to Pro plan",
 	}
 
-	response, err := activitysmith.Notifications.
+	_, err = activitysmith.Notifications.
 		Send(input)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println("Notified:", response.GetDevicesNotified())
 }
 ```
 
@@ -59,13 +56,10 @@ input := activitysmithsdk.PushNotificationInput{
 	Message: "Customer upgraded to Pro plan",
 }
 
-response, err := activitysmith.Notifications.Send(input)
+_, err := activitysmith.Notifications.Send(input)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(response.GetSuccess())
-log.Println(response.GetDevicesNotified())
 ```
 
 ## Live Activities
@@ -132,12 +126,10 @@ updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	CurrentStep:   2,
 }
 
-update, err := activitysmith.LiveActivities.Update(updateInput)
+_, err := activitysmith.LiveActivities.Update(updateInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(update.GetDevicesNotified())
 ```
 
 #### End
@@ -156,12 +148,10 @@ endInput := activitysmithsdk.LiveActivityEndInput{
 	AutoDismissMinutes: 2,
 }
 
-end, err := activitysmith.LiveActivities.End(endInput)
+_, err := activitysmith.LiveActivities.End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(end.GetSuccess())
 ```
 
 ### Progress Type
@@ -207,12 +197,10 @@ updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	Percentage:  60,
 }
 
-update, err := activitysmith.LiveActivities.Update(updateInput)
+_, err := activitysmith.LiveActivities.Update(updateInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(update.GetDevicesNotified())
 ```
 
 #### End
@@ -230,12 +218,10 @@ endInput := activitysmithsdk.LiveActivityEndInput{
 	AutoDismissMinutes: 2,
 }
 
-end, err := activitysmith.LiveActivities.End(endInput)
+_, err := activitysmith.LiveActivities.End(endInput)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(end.GetSuccess())
 ```
 
 ## Channels
@@ -247,13 +233,10 @@ request := generated.NewPushNotificationRequest("New subscription 💸")
 request.SetMessage("Customer upgraded to Pro plan")
 request.SetTarget(generated.ChannelTarget{Channels: []string{"sales", "customer-success"}}) // Optional
 
-response, err := activitysmith.Notifications.Send(request)
+_, err := activitysmith.Notifications.Send(request)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(response.GetSuccess())
-log.Println(response.GetDevicesNotified())
 ```
 
 ## Rich Push Notifications with Media
@@ -270,13 +253,10 @@ input := activitysmithsdk.PushNotificationInput{
 	Redirection: "https://github.com/acme/web/pull/482",
 }
 
-response, err := activitysmith.Notifications.Send(input)
+_, err := activitysmith.Notifications.Send(input)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(response.GetSuccess())
-log.Println(response.GetDevicesNotified())
 ```
 
 Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
@@ -292,10 +272,14 @@ What will work:
 - direct video file URL: `.mp4`, `.mov`, etc.
 - URL that responds with a proper media `Content-Type`, even if the path has no extension
 
-## Push Notification Redirection and Actions
+## Actionable Push Notifications
 
-Push notification redirection and actions are optional and can be used to redirect the user to a specific URL when they tap the notification or to trigger a specific action when they long-press the notification.
-Webhooks are executed by ActivitySmith backend.
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/actionable-push-notifications-2.png" alt="Actionable push notification example" width="680" />
+</p>
+
+Actionable push notifications can open a URL on tap or trigger actions when someone long-presses the notification.
+Webhooks are executed by the ActivitySmith backend.
 
 ```go
 request := generated.NewPushNotificationRequest("New subscription 💸")
@@ -324,13 +308,10 @@ request.SetActions([]generated.PushNotificationAction{
 	*onboardingAction,
 }) // Optional (max 4)
 
-response, err := activitysmith.Notifications.Send(request)
+_, err := activitysmith.Notifications.Send(request)
 if err != nil {
 	log.Fatal(err)
 }
-
-log.Println(response.GetSuccess())
-log.Println(response.GetDevicesNotified())
 ```
 
 ## Error Handling
