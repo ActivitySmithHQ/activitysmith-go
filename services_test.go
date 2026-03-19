@@ -193,7 +193,12 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 		CurrentStep:   1,
 		Type:          "segmented_progress",
 		Color:         "yellow",
-		Channels:      []string{"devs", "ops"},
+		Action: &LiveActivityActionInput{
+			Title: "Open Workflow",
+			Type:  "open_url",
+			URL:   "https://github.com/acme/payments-api/actions/runs/1234567890",
+		},
+		Channels: []string{"devs", "ops"},
 	}
 	if _, err := client.LiveActivities.Start(startInput); err != nil {
 		t.Fatalf("Start returned error: %v", err)
@@ -205,6 +210,15 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 		Subtitle:      "testing",
 		CurrentStep:   2,
 		NumberOfSteps: 4,
+		Action: &LiveActivityActionInput{
+			Title:  "Pause Reindex",
+			Type:   "webhook",
+			URL:    "https://ops.example.com/hooks/search/reindex/pause",
+			Method: "POST",
+			Body: map[string]interface{}{
+				"job_id": "reindex-2026-03-19",
+			},
+		},
 	}
 	if _, err := client.LiveActivities.Update(updateInput); err != nil {
 		t.Fatalf("Update returned error: %v", err)
@@ -216,6 +230,11 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 		Subtitle:           "done",
 		CurrentStep:        4,
 		AutoDismissMinutes: 3,
+		Action: &LiveActivityActionInput{
+			Title: "Open Workflow",
+			Type:  "open_url",
+			URL:   "https://github.com/acme/payments-api/actions/runs/1234567890",
+		},
 	}
 	if _, err := client.LiveActivities.End(endInput); err != nil {
 		t.Fatalf("End returned error: %v", err)
@@ -252,6 +271,9 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	if !strings.Contains(bodies[1], `"color":"yellow"`) {
 		t.Fatalf("start body missing color: %s", bodies[1])
 	}
+	if !strings.Contains(bodies[1], `"action":{"title":"Open Workflow","type":"open_url","url":"https://github.com/acme/payments-api/actions/runs/1234567890"}`) {
+		t.Fatalf("start body missing action: %s", bodies[1])
+	}
 	if !strings.Contains(bodies[1], `"channels":["devs","ops"]`) {
 		t.Fatalf("start body missing target channels: %s", bodies[1])
 	}
@@ -262,12 +284,22 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	if !strings.Contains(bodies[2], `"number_of_steps":4`) {
 		t.Fatalf("update body missing number_of_steps: %s", bodies[2])
 	}
+	if !strings.Contains(bodies[2], `"title":"Pause Reindex"`) ||
+		!strings.Contains(bodies[2], `"type":"webhook"`) ||
+		!strings.Contains(bodies[2], `"url":"https://ops.example.com/hooks/search/reindex/pause"`) ||
+		!strings.Contains(bodies[2], `"method":"POST"`) ||
+		!strings.Contains(bodies[2], `"job_id":"reindex-2026-03-19"`) {
+		t.Fatalf("update body missing action: %s", bodies[2])
+	}
 
 	if !strings.Contains(bodies[3], `"subtitle":"done"`) {
 		t.Fatalf("end body missing subtitle: %s", bodies[3])
 	}
 	if !strings.Contains(bodies[3], `"auto_dismiss_minutes":3`) {
 		t.Fatalf("end body missing auto_dismiss_minutes: %s", bodies[3])
+	}
+	if !strings.Contains(bodies[3], `"action":{"title":"Open Workflow","type":"open_url","url":"https://github.com/acme/payments-api/actions/runs/1234567890"}`) {
+		t.Fatalf("end body missing action: %s", bodies[3])
 	}
 }
 

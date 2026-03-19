@@ -146,6 +146,64 @@ then end it when the work is done.
 3. Call `activitysmith.LiveActivities.Update(...)` as progress changes.
 4. Call `activitysmith.LiveActivities.End(...)` when the work is finished.
 
+### Live Activity Actions
+
+Live Activities can show one optional button. Use `open_url` when you want a
+mobile shortcut into GitHub, a runbook, or an internal dashboard. Use
+`webhook` when you want ActivitySmith backend to trigger an operational control
+such as pausing a reindex.
+
+#### Open URL action
+
+```go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:         "Deploying payments-api",
+	Subtitle:      "Running database migrations",
+	NumberOfSteps: 5,
+	CurrentStep:   3,
+	Type:          "segmented_progress",
+	Action: &activitysmithsdk.LiveActivityActionInput{
+		Title: "Open Workflow",
+		Type:  "open_url",
+		URL:   "https://github.com/acme/payments-api/actions/runs/1234567890",
+	},
+}
+
+start, err := activitysmith.LiveActivities.Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
+#### Webhook action
+
+```go
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID:    activityID,
+	Title:         "Reindexing product search",
+	Subtitle:      "Shard 7 of 12",
+	NumberOfSteps: 12,
+	CurrentStep:   7,
+	Action: &activitysmithsdk.LiveActivityActionInput{
+		Title:  "Pause Reindex",
+		Type:   "webhook",
+		URL:    "https://ops.example.com/hooks/search/reindex/pause",
+		Method: "POST",
+		Body: map[string]interface{}{
+			"job_id":       "reindex-2026-03-19",
+			"requested_by": "activitysmith-go",
+		},
+	},
+}
+
+_, err = activitysmith.LiveActivities.Update(updateInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
 ### Segmented Progress Type
 
 Use `segmented_progress` when progress is easier to follow as steps instead of a
