@@ -178,6 +178,18 @@ paths:
                     percentage: 15
                     type: progress
                     color: lime
+              open_url_action:
+                value:
+                  content_state:
+                    title: Deploying payments-api
+                    subtitle: Running database migrations
+                    number_of_steps: 5
+                    current_step: 3
+                    type: segmented_progress
+                  action:
+                    title: Open Workflow
+                    type: open_url
+                    url: https://github.com/acme/payments-api/actions/runs/1234567890
               segmented_progress_channel_targeted:
                 value:
                   content_state:
@@ -301,6 +313,23 @@ paths:
                     title: EV Charging
                     subtitle: Added 120 mi range
                     percentage: 60
+              webhook_action:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: Reindexing product search
+                    subtitle: Shard 7 of 12
+                    number_of_steps: 12
+                    current_step: 7
+                  action:
+                    title: Pause Reindex
+                    type: webhook
+                    url: https://ops.example.com/hooks/search/reindex/pause
+                    method: POST
+                    body:
+                      job_id: reindex-2026-03-19
+                      requested_by: activitysmith_live_activity
+                      reason: paused_from_ios_live_activity
             schema:
               $ref: '#/components/schemas/LiveActivityUpdateRequest'
         required: true
@@ -371,6 +400,19 @@ paths:
                     subtitle: Added 200 mi range
                     percentage: 100
                     auto_dismiss_minutes: 2
+              open_url_action:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: Deploying payments-api
+                    subtitle: Production rollout complete
+                    number_of_steps: 5
+                    current_step: 5
+                    auto_dismiss_minutes: 10
+                  action:
+                    title: Open Workflow
+                    type: open_url
+                    url: https://github.com/acme/payments-api/actions/runs/1234567890
             schema:
               $ref: '#/components/schemas/LiveActivityEndRequest'
         required: true
@@ -729,6 +771,49 @@ components:
       - title
       - type
       - url
+    LiveActivityActionType:
+      enum:
+      - open_url
+      - webhook
+      type: string
+    LiveActivityWebhookMethod:
+      default: POST
+      enum:
+      - GET
+      - POST
+      type: string
+    LiveActivityAction:
+      additionalProperties: true
+      description: Optional single action button shown in the Live Activity UI.
+      example:
+        method: POST
+        title: title
+        type: open_url
+        body:
+          key: ""
+        url: https://openapi-generator.tech
+      properties:
+        title:
+          description: Button title displayed in the Live Activity UI.
+          type: string
+        type:
+          $ref: '#/components/schemas/LiveActivityActionType'
+        url:
+          description: HTTPS URL. For open_url it is opened in browser. For webhook
+            it is called by ActivitySmith backend.
+          format: uri
+          pattern: ^https://
+          type: string
+        method:
+          $ref: '#/components/schemas/LiveActivityWebhookMethod'
+        body:
+          additionalProperties: true
+          description: Optional webhook payload body. Used only when type=webhook.
+          type: object
+      required:
+      - title
+      - type
+      - url
     PushNotificationRequest:
       additionalProperties: {}
       example:
@@ -846,6 +931,13 @@ components:
         alert:
           title: title
           body: body
+        action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
         target:
           channels:
           - channels
@@ -853,6 +945,8 @@ components:
       properties:
         content_state:
           $ref: '#/components/schemas/ContentStateStart'
+        action:
+          $ref: '#/components/schemas/LiveActivityAction'
         alert:
           $ref: '#/components/schemas/AlertPayload'
         target:
@@ -984,11 +1078,20 @@ components:
           value: 5.962133916683182
           current_step: 1
         activity_id: activity_id
+        action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
       properties:
         activity_id:
           type: string
         content_state:
           $ref: '#/components/schemas/ContentStateUpdate'
+        action:
+          $ref: '#/components/schemas/LiveActivityAction'
       required:
       - activity_id
       - content_state
@@ -1034,11 +1137,20 @@ components:
           value: 5.962133916683182
           current_step: 1
         activity_id: activity_id
+        action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
       properties:
         activity_id:
           type: string
         content_state:
           $ref: '#/components/schemas/ContentStateEnd'
+        action:
+          $ref: '#/components/schemas/LiveActivityAction'
       required:
       - activity_id
       - content_state

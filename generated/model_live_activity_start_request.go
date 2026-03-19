@@ -21,6 +21,7 @@ var _ MappedNullable = &LiveActivityStartRequest{}
 // LiveActivityStartRequest Start a new Live Activity. The response includes activity_id for later update and end calls.
 type LiveActivityStartRequest struct {
 	ContentState ContentStateStart `json:"content_state"`
+	Action *LiveActivityAction `json:"action,omitempty"`
 	Alert *AlertPayload `json:"alert,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
 	AdditionalProperties map[string]interface{}
@@ -68,6 +69,38 @@ func (o *LiveActivityStartRequest) GetContentStateOk() (*ContentStateStart, bool
 // SetContentState sets field value
 func (o *LiveActivityStartRequest) SetContentState(v ContentStateStart) {
 	o.ContentState = v
+}
+
+// GetAction returns the Action field value if set, zero value otherwise.
+func (o *LiveActivityStartRequest) GetAction() LiveActivityAction {
+	if o == nil || IsNil(o.Action) {
+		var ret LiveActivityAction
+		return ret
+	}
+	return *o.Action
+}
+
+// GetActionOk returns a tuple with the Action field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartRequest) GetActionOk() (*LiveActivityAction, bool) {
+	if o == nil || IsNil(o.Action) {
+		return nil, false
+	}
+	return o.Action, true
+}
+
+// HasAction returns a boolean if a field has been set.
+func (o *LiveActivityStartRequest) HasAction() bool {
+	if o != nil && !IsNil(o.Action) {
+		return true
+	}
+
+	return false
+}
+
+// SetAction gets a reference to the given LiveActivityAction and assigns it to the Action field.
+func (o *LiveActivityStartRequest) SetAction(v LiveActivityAction) {
+	o.Action = &v
 }
 
 // GetAlert returns the Alert field value if set, zero value otherwise.
@@ -145,6 +178,9 @@ func (o LiveActivityStartRequest) MarshalJSON() ([]byte, error) {
 func (o LiveActivityStartRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["content_state"] = o.ContentState
+	if !IsNil(o.Action) {
+		toSerialize["action"] = o.Action
+	}
 	if !IsNil(o.Alert) {
 		toSerialize["alert"] = o.Alert
 	}
@@ -195,6 +231,7 @@ func (o *LiveActivityStartRequest) UnmarshalJSON(data []byte) (err error) {
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "content_state")
+		delete(additionalProperties, "action")
 		delete(additionalProperties, "alert")
 		delete(additionalProperties, "target")
 		o.AdditionalProperties = additionalProperties

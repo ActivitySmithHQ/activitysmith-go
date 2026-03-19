@@ -20,19 +20,19 @@ var _ MappedNullable = &PushNotificationRequest{}
 
 // PushNotificationRequest struct for PushNotificationRequest
 type PushNotificationRequest struct {
-	Title    string  `json:"title"`
-	Message  *string `json:"message,omitempty"`
+	Title string `json:"title"`
+	Message *string `json:"message,omitempty"`
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
 	Media *string `json:"media,omitempty" validate:"regexp=^https:\\/\\/"`
 	// Optional HTTPS URL opened when user taps the notification body. Overrides the default tap target from `media` when both are provided.
 	Redirection *string `json:"redirection,omitempty" validate:"regexp=^https:\\/\\/"`
 	// Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
-	Actions              []PushNotificationAction `json:"actions,omitempty"`
-	Payload              map[string]interface{}   `json:"payload,omitempty"`
-	Badge                *int32                   `json:"badge,omitempty"`
-	Sound                *string                  `json:"sound,omitempty"`
-	Target               *ChannelTarget           `json:"target,omitempty"`
+	Actions []PushNotificationAction `json:"actions,omitempty"`
+	Payload map[string]interface{} `json:"payload,omitempty"`
+	Badge *int32 `json:"badge,omitempty"`
+	Sound *string `json:"sound,omitempty"`
+	Target *ChannelTarget `json:"target,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -369,7 +369,7 @@ func (o *PushNotificationRequest) SetTarget(v ChannelTarget) {
 }
 
 func (o PushNotificationRequest) MarshalJSON() ([]byte, error) {
-	toSerialize, err := o.ToMap()
+	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
 	}
@@ -427,10 +427,10 @@ func (o *PushNotificationRequest) UnmarshalJSON(data []byte) (err error) {
 	err = json.Unmarshal(data, &allProperties)
 
 	if err != nil {
-		return err
+		return err;
 	}
 
-	for _, requiredProperty := range requiredProperties {
+	for _, requiredProperty := range(requiredProperties) {
 		if _, exists := allProperties[requiredProperty]; !exists {
 			return fmt.Errorf("no value given for required property %v", requiredProperty)
 		}
@@ -500,3 +500,5 @@ func (v *NullablePushNotificationRequest) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
+
+
