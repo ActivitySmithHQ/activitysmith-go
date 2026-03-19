@@ -292,6 +292,65 @@ if err != nil {
 }
 ```
 
+### Live Activity Action
+
+Just like Actionable Push Notifications, Live Activities can have a button that opens provided URL in a browser or triggers a webhook. Webhooks are executed by the ActivitySmith backend.
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1" alt="Live Activity with action" width="680" />
+</p>
+
+#### Open URL action
+
+```go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:         "Deploying payments-api",
+	Subtitle:      "Running database migrations",
+	NumberOfSteps: 5,
+	CurrentStep:   3,
+	Type:          "segmented_progress",
+	Action: &activitysmithsdk.LiveActivityActionInput{
+		Title: "Open Workflow",
+		Type:  "open_url",
+		URL:   "https://github.com/acme/payments-api/actions/runs/1234567890",
+	},
+}
+
+start, err := activitysmith.LiveActivities.Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
+#### Webhook action
+
+```go
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID:    activityID,
+	Title:         "Reindexing product search",
+	Subtitle:      "Shard 7 of 12",
+	NumberOfSteps: 12,
+	CurrentStep:   7,
+	Action: &activitysmithsdk.LiveActivityActionInput{
+		Title:  "Pause Reindex",
+		Type:   "webhook",
+		URL:    "https://ops.example.com/hooks/search/reindex/pause",
+		Method: "POST",
+		Body: map[string]interface{}{
+			"job_id":       "reindex-2026-03-19",
+			"requested_by": "activitysmith-go",
+		},
+	},
+}
+
+_, err = activitysmith.LiveActivities.Update(updateInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
 ## Channels
 
 Channels are used to target specific team members or devices. Can be used for both push notifications and live activities.

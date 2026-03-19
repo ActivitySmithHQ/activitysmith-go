@@ -22,6 +22,7 @@ var _ MappedNullable = &LiveActivityEndRequest{}
 type LiveActivityEndRequest struct {
 	ActivityId string `json:"activity_id"`
 	ContentState ContentStateEnd `json:"content_state"`
+	Action *LiveActivityAction `json:"action,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -94,6 +95,38 @@ func (o *LiveActivityEndRequest) SetContentState(v ContentStateEnd) {
 	o.ContentState = v
 }
 
+// GetAction returns the Action field value if set, zero value otherwise.
+func (o *LiveActivityEndRequest) GetAction() LiveActivityAction {
+	if o == nil || IsNil(o.Action) {
+		var ret LiveActivityAction
+		return ret
+	}
+	return *o.Action
+}
+
+// GetActionOk returns a tuple with the Action field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityEndRequest) GetActionOk() (*LiveActivityAction, bool) {
+	if o == nil || IsNil(o.Action) {
+		return nil, false
+	}
+	return o.Action, true
+}
+
+// HasAction returns a boolean if a field has been set.
+func (o *LiveActivityEndRequest) HasAction() bool {
+	if o != nil && !IsNil(o.Action) {
+		return true
+	}
+
+	return false
+}
+
+// SetAction gets a reference to the given LiveActivityAction and assigns it to the Action field.
+func (o *LiveActivityEndRequest) SetAction(v LiveActivityAction) {
+	o.Action = &v
+}
+
 func (o LiveActivityEndRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -106,6 +139,9 @@ func (o LiveActivityEndRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["activity_id"] = o.ActivityId
 	toSerialize["content_state"] = o.ContentState
+	if !IsNil(o.Action) {
+		toSerialize["action"] = o.Action
+	}
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -152,6 +188,7 @@ func (o *LiveActivityEndRequest) UnmarshalJSON(data []byte) (err error) {
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "activity_id")
 		delete(additionalProperties, "content_state")
+		delete(additionalProperties, "action")
 		o.AdditionalProperties = additionalProperties
 	}
 

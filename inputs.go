@@ -1,6 +1,10 @@
 package activitysmith
 
-import "github.com/ActivitySmithHQ/activitysmith-go/generated"
+import (
+	"maps"
+
+	"github.com/ActivitySmithHQ/activitysmith-go/generated"
+)
 
 // PushNotificationInput is a handwritten DX input with plain optional values.
 type PushNotificationInput struct {
@@ -38,6 +42,30 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	return req
 }
 
+// LiveActivityActionInput is a handwritten DX input for the optional Live Activity button.
+type LiveActivityActionInput struct {
+	Title  string
+	Type   string
+	URL    string
+	Method string
+	Body   map[string]interface{}
+}
+
+func (in LiveActivityActionInput) toGenerated() generated.LiveActivityAction {
+	action := generated.LiveActivityAction{
+		Title: in.Title,
+		Type:  generated.LiveActivityActionType(in.Type),
+		Url:   in.URL,
+	}
+	if in.Method != "" {
+		action.SetMethod(generated.LiveActivityWebhookMethod(in.Method))
+	}
+	if in.Body != nil {
+		action.SetBody(maps.Clone(in.Body))
+	}
+	return action
+}
+
 // LiveActivityStartInput is a handwritten DX input with plain optional values.
 type LiveActivityStartInput struct {
 	Title         string
@@ -50,6 +78,7 @@ type LiveActivityStartInput struct {
 	Subtitle      string
 	Color         string
 	StepColor     string
+	Action        *LiveActivityActionInput
 	Channels      []string
 
 	numberOfStepsSet bool
@@ -86,6 +115,9 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	if in.StepColor != "" {
 		req.ContentState.SetStepColor(in.StepColor)
 	}
+	if in.Action != nil {
+		req.SetAction(in.Action.toGenerated())
+	}
 	if len(in.Channels) > 0 {
 		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
 	}
@@ -120,6 +152,11 @@ func (in LiveActivityStartInput) WithUpperLimit(v float32) LiveActivityStartInpu
 	return in
 }
 
+func (in LiveActivityStartInput) WithAction(v LiveActivityActionInput) LiveActivityStartInput {
+	in.Action = &v
+	return in
+}
+
 // LiveActivityUpdateInput is a handwritten DX input with plain optional values.
 type LiveActivityUpdateInput struct {
 	ActivityID    string
@@ -133,6 +170,7 @@ type LiveActivityUpdateInput struct {
 	Color         string
 	StepColor     string
 	NumberOfSteps int32
+	Action        *LiveActivityActionInput
 
 	numberOfStepsSet bool
 	percentageSet    bool
@@ -172,6 +210,9 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
 	}
+	if in.Action != nil {
+		req.SetAction(in.Action.toGenerated())
+	}
 	return req
 }
 
@@ -203,6 +244,11 @@ func (in LiveActivityUpdateInput) WithUpperLimit(v float32) LiveActivityUpdateIn
 	return in
 }
 
+func (in LiveActivityUpdateInput) WithAction(v LiveActivityActionInput) LiveActivityUpdateInput {
+	in.Action = &v
+	return in
+}
+
 // LiveActivityEndInput is a handwritten DX input with plain optional values.
 type LiveActivityEndInput struct {
 	ActivityID         string
@@ -217,6 +263,7 @@ type LiveActivityEndInput struct {
 	StepColor          string
 	NumberOfSteps      int32
 	AutoDismissMinutes int32
+	Action             *LiveActivityActionInput
 
 	numberOfStepsSet      bool
 	percentageSet         bool
@@ -260,6 +307,9 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
 		req.ContentState.SetAutoDismissMinutes(in.AutoDismissMinutes)
 	}
+	if in.Action != nil {
+		req.SetAction(in.Action.toGenerated())
+	}
 	return req
 }
 
@@ -295,5 +345,10 @@ func (in LiveActivityEndInput) WithUpperLimit(v float32) LiveActivityEndInput {
 func (in LiveActivityEndInput) WithAutoDismissMinutes(v int32) LiveActivityEndInput {
 	in.AutoDismissMinutes = v
 	in.autoDismissMinutesSet = true
+	return in
+}
+
+func (in LiveActivityEndInput) WithAction(v LiveActivityActionInput) LiveActivityEndInput {
+	in.Action = &v
 	return in
 }

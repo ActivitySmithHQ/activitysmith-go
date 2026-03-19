@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ActivityId** | **string** |  | 
 **ContentState** | [**ContentStateEnd**](ContentStateEnd.md) |  | 
+**Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
 
 ## Methods
 
@@ -65,6 +66,31 @@ and a boolean to check if the value has been set.
 
 SetContentState sets ContentState field to given value.
 
+
+### GetAction
+
+`func (o *LiveActivityEndRequest) GetAction() LiveActivityAction`
+
+GetAction returns the Action field if non-nil, zero value otherwise.
+
+### GetActionOk
+
+`func (o *LiveActivityEndRequest) GetActionOk() (*LiveActivityAction, bool)`
+
+GetActionOk returns a tuple with the Action field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAction
+
+`func (o *LiveActivityEndRequest) SetAction(v LiveActivityAction)`
+
+SetAction sets Action field to given value.
+
+### HasAction
+
+`func (o *LiveActivityEndRequest) HasAction() bool`
+
+HasAction returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

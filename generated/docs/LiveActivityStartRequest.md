@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ContentState** | [**ContentStateStart**](ContentStateStart.md) |  | 
+**Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
 **Alert** | Pointer to [**AlertPayload**](AlertPayload.md) |  | [optional] 
 **Target** | Pointer to [**ChannelTarget**](ChannelTarget.md) |  | [optional] 
 
@@ -46,6 +47,31 @@ and a boolean to check if the value has been set.
 
 SetContentState sets ContentState field to given value.
 
+
+### GetAction
+
+`func (o *LiveActivityStartRequest) GetAction() LiveActivityAction`
+
+GetAction returns the Action field if non-nil, zero value otherwise.
+
+### GetActionOk
+
+`func (o *LiveActivityStartRequest) GetActionOk() (*LiveActivityAction, bool)`
+
+GetActionOk returns a tuple with the Action field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAction
+
+`func (o *LiveActivityStartRequest) SetAction(v LiveActivityAction)`
+
+SetAction sets Action field to given value.
+
+### HasAction
+
+`func (o *LiveActivityStartRequest) HasAction() bool`
+
+HasAction returns a boolean if a field has been set.
 
 ### GetAlert
 
