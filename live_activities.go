@@ -52,6 +52,35 @@ func (s *LiveActivitiesService) End(input any) (*generated.LiveActivityEndRespon
 	return response, err
 }
 
+func (s *LiveActivitiesService) Stream(streamKey string, input any) (*generated.LiveActivityStreamPutResponse, error) {
+	request, err := normalizeLiveActivityStreamRequest(input)
+	if err != nil {
+		return nil, err
+	}
+
+	response, _, err := s.client.apiClient.LiveActivitiesAPI.
+		ReconcileLiveActivityStream(s.client.ctx, streamKey).
+		LiveActivityStreamRequest(request).
+		Execute()
+
+	return response, err
+}
+
+func (s *LiveActivitiesService) EndStream(streamKey string, input any) (*generated.LiveActivityStreamDeleteResponse, error) {
+	request, hasRequest, err := normalizeLiveActivityStreamDeleteRequest(input)
+	if err != nil {
+		return nil, err
+	}
+
+	call := s.client.apiClient.LiveActivitiesAPI.EndLiveActivityStream(s.client.ctx, streamKey)
+	if hasRequest {
+		call = call.LiveActivityStreamDeleteRequest(request)
+	}
+
+	response, _, err := call.Execute()
+	return response, err
+}
+
 // Backward-compatible aliases.
 func (s *LiveActivitiesService) StartLiveActivity(request generated.LiveActivityStartRequest) (*generated.LiveActivityStartResponse, error) {
 	return s.Start(request)
@@ -63,6 +92,14 @@ func (s *LiveActivitiesService) UpdateLiveActivity(request generated.LiveActivit
 
 func (s *LiveActivitiesService) EndLiveActivity(request generated.LiveActivityEndRequest) (*generated.LiveActivityEndResponse, error) {
 	return s.End(request)
+}
+
+func (s *LiveActivitiesService) ReconcileLiveActivityStream(streamKey string, request generated.LiveActivityStreamRequest) (*generated.LiveActivityStreamPutResponse, error) {
+	return s.Stream(streamKey, request)
+}
+
+func (s *LiveActivitiesService) EndLiveActivityStream(streamKey string, request generated.LiveActivityStreamDeleteRequest) (*generated.LiveActivityStreamDeleteResponse, error) {
+	return s.EndStream(streamKey, request)
 }
 
 func normalizeLiveActivityStartRequest(input any) (generated.LiveActivityStartRequest, error) {
@@ -132,6 +169,56 @@ func normalizeLiveActivityEndRequest(input any) (generated.LiveActivityEndReques
 	default:
 		return generated.LiveActivityEndRequest{}, fmt.Errorf(
 			"activitysmith: unsupported live activity end input type %T",
+			input,
+		)
+	}
+}
+
+func normalizeLiveActivityStreamRequest(input any) (generated.LiveActivityStreamRequest, error) {
+	switch v := input.(type) {
+	case LiveActivityStreamInput:
+		return v.toGenerated(), nil
+	case *LiveActivityStreamInput:
+		if v == nil {
+			return generated.LiveActivityStreamRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
+		}
+		return v.toGenerated(), nil
+	case generated.LiveActivityStreamRequest:
+		return v, nil
+	case *generated.LiveActivityStreamRequest:
+		if v == nil {
+			return generated.LiveActivityStreamRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
+		}
+		return *v, nil
+	default:
+		return generated.LiveActivityStreamRequest{}, fmt.Errorf(
+			"activitysmith: unsupported live activity stream input type %T",
+			input,
+		)
+	}
+}
+
+func normalizeLiveActivityStreamDeleteRequest(input any) (generated.LiveActivityStreamDeleteRequest, bool, error) {
+	switch v := input.(type) {
+	case nil:
+		return generated.LiveActivityStreamDeleteRequest{}, false, nil
+	case LiveActivityStreamEndInput:
+		return v.toGenerated(), true, nil
+	case *LiveActivityStreamEndInput:
+		if v == nil {
+			return generated.LiveActivityStreamDeleteRequest{}, false, nil
+		}
+		return v.toGenerated(), true, nil
+	case generated.LiveActivityStreamDeleteRequest:
+		return v, true, nil
+	case *generated.LiveActivityStreamDeleteRequest:
+		if v == nil {
+			return generated.LiveActivityStreamDeleteRequest{}, false, nil
+		}
+		return *v, true, nil
+	default:
+		return generated.LiveActivityStreamDeleteRequest{}, false, fmt.Errorf(
+			"activitysmith: unsupported live activity stream end input type %T",
 			input,
 		)
 	}
