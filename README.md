@@ -498,7 +498,7 @@ if err != nil {
 
 ### Live Activity Action
 
-Just like Actionable Push Notifications, Live Activities can have a button that opens a URL in a browser or triggers a webhook. Webhooks are executed by the ActivitySmith backend.
+Just like Actionable Push Notifications, Live Activities can have a button that opens provided URL in a browser or triggers a webhook. Webhooks are executed by the ActivitySmith backend.
 
 <p align="center">
   <img src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png" alt="Metrics Live Activity with action" width="680" />
@@ -532,23 +532,24 @@ activityID := start.GetActivityId()
 
 #### Webhook action
 
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1" alt="Live Activity with action" width="680" />
+</p>
+
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID: activityID,
-	Title:      "Server Health",
-	Subtitle:   "prod-web-1",
-	Type:       "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 91, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 57, Unit: generated.PtrString("%")},
-	},
+	Title:      "Reindexing product search",
+	Subtitle:   "Shard 7 of 12",
+	NumberOfSteps: 12,
+	CurrentStep: 7,
 	Action: &activitysmithsdk.LiveActivityActionInput{
-		Title:  "Restart Service",
+		Title:  "Pause Reindex",
 		Type:   "webhook",
-		URL:    "https://ops.example.com/hooks/servers/prod-web-1/restart",
+		URL:    "https://ops.example.com/hooks/search/reindex/pause",
 		Method: "POST",
 		Body: map[string]interface{}{
-			"server_id":    "prod-web-1",
+			"job_id":       "reindex-2026-03-19",
 			"requested_by": "activitysmith-go",
 		},
 	},
