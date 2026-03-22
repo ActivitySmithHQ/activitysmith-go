@@ -44,6 +44,14 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 			_, _ = w.Write([]byte(`{"success":true,"activity_id":"act-1","devices_notified":1,"timestamp":"2026-02-07T00:00:00Z"}`))
 		case "/live-activity/end":
 			_, _ = w.Write([]byte(`{"success":true,"activity_id":"act-1","devices_notified":1,"timestamp":"2026-02-07T00:00:00Z"}`))
+		case "/live-activity/stream/prod-web-1":
+			if r.Method == http.MethodPut {
+				_, _ = w.Write([]byte(`{"success":true,"operation":"started","stream_key":"prod-web-1","activity_id":"act-1","timestamp":"2026-02-07T00:00:00Z"}`))
+			} else if r.Method == http.MethodDelete {
+				_, _ = w.Write([]byte(`{"success":true,"operation":"ended","stream_key":"prod-web-1","activity_id":"act-1","timestamp":"2026-02-07T00:00:00Z"}`))
+			} else {
+				http.NotFound(w, r)
+			}
 		default:
 			http.NotFound(w, r)
 		}
@@ -161,6 +169,78 @@ func TestLiveActivitiesShortAndLegacyMethods(t *testing.T) {
 	wantJSON, _ := json.Marshal(wantPaths)
 	if string(gotJSON) != string(wantJSON) {
 		t.Fatalf("path order mismatch: got=%s want=%s", gotJSON, wantJSON)
+	}
+}
+
+func TestLiveActivitiesStreamShortAndLegacyMethods(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	streamInput := LiveActivityStreamInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []generated.ActivityMetric{
+			{Label: "CPU", Value: 9, Unit: generated.PtrString("%")},
+			{Label: "MEM", Value: 45, Unit: generated.PtrString("%")},
+		},
+		Channels: []string{"ops"},
+	}
+	endInput := LiveActivityStreamEndInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []generated.ActivityMetric{
+			{Label: "CPU", Value: 7, Unit: generated.PtrString("%")},
+			{Label: "MEM", Value: 38, Unit: generated.PtrString("%")},
+		},
+	}
+
+	if _, err := client.LiveActivities.Stream("prod-web-1", streamInput); err != nil {
+		t.Fatalf("Stream returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.ReconcileLiveActivityStream("prod-web-1", streamInput.toGenerated()); err != nil {
+		t.Fatalf("ReconcileLiveActivityStream returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.EndStream("prod-web-1", endInput); err != nil {
+		t.Fatalf("EndStream returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.EndLiveActivityStream("prod-web-1", endInput.toGenerated()); err != nil {
+		t.Fatalf("EndLiveActivityStream returned error: %v", err)
+	}
+
+	if len(*requests) != 4 {
+		t.Fatalf("expected 4 requests, got %d", len(*requests))
+	}
+
+	wantPaths := []string{
+		"/live-activity/stream/prod-web-1",
+		"/live-activity/stream/prod-web-1",
+		"/live-activity/stream/prod-web-1",
+		"/live-activity/stream/prod-web-1",
+	}
+
+	gotPaths := make([]string, 0, len(*requests))
+	for _, req := range *requests {
+		gotPaths = append(gotPaths, req.Path)
+		if req.Authorization != "Bearer test-api-key" {
+			t.Fatalf("auth mismatch: %s", req.Authorization)
+		}
+	}
+
+	gotJSON, _ := json.Marshal(gotPaths)
+	wantJSON, _ := json.Marshal(wantPaths)
+	if string(gotJSON) != string(wantJSON) {
+		t.Fatalf("path order mismatch: got=%s want=%s", gotJSON, wantJSON)
+	}
+	if !strings.Contains((*requests)[0].Body, `"target":{"channels":["ops"]}`) {
+		t.Fatalf("stream body missing target channels: %s", (*requests)[0].Body)
 	}
 }
 

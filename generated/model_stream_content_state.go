@@ -15,68 +15,66 @@ import (
 	"fmt"
 )
 
-// checks if the ContentStateEnd type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &ContentStateEnd{}
+// checks if the StreamContentState type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &StreamContentState{}
 
-// ContentStateEnd End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
-type ContentStateEnd struct {
+// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based types.
+type StreamContentState struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
-	// Total number of steps. Use for type=segmented_progress. Optional on end, and safe to change if the final workflow used more or fewer steps than originally planned.
+	// Use for segmented_progress, counter, timer, and countdown.
 	NumberOfSteps *int32 `json:"number_of_steps,omitempty"`
-	// Current step. Use for type=segmented_progress.
+	// Use for segmented_progress, counter, timer, and countdown.
 	CurrentStep *int32 `json:"current_step,omitempty"`
-	// Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
+	// Use for progress. Takes precedence over value/upper_limit if both are provided.
 	Percentage *float32 `json:"percentage,omitempty"`
-	// Current progress value. Use with upper_limit for type=progress.
+	// Current progress value. Use with upper_limit for progress.
 	Value *float32 `json:"value,omitempty"`
-	// Maximum progress value. Use with value for type=progress.
+	// Maximum progress value. Use with value for progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
-	// Use for type=metrics.
-	Metrics []ActivityMetric `json:"metrics,omitempty"`
-	// Optional. When omitted, the API uses the existing Live Activity type.
+	// Required on the first PUT or whenever the stream cannot infer the current activity type.
 	Type *string `json:"type,omitempty"`
 	// Optional. Accent color for the Live Activity. Defaults to blue.
 	Color *string `json:"color,omitempty"`
-	// Optional. Overrides color for the current step. Only applies to type=segmented_progress.
+	// Optional. Overrides color for the current step. Only applies to segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
 	// Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step.
 	StepColors []string `json:"step_colors,omitempty"`
-	// Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max.
+	// Use for metrics activities.
+	Metrics []ActivityMetric `json:"metrics,omitempty"`
+	// Optional. Seconds before the ended Live Activity is dismissed.
+	AutoDismissSeconds *int32 `json:"auto_dismiss_seconds,omitempty"`
+	// Optional. Minutes before the ended Live Activity is dismissed.
 	AutoDismissMinutes *int32 `json:"auto_dismiss_minutes,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
-type _ContentStateEnd ContentStateEnd
+type _StreamContentState StreamContentState
 
-// NewContentStateEnd instantiates a new ContentStateEnd object
+// NewStreamContentState instantiates a new StreamContentState object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewContentStateEnd(title string) *ContentStateEnd {
-	this := ContentStateEnd{}
+func NewStreamContentState(title string) *StreamContentState {
+	this := StreamContentState{}
 	this.Title = title
 	var color string = "blue"
 	this.Color = &color
-	var autoDismissMinutes int32 = 3
-	this.AutoDismissMinutes = &autoDismissMinutes
 	return &this
 }
 
-// NewContentStateEndWithDefaults instantiates a new ContentStateEnd object
+// NewStreamContentStateWithDefaults instantiates a new StreamContentState object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewContentStateEndWithDefaults() *ContentStateEnd {
-	this := ContentStateEnd{}
+func NewStreamContentStateWithDefaults() *StreamContentState {
+	this := StreamContentState{}
 	var color string = "blue"
 	this.Color = &color
-	var autoDismissMinutes int32 = 3
-	this.AutoDismissMinutes = &autoDismissMinutes
 	return &this
 }
 
 // GetTitle returns the Title field value
-func (o *ContentStateEnd) GetTitle() string {
+func (o *StreamContentState) GetTitle() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -87,7 +85,7 @@ func (o *ContentStateEnd) GetTitle() string {
 
 // GetTitleOk returns a tuple with the Title field value
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetTitleOk() (*string, bool) {
+func (o *StreamContentState) GetTitleOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -95,12 +93,12 @@ func (o *ContentStateEnd) GetTitleOk() (*string, bool) {
 }
 
 // SetTitle sets field value
-func (o *ContentStateEnd) SetTitle(v string) {
+func (o *StreamContentState) SetTitle(v string) {
 	o.Title = v
 }
 
 // GetSubtitle returns the Subtitle field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetSubtitle() string {
+func (o *StreamContentState) GetSubtitle() string {
 	if o == nil || IsNil(o.Subtitle) {
 		var ret string
 		return ret
@@ -110,7 +108,7 @@ func (o *ContentStateEnd) GetSubtitle() string {
 
 // GetSubtitleOk returns a tuple with the Subtitle field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetSubtitleOk() (*string, bool) {
+func (o *StreamContentState) GetSubtitleOk() (*string, bool) {
 	if o == nil || IsNil(o.Subtitle) {
 		return nil, false
 	}
@@ -118,7 +116,7 @@ func (o *ContentStateEnd) GetSubtitleOk() (*string, bool) {
 }
 
 // HasSubtitle returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasSubtitle() bool {
+func (o *StreamContentState) HasSubtitle() bool {
 	if o != nil && !IsNil(o.Subtitle) {
 		return true
 	}
@@ -127,12 +125,12 @@ func (o *ContentStateEnd) HasSubtitle() bool {
 }
 
 // SetSubtitle gets a reference to the given string and assigns it to the Subtitle field.
-func (o *ContentStateEnd) SetSubtitle(v string) {
+func (o *StreamContentState) SetSubtitle(v string) {
 	o.Subtitle = &v
 }
 
 // GetNumberOfSteps returns the NumberOfSteps field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetNumberOfSteps() int32 {
+func (o *StreamContentState) GetNumberOfSteps() int32 {
 	if o == nil || IsNil(o.NumberOfSteps) {
 		var ret int32
 		return ret
@@ -142,7 +140,7 @@ func (o *ContentStateEnd) GetNumberOfSteps() int32 {
 
 // GetNumberOfStepsOk returns a tuple with the NumberOfSteps field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetNumberOfStepsOk() (*int32, bool) {
+func (o *StreamContentState) GetNumberOfStepsOk() (*int32, bool) {
 	if o == nil || IsNil(o.NumberOfSteps) {
 		return nil, false
 	}
@@ -150,7 +148,7 @@ func (o *ContentStateEnd) GetNumberOfStepsOk() (*int32, bool) {
 }
 
 // HasNumberOfSteps returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasNumberOfSteps() bool {
+func (o *StreamContentState) HasNumberOfSteps() bool {
 	if o != nil && !IsNil(o.NumberOfSteps) {
 		return true
 	}
@@ -159,12 +157,12 @@ func (o *ContentStateEnd) HasNumberOfSteps() bool {
 }
 
 // SetNumberOfSteps gets a reference to the given int32 and assigns it to the NumberOfSteps field.
-func (o *ContentStateEnd) SetNumberOfSteps(v int32) {
+func (o *StreamContentState) SetNumberOfSteps(v int32) {
 	o.NumberOfSteps = &v
 }
 
 // GetCurrentStep returns the CurrentStep field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetCurrentStep() int32 {
+func (o *StreamContentState) GetCurrentStep() int32 {
 	if o == nil || IsNil(o.CurrentStep) {
 		var ret int32
 		return ret
@@ -174,7 +172,7 @@ func (o *ContentStateEnd) GetCurrentStep() int32 {
 
 // GetCurrentStepOk returns a tuple with the CurrentStep field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetCurrentStepOk() (*int32, bool) {
+func (o *StreamContentState) GetCurrentStepOk() (*int32, bool) {
 	if o == nil || IsNil(o.CurrentStep) {
 		return nil, false
 	}
@@ -182,7 +180,7 @@ func (o *ContentStateEnd) GetCurrentStepOk() (*int32, bool) {
 }
 
 // HasCurrentStep returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasCurrentStep() bool {
+func (o *StreamContentState) HasCurrentStep() bool {
 	if o != nil && !IsNil(o.CurrentStep) {
 		return true
 	}
@@ -191,12 +189,12 @@ func (o *ContentStateEnd) HasCurrentStep() bool {
 }
 
 // SetCurrentStep gets a reference to the given int32 and assigns it to the CurrentStep field.
-func (o *ContentStateEnd) SetCurrentStep(v int32) {
+func (o *StreamContentState) SetCurrentStep(v int32) {
 	o.CurrentStep = &v
 }
 
 // GetPercentage returns the Percentage field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetPercentage() float32 {
+func (o *StreamContentState) GetPercentage() float32 {
 	if o == nil || IsNil(o.Percentage) {
 		var ret float32
 		return ret
@@ -206,7 +204,7 @@ func (o *ContentStateEnd) GetPercentage() float32 {
 
 // GetPercentageOk returns a tuple with the Percentage field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetPercentageOk() (*float32, bool) {
+func (o *StreamContentState) GetPercentageOk() (*float32, bool) {
 	if o == nil || IsNil(o.Percentage) {
 		return nil, false
 	}
@@ -214,7 +212,7 @@ func (o *ContentStateEnd) GetPercentageOk() (*float32, bool) {
 }
 
 // HasPercentage returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasPercentage() bool {
+func (o *StreamContentState) HasPercentage() bool {
 	if o != nil && !IsNil(o.Percentage) {
 		return true
 	}
@@ -223,12 +221,12 @@ func (o *ContentStateEnd) HasPercentage() bool {
 }
 
 // SetPercentage gets a reference to the given float32 and assigns it to the Percentage field.
-func (o *ContentStateEnd) SetPercentage(v float32) {
+func (o *StreamContentState) SetPercentage(v float32) {
 	o.Percentage = &v
 }
 
 // GetValue returns the Value field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetValue() float32 {
+func (o *StreamContentState) GetValue() float32 {
 	if o == nil || IsNil(o.Value) {
 		var ret float32
 		return ret
@@ -238,7 +236,7 @@ func (o *ContentStateEnd) GetValue() float32 {
 
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetValueOk() (*float32, bool) {
+func (o *StreamContentState) GetValueOk() (*float32, bool) {
 	if o == nil || IsNil(o.Value) {
 		return nil, false
 	}
@@ -246,7 +244,7 @@ func (o *ContentStateEnd) GetValueOk() (*float32, bool) {
 }
 
 // HasValue returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasValue() bool {
+func (o *StreamContentState) HasValue() bool {
 	if o != nil && !IsNil(o.Value) {
 		return true
 	}
@@ -255,12 +253,12 @@ func (o *ContentStateEnd) HasValue() bool {
 }
 
 // SetValue gets a reference to the given float32 and assigns it to the Value field.
-func (o *ContentStateEnd) SetValue(v float32) {
+func (o *StreamContentState) SetValue(v float32) {
 	o.Value = &v
 }
 
 // GetUpperLimit returns the UpperLimit field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetUpperLimit() float32 {
+func (o *StreamContentState) GetUpperLimit() float32 {
 	if o == nil || IsNil(o.UpperLimit) {
 		var ret float32
 		return ret
@@ -270,7 +268,7 @@ func (o *ContentStateEnd) GetUpperLimit() float32 {
 
 // GetUpperLimitOk returns a tuple with the UpperLimit field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetUpperLimitOk() (*float32, bool) {
+func (o *StreamContentState) GetUpperLimitOk() (*float32, bool) {
 	if o == nil || IsNil(o.UpperLimit) {
 		return nil, false
 	}
@@ -278,7 +276,7 @@ func (o *ContentStateEnd) GetUpperLimitOk() (*float32, bool) {
 }
 
 // HasUpperLimit returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasUpperLimit() bool {
+func (o *StreamContentState) HasUpperLimit() bool {
 	if o != nil && !IsNil(o.UpperLimit) {
 		return true
 	}
@@ -287,44 +285,12 @@ func (o *ContentStateEnd) HasUpperLimit() bool {
 }
 
 // SetUpperLimit gets a reference to the given float32 and assigns it to the UpperLimit field.
-func (o *ContentStateEnd) SetUpperLimit(v float32) {
+func (o *StreamContentState) SetUpperLimit(v float32) {
 	o.UpperLimit = &v
 }
 
-// GetMetrics returns the Metrics field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetMetrics() []ActivityMetric {
-	if o == nil || IsNil(o.Metrics) {
-		var ret []ActivityMetric
-		return ret
-	}
-	return o.Metrics
-}
-
-// GetMetricsOk returns a tuple with the Metrics field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetMetricsOk() ([]ActivityMetric, bool) {
-	if o == nil || IsNil(o.Metrics) {
-		return nil, false
-	}
-	return o.Metrics, true
-}
-
-// HasMetrics returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasMetrics() bool {
-	if o != nil && !IsNil(o.Metrics) {
-		return true
-	}
-
-	return false
-}
-
-// SetMetrics gets a reference to the given []ActivityMetric and assigns it to the Metrics field.
-func (o *ContentStateEnd) SetMetrics(v []ActivityMetric) {
-	o.Metrics = v
-}
-
 // GetType returns the Type field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetType() string {
+func (o *StreamContentState) GetType() string {
 	if o == nil || IsNil(o.Type) {
 		var ret string
 		return ret
@@ -334,7 +300,7 @@ func (o *ContentStateEnd) GetType() string {
 
 // GetTypeOk returns a tuple with the Type field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetTypeOk() (*string, bool) {
+func (o *StreamContentState) GetTypeOk() (*string, bool) {
 	if o == nil || IsNil(o.Type) {
 		return nil, false
 	}
@@ -342,7 +308,7 @@ func (o *ContentStateEnd) GetTypeOk() (*string, bool) {
 }
 
 // HasType returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasType() bool {
+func (o *StreamContentState) HasType() bool {
 	if o != nil && !IsNil(o.Type) {
 		return true
 	}
@@ -351,12 +317,12 @@ func (o *ContentStateEnd) HasType() bool {
 }
 
 // SetType gets a reference to the given string and assigns it to the Type field.
-func (o *ContentStateEnd) SetType(v string) {
+func (o *StreamContentState) SetType(v string) {
 	o.Type = &v
 }
 
 // GetColor returns the Color field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetColor() string {
+func (o *StreamContentState) GetColor() string {
 	if o == nil || IsNil(o.Color) {
 		var ret string
 		return ret
@@ -366,7 +332,7 @@ func (o *ContentStateEnd) GetColor() string {
 
 // GetColorOk returns a tuple with the Color field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetColorOk() (*string, bool) {
+func (o *StreamContentState) GetColorOk() (*string, bool) {
 	if o == nil || IsNil(o.Color) {
 		return nil, false
 	}
@@ -374,7 +340,7 @@ func (o *ContentStateEnd) GetColorOk() (*string, bool) {
 }
 
 // HasColor returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasColor() bool {
+func (o *StreamContentState) HasColor() bool {
 	if o != nil && !IsNil(o.Color) {
 		return true
 	}
@@ -383,12 +349,12 @@ func (o *ContentStateEnd) HasColor() bool {
 }
 
 // SetColor gets a reference to the given string and assigns it to the Color field.
-func (o *ContentStateEnd) SetColor(v string) {
+func (o *StreamContentState) SetColor(v string) {
 	o.Color = &v
 }
 
 // GetStepColor returns the StepColor field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetStepColor() string {
+func (o *StreamContentState) GetStepColor() string {
 	if o == nil || IsNil(o.StepColor) {
 		var ret string
 		return ret
@@ -398,7 +364,7 @@ func (o *ContentStateEnd) GetStepColor() string {
 
 // GetStepColorOk returns a tuple with the StepColor field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetStepColorOk() (*string, bool) {
+func (o *StreamContentState) GetStepColorOk() (*string, bool) {
 	if o == nil || IsNil(o.StepColor) {
 		return nil, false
 	}
@@ -406,7 +372,7 @@ func (o *ContentStateEnd) GetStepColorOk() (*string, bool) {
 }
 
 // HasStepColor returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasStepColor() bool {
+func (o *StreamContentState) HasStepColor() bool {
 	if o != nil && !IsNil(o.StepColor) {
 		return true
 	}
@@ -415,12 +381,12 @@ func (o *ContentStateEnd) HasStepColor() bool {
 }
 
 // SetStepColor gets a reference to the given string and assigns it to the StepColor field.
-func (o *ContentStateEnd) SetStepColor(v string) {
+func (o *StreamContentState) SetStepColor(v string) {
 	o.StepColor = &v
 }
 
 // GetStepColors returns the StepColors field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetStepColors() []string {
+func (o *StreamContentState) GetStepColors() []string {
 	if o == nil || IsNil(o.StepColors) {
 		var ret []string
 		return ret
@@ -430,7 +396,7 @@ func (o *ContentStateEnd) GetStepColors() []string {
 
 // GetStepColorsOk returns a tuple with the StepColors field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetStepColorsOk() ([]string, bool) {
+func (o *StreamContentState) GetStepColorsOk() ([]string, bool) {
 	if o == nil || IsNil(o.StepColors) {
 		return nil, false
 	}
@@ -438,7 +404,7 @@ func (o *ContentStateEnd) GetStepColorsOk() ([]string, bool) {
 }
 
 // HasStepColors returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasStepColors() bool {
+func (o *StreamContentState) HasStepColors() bool {
 	if o != nil && !IsNil(o.StepColors) {
 		return true
 	}
@@ -447,12 +413,76 @@ func (o *ContentStateEnd) HasStepColors() bool {
 }
 
 // SetStepColors gets a reference to the given []string and assigns it to the StepColors field.
-func (o *ContentStateEnd) SetStepColors(v []string) {
+func (o *StreamContentState) SetStepColors(v []string) {
 	o.StepColors = v
 }
 
+// GetMetrics returns the Metrics field value if set, zero value otherwise.
+func (o *StreamContentState) GetMetrics() []ActivityMetric {
+	if o == nil || IsNil(o.Metrics) {
+		var ret []ActivityMetric
+		return ret
+	}
+	return o.Metrics
+}
+
+// GetMetricsOk returns a tuple with the Metrics field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetMetricsOk() ([]ActivityMetric, bool) {
+	if o == nil || IsNil(o.Metrics) {
+		return nil, false
+	}
+	return o.Metrics, true
+}
+
+// HasMetrics returns a boolean if a field has been set.
+func (o *StreamContentState) HasMetrics() bool {
+	if o != nil && !IsNil(o.Metrics) {
+		return true
+	}
+
+	return false
+}
+
+// SetMetrics gets a reference to the given []ActivityMetric and assigns it to the Metrics field.
+func (o *StreamContentState) SetMetrics(v []ActivityMetric) {
+	o.Metrics = v
+}
+
+// GetAutoDismissSeconds returns the AutoDismissSeconds field value if set, zero value otherwise.
+func (o *StreamContentState) GetAutoDismissSeconds() int32 {
+	if o == nil || IsNil(o.AutoDismissSeconds) {
+		var ret int32
+		return ret
+	}
+	return *o.AutoDismissSeconds
+}
+
+// GetAutoDismissSecondsOk returns a tuple with the AutoDismissSeconds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetAutoDismissSecondsOk() (*int32, bool) {
+	if o == nil || IsNil(o.AutoDismissSeconds) {
+		return nil, false
+	}
+	return o.AutoDismissSeconds, true
+}
+
+// HasAutoDismissSeconds returns a boolean if a field has been set.
+func (o *StreamContentState) HasAutoDismissSeconds() bool {
+	if o != nil && !IsNil(o.AutoDismissSeconds) {
+		return true
+	}
+
+	return false
+}
+
+// SetAutoDismissSeconds gets a reference to the given int32 and assigns it to the AutoDismissSeconds field.
+func (o *StreamContentState) SetAutoDismissSeconds(v int32) {
+	o.AutoDismissSeconds = &v
+}
+
 // GetAutoDismissMinutes returns the AutoDismissMinutes field value if set, zero value otherwise.
-func (o *ContentStateEnd) GetAutoDismissMinutes() int32 {
+func (o *StreamContentState) GetAutoDismissMinutes() int32 {
 	if o == nil || IsNil(o.AutoDismissMinutes) {
 		var ret int32
 		return ret
@@ -462,7 +492,7 @@ func (o *ContentStateEnd) GetAutoDismissMinutes() int32 {
 
 // GetAutoDismissMinutesOk returns a tuple with the AutoDismissMinutes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateEnd) GetAutoDismissMinutesOk() (*int32, bool) {
+func (o *StreamContentState) GetAutoDismissMinutesOk() (*int32, bool) {
 	if o == nil || IsNil(o.AutoDismissMinutes) {
 		return nil, false
 	}
@@ -470,7 +500,7 @@ func (o *ContentStateEnd) GetAutoDismissMinutesOk() (*int32, bool) {
 }
 
 // HasAutoDismissMinutes returns a boolean if a field has been set.
-func (o *ContentStateEnd) HasAutoDismissMinutes() bool {
+func (o *StreamContentState) HasAutoDismissMinutes() bool {
 	if o != nil && !IsNil(o.AutoDismissMinutes) {
 		return true
 	}
@@ -479,11 +509,11 @@ func (o *ContentStateEnd) HasAutoDismissMinutes() bool {
 }
 
 // SetAutoDismissMinutes gets a reference to the given int32 and assigns it to the AutoDismissMinutes field.
-func (o *ContentStateEnd) SetAutoDismissMinutes(v int32) {
+func (o *StreamContentState) SetAutoDismissMinutes(v int32) {
 	o.AutoDismissMinutes = &v
 }
 
-func (o ContentStateEnd) MarshalJSON() ([]byte, error) {
+func (o StreamContentState) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -491,7 +521,7 @@ func (o ContentStateEnd) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o ContentStateEnd) ToMap() (map[string]interface{}, error) {
+func (o StreamContentState) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["title"] = o.Title
 	if !IsNil(o.Subtitle) {
@@ -512,9 +542,6 @@ func (o ContentStateEnd) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UpperLimit) {
 		toSerialize["upper_limit"] = o.UpperLimit
 	}
-	if !IsNil(o.Metrics) {
-		toSerialize["metrics"] = o.Metrics
-	}
 	if !IsNil(o.Type) {
 		toSerialize["type"] = o.Type
 	}
@@ -527,6 +554,12 @@ func (o ContentStateEnd) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.StepColors) {
 		toSerialize["step_colors"] = o.StepColors
 	}
+	if !IsNil(o.Metrics) {
+		toSerialize["metrics"] = o.Metrics
+	}
+	if !IsNil(o.AutoDismissSeconds) {
+		toSerialize["auto_dismiss_seconds"] = o.AutoDismissSeconds
+	}
 	if !IsNil(o.AutoDismissMinutes) {
 		toSerialize["auto_dismiss_minutes"] = o.AutoDismissMinutes
 	}
@@ -538,7 +571,7 @@ func (o ContentStateEnd) ToMap() (map[string]interface{}, error) {
 	return toSerialize, nil
 }
 
-func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
+func (o *StreamContentState) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
@@ -560,15 +593,15 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varContentStateEnd := _ContentStateEnd{}
+	varStreamContentState := _StreamContentState{}
 
-	err = json.Unmarshal(data, &varContentStateEnd)
+	err = json.Unmarshal(data, &varStreamContentState)
 
 	if err != nil {
 		return err
 	}
 
-	*o = ContentStateEnd(varContentStateEnd)
+	*o = StreamContentState(varStreamContentState)
 
 	additionalProperties := make(map[string]interface{})
 
@@ -580,11 +613,12 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "percentage")
 		delete(additionalProperties, "value")
 		delete(additionalProperties, "upper_limit")
-		delete(additionalProperties, "metrics")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "color")
 		delete(additionalProperties, "step_color")
 		delete(additionalProperties, "step_colors")
+		delete(additionalProperties, "metrics")
+		delete(additionalProperties, "auto_dismiss_seconds")
 		delete(additionalProperties, "auto_dismiss_minutes")
 		o.AdditionalProperties = additionalProperties
 	}
@@ -592,38 +626,38 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 	return err
 }
 
-type NullableContentStateEnd struct {
-	value *ContentStateEnd
+type NullableStreamContentState struct {
+	value *StreamContentState
 	isSet bool
 }
 
-func (v NullableContentStateEnd) Get() *ContentStateEnd {
+func (v NullableStreamContentState) Get() *StreamContentState {
 	return v.value
 }
 
-func (v *NullableContentStateEnd) Set(val *ContentStateEnd) {
+func (v *NullableStreamContentState) Set(val *StreamContentState) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableContentStateEnd) IsSet() bool {
+func (v NullableStreamContentState) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableContentStateEnd) Unset() {
+func (v *NullableStreamContentState) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableContentStateEnd(val *ContentStateEnd) *NullableContentStateEnd {
-	return &NullableContentStateEnd{value: val, isSet: true}
+func NewNullableStreamContentState(val *StreamContentState) *NullableStreamContentState {
+	return &NullableStreamContentState{value: val, isSet: true}
 }
 
-func (v NullableContentStateEnd) MarshalJSON() ([]byte, error) {
+func (v NullableStreamContentState) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableContentStateEnd) UnmarshalJSON(src []byte) error {
+func (v *NullableStreamContentState) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

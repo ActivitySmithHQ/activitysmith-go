@@ -5,6 +5,8 @@ All URIs are relative to *https://activitysmith.com/api*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**EndLiveActivity**](LiveActivitiesAPI.md#EndLiveActivity) | **Post** /live-activity/end | End a Live Activity
+[**EndLiveActivityStream**](LiveActivitiesAPI.md#EndLiveActivityStream) | **Delete** /live-activity/stream/{stream_key} | End a stream
+[**ReconcileLiveActivityStream**](LiveActivitiesAPI.md#ReconcileLiveActivityStream) | **Put** /live-activity/stream/{stream_key} | Send a stream update
 [**StartLiveActivity**](LiveActivitiesAPI.md#StartLiveActivity) | **Post** /live-activity/start | Start a Live Activity
 [**UpdateLiveActivity**](LiveActivitiesAPI.md#UpdateLiveActivity) | **Post** /live-activity/update | Update a Live Activity
 
@@ -61,6 +63,150 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**LiveActivityEndResponse**](LiveActivityEndResponse.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## EndLiveActivityStream
+
+> LiveActivityStreamDeleteResponse EndLiveActivityStream(ctx, streamKey).LiveActivityStreamDeleteRequest(liveActivityStreamDeleteRequest).Execute()
+
+End a stream
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/GIT_USER_ID/GIT_REPO_ID"
+)
+
+func main() {
+	streamKey := "streamKey_example" // string | Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
+	liveActivityStreamDeleteRequest := *openapiclient.NewLiveActivityStreamDeleteRequest() // LiveActivityStreamDeleteRequest |  (optional)
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.LiveActivitiesAPI.EndLiveActivityStream(context.Background(), streamKey).LiveActivityStreamDeleteRequest(liveActivityStreamDeleteRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `LiveActivitiesAPI.EndLiveActivityStream``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `EndLiveActivityStream`: LiveActivityStreamDeleteResponse
+	fmt.Fprintf(os.Stdout, "Response from `LiveActivitiesAPI.EndLiveActivityStream`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**streamKey** | **string** | Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens. | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiEndLiveActivityStreamRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **liveActivityStreamDeleteRequest** | [**LiveActivityStreamDeleteRequest**](LiveActivityStreamDeleteRequest.md) |  | 
+
+### Return type
+
+[**LiveActivityStreamDeleteResponse**](LiveActivityStreamDeleteResponse.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## ReconcileLiveActivityStream
+
+> LiveActivityStreamPutResponse ReconcileLiveActivityStream(ctx, streamKey).LiveActivityStreamRequest(liveActivityStreamRequest).Execute()
+
+Send a stream update
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/GIT_USER_ID/GIT_REPO_ID"
+)
+
+func main() {
+	streamKey := "streamKey_example" // string | Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
+	liveActivityStreamRequest := *openapiclient.NewLiveActivityStreamRequest(*openapiclient.NewStreamContentState("Title_example")) // LiveActivityStreamRequest | 
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.LiveActivitiesAPI.ReconcileLiveActivityStream(context.Background(), streamKey).LiveActivityStreamRequest(liveActivityStreamRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `LiveActivitiesAPI.ReconcileLiveActivityStream``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ReconcileLiveActivityStream`: LiveActivityStreamPutResponse
+	fmt.Fprintf(os.Stdout, "Response from `LiveActivitiesAPI.ReconcileLiveActivityStream`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**streamKey** | **string** | Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens. | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiReconcileLiveActivityStreamRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **liveActivityStreamRequest** | [**LiveActivityStreamRequest**](LiveActivityStreamRequest.md) |  | 
+
+### Return type
+
+[**LiveActivityStreamPutResponse**](LiveActivityStreamPutResponse.md)
 
 ### Authorization
 

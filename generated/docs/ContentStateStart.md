@@ -11,9 +11,11 @@ Name | Type | Description | Notes
 **Percentage** | Pointer to **float32** | Progress percentage (0–100). Use for type&#x3D;progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
 **Value** | Pointer to **float32** | Current progress value. Use with upper_limit for type&#x3D;progress. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for type&#x3D;progress. | [optional] 
+**Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for type&#x3D;metrics. | [optional] 
 **Type** | **string** |  | 
 **Color** | Pointer to **string** | Optional. Accent color for the Live Activity. Defaults to blue. | [optional] [default to "blue"]
 **StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to type&#x3D;segmented_progress. | [optional] 
+**StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
 
 ## Methods
 
@@ -204,6 +206,31 @@ SetUpperLimit sets UpperLimit field to given value.
 
 HasUpperLimit returns a boolean if a field has been set.
 
+### GetMetrics
+
+`func (o *ContentStateStart) GetMetrics() []ActivityMetric`
+
+GetMetrics returns the Metrics field if non-nil, zero value otherwise.
+
+### GetMetricsOk
+
+`func (o *ContentStateStart) GetMetricsOk() (*[]ActivityMetric, bool)`
+
+GetMetricsOk returns a tuple with the Metrics field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMetrics
+
+`func (o *ContentStateStart) SetMetrics(v []ActivityMetric)`
+
+SetMetrics sets Metrics field to given value.
+
+### HasMetrics
+
+`func (o *ContentStateStart) HasMetrics() bool`
+
+HasMetrics returns a boolean if a field has been set.
+
 ### GetType
 
 `func (o *ContentStateStart) GetType() string`
@@ -273,6 +300,31 @@ SetStepColor sets StepColor field to given value.
 `func (o *ContentStateStart) HasStepColor() bool`
 
 HasStepColor returns a boolean if a field has been set.
+
+### GetStepColors
+
+`func (o *ContentStateStart) GetStepColors() []string`
+
+GetStepColors returns the StepColors field if non-nil, zero value otherwise.
+
+### GetStepColorsOk
+
+`func (o *ContentStateStart) GetStepColorsOk() (*[]string, bool)`
+
+GetStepColorsOk returns a tuple with the StepColors field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetStepColors
+
+`func (o *ContentStateStart) SetStepColors(v []string)`
+
+SetStepColors sets StepColors field to given value.
+
+### HasStepColors
+
+`func (o *ContentStateStart) HasStepColors() bool`
+
+HasStepColors returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

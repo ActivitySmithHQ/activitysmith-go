@@ -7,9 +7,13 @@ var _ = (*NotificationsService).SendPushNotification
 var _ = (*LiveActivitiesService).Start
 var _ = (*LiveActivitiesService).Update
 var _ = (*LiveActivitiesService).End
+var _ = (*LiveActivitiesService).Stream
+var _ = (*LiveActivitiesService).EndStream
 var _ = (*LiveActivitiesService).StartLiveActivity
 var _ = (*LiveActivitiesService).UpdateLiveActivity
 var _ = (*LiveActivitiesService).EndLiveActivity
+var _ = (*LiveActivitiesService).ReconcileLiveActivityStream
+var _ = (*LiveActivitiesService).EndLiveActivityStream
 
 func TestClientConstructs(t *testing.T) {
 	client, err := New("test-api-key")
