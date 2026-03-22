@@ -151,11 +151,265 @@ paths:
       summary: Send a push notification
       tags:
       - PushNotifications
+  /live-activity/stream/{stream_key}:
+    delete:
+      description: "Use this endpoint when the process you are tracking is finished\
+        \ and you no longer want the Live Activity on your devices. ActivitySmith\
+        \ ends the current Live Activity for this stream and dismisses it from devices.\
+        \ If you need direct lifecycle control, use /live-activity/start, /live-activity/update,\
+        \ and /live-activity/end instead."
+      operationId: endLiveActivityStream
+      parameters:
+      - description: "Stable identifier for one ongoing thing. Allowed characters:\
+          \ letters, numbers, underscores, and hyphens."
+        explode: false
+        in: path
+        name: stream_key
+        required: true
+        schema:
+          maxLength: 255
+          pattern: "^[A-Za-z0-9_-]+$"
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value: {}
+              with_content_state:
+                value:
+                  content_state:
+                    title: Server Health
+                    subtitle: prod-web-1
+                    type: metrics
+                    metrics:
+                    - label: CPU
+                      value: 0
+                      unit: '%'
+                    - label: MEM
+                      value: 0
+                      unit: '%'
+                    auto_dismiss_minutes: 2
+            schema:
+              $ref: '#/components/schemas/LiveActivityStreamDeleteRequest'
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                ended:
+                  value:
+                    success: true
+                    operation: ended
+                    stream_key: linode-vps
+                    activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
+                    devices_queued: 1
+                    timestamp: 2025-08-12T12:10:00.000Z
+                already_inactive:
+                  value:
+                    success: true
+                    operation: ended
+                    stream_key: linode-vps
+                    activity_id: null
+                    timestamp: 2025-08-12T12:10:00.000Z
+              schema:
+                $ref: '#/components/schemas/LiveActivityStreamDeleteResponse'
+          description: Managed stream ended
+        "400":
+          content:
+            application/json:
+              examples:
+                invalid_stream_key:
+                  value:
+                    error: Invalid stream_key
+                    message: "stream_key must contain only letters, numbers, underscores,\
+                      \ and hyphens"
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad request (invalid stream_key or action)
+        "404":
+          content:
+            application/json:
+              examples:
+                not_found:
+                  value:
+                    error: Live Activity stream not found
+                    message: "No Live Activity stream found for stream_key: linode-vps"
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+          description: Managed stream not found
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: End a stream
+      tags:
+      - LiveActivities
+    put:
+      description: "Use this endpoint when you want the easiest, stateless way to\
+        \ trigger Live Activities. You do not need to store activity_id or manage\
+        \ the Live Activity lifecycle yourself. Send the latest state for a stable\
+        \ stream_key and ActivitySmith will handle the rest for you: if there is no\
+        \ Live Activity yet, it starts one; if there is already one for this stream,\
+        \ it updates it. If you need direct lifecycle control, use /live-activity/start,\
+        \ /live-activity/update, and /live-activity/end instead."
+      operationId: reconcileLiveActivityStream
+      parameters:
+      - description: "Stable identifier for one ongoing thing. Allowed characters:\
+          \ letters, numbers, underscores, and hyphens."
+        explode: false
+        in: path
+        name: stream_key
+        required: true
+        schema:
+          maxLength: 255
+          pattern: "^[A-Za-z0-9_-]+$"
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            examples:
+              metrics:
+                value:
+                  content_state:
+                    title: Server Health
+                    subtitle: prod-web-1
+                    type: metrics
+                    metrics:
+                    - label: CPU
+                      value: 27
+                      unit: '%'
+                    - label: MEM
+                      value: 64
+                      unit: '%'
+              channel_targeted:
+                value:
+                  channels:
+                  - ops
+                  content_state:
+                    title: Server Health
+                    subtitle: prod-web-1
+                    type: metrics
+                    metrics:
+                    - label: CPU
+                      value: 27
+                      unit: '%'
+                    - label: MEM
+                      value: 64
+                      unit: '%'
+            schema:
+              $ref: '#/components/schemas/LiveActivityStreamRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                started:
+                  value:
+                    success: true
+                    operation: started
+                    stream_key: linode-vps
+                    activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
+                    devices_notified: 2
+                    timestamp: 2025-08-12T12:00:00.000Z
+                noop:
+                  value:
+                    success: true
+                    operation: noop
+                    stream_key: linode-vps
+                    activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
+                    timestamp: 2025-08-12T12:05:00.000Z
+                paused:
+                  value:
+                    success: true
+                    operation: paused
+                    stream_key: linode-vps
+                    activity_id: null
+                    timestamp: 2025-08-12T12:10:00.000Z
+              schema:
+                $ref: '#/components/schemas/LiveActivityStreamPutResponse'
+          description: Stream reconciled
+        "400":
+          content:
+            application/json:
+              examples:
+                invalid_stream_key:
+                  value:
+                    error: Invalid stream_key
+                    message: "stream_key must contain only letters, numbers, underscores,\
+                      \ and hyphens"
+                invalid_target:
+                  value:
+                    error: Invalid channel targeting
+                    message: channels must contain at least one channel
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: "Bad request (invalid stream_key, payload, action, or channel\
+            \ targeting input)"
+        "403":
+          content:
+            application/json:
+              examples:
+                channel_scope_violation:
+                  value:
+                    error: Invalid channel targeting
+                    message: This API key can only target assigned channels. Requested
+                      channels include channels outside this key scope.
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: Forbidden (API key scope or channel assignment violation)
+        "404":
+          content:
+            application/json:
+              examples:
+                no_devices:
+                  value:
+                    error: No recipients found
+                    message: No Live Activity devices matched the effective channel
+                      target
+                    effective_channel_slugs:
+                    - ops
+              schema:
+                $ref: '#/components/schemas/NoRecipientsError'
+          description: No recipients found for effective channel target
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+                concurrent_live_activity_limit_reached:
+                  value:
+                    error: Live Activity limit reached
+                    message: Only 4 concurrent Live Activities are allowed per account
+                    limit: 4
+                    active: 4
+              schema:
+                $ref: '#/components/schemas/sendPushNotification_429_response'
+          description: Rate limit exceeded
+      summary: Send a stream update
+      tags:
+      - LiveActivities
   /live-activity/start:
     post:
       description: "Starts a Live Activity on devices matched by API key scope and\
-        \ optional target channels. For segmented_progress activities, number_of_steps\
-        \ can be changed later during update or end calls if the workflow changes."
+        \ optional target channels. Supports segmented_progress, progress, metrics,\
+        \ and the legacy counter/timer/countdown step-based activity types. For segmented_progress\
+        \ activities, number_of_steps can be changed later during update or end calls\
+        \ if the workflow changes."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -178,6 +432,19 @@ paths:
                     percentage: 15
                     type: progress
                     color: lime
+              metrics:
+                value:
+                  content_state:
+                    title: Server Health
+                    subtitle: prod-web-1
+                    type: metrics
+                    metrics:
+                    - label: CPU
+                      value: 21
+                      unit: '%'
+                    - label: MEM
+                      value: 64
+                      unit: '%'
               open_url_action:
                 value:
                   content_state:
@@ -291,8 +558,10 @@ paths:
   /live-activity/update:
     post:
       description: "Updates an existing Live Activity. If the per-activity token is\
-        \ not registered yet, the update is queued. For segmented_progress activities,\
-        \ you can increase or decrease number_of_steps here as the workflow changes."
+        \ not registered yet, the update is queued. Supports segmented_progress, progress,\
+        \ metrics, and the legacy counter/timer/countdown step-based activity types.\
+        \ For segmented_progress activities, you can increase or decrease number_of_steps\
+        \ here as the workflow changes."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -313,6 +582,20 @@ paths:
                     title: EV Charging
                     subtitle: Added 120 mi range
                     percentage: 60
+              metrics:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: Server Health
+                    subtitle: prod-web-1
+                    type: metrics
+                    metrics:
+                    - label: CPU
+                      value: 25
+                      unit: '%'
+                    - label: MEM
+                      value: 67
+                      unit: '%'
               webhook_action:
                 value:
                   activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
@@ -375,9 +658,10 @@ paths:
       - LiveActivities
   /live-activity/end:
     post:
-      description: "Ends a Live Activity and archives its lifecycle. For segmented_progress\
-        \ activities, you can send the latest number_of_steps here if the workflow\
-        \ changed after start."
+      description: "Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
+        \ progress, metrics, and the legacy counter/timer/countdown step-based activity\
+        \ types. For segmented_progress activities, you can send the latest number_of_steps\
+        \ here if the workflow changed after start."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -399,6 +683,21 @@ paths:
                     title: EV Charging
                     subtitle: Added 200 mi range
                     percentage: 100
+                    auto_dismiss_minutes: 2
+              metrics:
+                value:
+                  activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                  content_state:
+                    title: Server Health
+                    subtitle: prod-web-1
+                    type: metrics
+                    metrics:
+                    - label: CPU
+                      value: 0
+                      unit: '%'
+                    - label: MEM
+                      value: 0
+                      unit: '%'
                     auto_dismiss_minutes: 2
               open_url_action:
                 value:
@@ -462,14 +761,26 @@ components:
       additionalProperties: true
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
-        \ or value with upper_limit. For segmented_progress, number_of_steps is not\
-        \ locked and can be changed in later update or end calls."
+        \ or value with upper_limit. For metrics include a non-empty metrics array.\
+        \ Legacy counter/timer/countdown types also use current_step and number_of_steps.\
+        \ For segmented_progress, number_of_steps is not locked and can be changed\
+        \ in later update or end calls."
       example:
         color: blue
         step_color: lime
+        step_colors:
+        - lime
+        - lime
         subtitle: subtitle
         percentage: 14.658129805029452
         upper_limit: 5.637376656633329
+        metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
         title: title
         number_of_steps: 1
         type: segmented_progress
@@ -502,10 +813,20 @@ components:
         upper_limit:
           description: Maximum progress value. Use with value for type=progress.
           type: number
+        metrics:
+          description: Use for type=metrics.
+          items:
+            $ref: '#/components/schemas/ActivityMetric'
+          minItems: 1
+          type: array
         type:
           enum:
           - segmented_progress
           - progress
+          - metrics
+          - counter
+          - timer
+          - countdown
           type: string
         color:
           default: blue
@@ -535,6 +856,22 @@ components:
           - orange
           - yellow
           type: string
+        step_colors:
+          description: "Optional. Colors for completed steps. When used with segmented_progress,\
+            \ the array length should match current_step."
+          items:
+            enum:
+            - lime
+            - green
+            - cyan
+            - blue
+            - purple
+            - magenta
+            - red
+            - orange
+            - yellow
+            type: string
+          type: array
       required:
       - title
       - type
@@ -542,14 +879,26 @@ components:
       additionalProperties: true
       description: Update payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. Type is optional when updating an existing activity. You can
-        increase or decrease number_of_steps during updates.
+        upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown
+        types also use current_step and number_of_steps. Type is optional when updating
+        an existing activity. You can increase or decrease number_of_steps during
+        updates.
       example:
         color: blue
         step_color: lime
+        step_colors:
+        - lime
+        - lime
         subtitle: subtitle
         percentage: 14.658129805029452
         upper_limit: 5.637376656633329
+        metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
         title: title
         number_of_steps: 1
         type: segmented_progress
@@ -581,12 +930,22 @@ components:
         upper_limit:
           description: Maximum progress value. Use with value for type=progress.
           type: number
+        metrics:
+          description: Use for type=metrics.
+          items:
+            $ref: '#/components/schemas/ActivityMetric'
+          minItems: 1
+          type: array
         type:
           description: "Optional. When omitted, the API uses the existing Live Activity\
             \ type."
           enum:
           - segmented_progress
           - progress
+          - metrics
+          - counter
+          - timer
+          - countdown
           type: string
         color:
           default: blue
@@ -616,24 +975,52 @@ components:
           - orange
           - yellow
           type: string
+        step_colors:
+          description: "Optional. Colors for completed steps. When used with segmented_progress,\
+            \ the array length should match current_step."
+          items:
+            enum:
+            - lime
+            - green
+            - cyan
+            - blue
+            - purple
+            - magenta
+            - red
+            - orange
+            - yellow
+            type: string
+          type: array
       required:
       - title
     ContentStateEnd:
       additionalProperties: true
       description: End payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. Type is optional when ending an existing activity. You can send
-        an updated number_of_steps here if the workflow changed after start.
+        upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown
+        types also use current_step and number_of_steps. Type is optional when ending
+        an existing activity. You can send an updated number_of_steps here if the
+        workflow changed after start.
       example:
         color: blue
         step_color: lime
-        subtitle: subtitle
-        percentage: 14.658129805029452
         auto_dismiss_minutes: 0
         upper_limit: 5.637376656633329
         title: title
-        number_of_steps: 1
         type: segmented_progress
+        step_colors:
+        - lime
+        - lime
+        subtitle: subtitle
+        percentage: 14.658129805029452
+        metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        number_of_steps: 1
         value: 5.962133916683182
         current_step: 1
       properties:
@@ -663,12 +1050,22 @@ components:
         upper_limit:
           description: Maximum progress value. Use with value for type=progress.
           type: number
+        metrics:
+          description: Use for type=metrics.
+          items:
+            $ref: '#/components/schemas/ActivityMetric'
+          minItems: 1
+          type: array
         type:
           description: "Optional. When omitted, the API uses the existing Live Activity\
             \ type."
           enum:
           - segmented_progress
           - progress
+          - metrics
+          - counter
+          - timer
+          - countdown
           type: string
         color:
           default: blue
@@ -698,6 +1095,22 @@ components:
           - orange
           - yellow
           type: string
+        step_colors:
+          description: "Optional. Colors for completed steps. When used with segmented_progress,\
+            \ the array length should match current_step."
+          items:
+            enum:
+            - lime
+            - green
+            - cyan
+            - blue
+            - purple
+            - magenta
+            - red
+            - orange
+            - yellow
+            type: string
+          type: array
         auto_dismiss_minutes:
           default: 3
           description: Optional. Minutes before the ended Live Activity is dismissed.
@@ -707,6 +1120,150 @@ components:
           type: integer
       required:
       - title
+    StreamContentState:
+      additionalProperties: true
+      description: "Current state for a managed Live Activity stream. Include type\
+        \ on the first PUT, and whenever the stream may need to start a fresh activity.\
+        \ Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown\
+        \ step-based types."
+      example:
+        color: blue
+        step_color: lime
+        auto_dismiss_minutes: 0
+        upper_limit: 5.637376656633329
+        title: title
+        type: segmented_progress
+        step_colors:
+        - lime
+        - lime
+        subtitle: subtitle
+        percentage: 14.658129805029452
+        metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        number_of_steps: 1
+        auto_dismiss_seconds: 0
+        value: 5.962133916683182
+        current_step: 1
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        number_of_steps:
+          description: "Use for segmented_progress, counter, timer, and countdown."
+          minimum: 1
+          type: integer
+        current_step:
+          description: "Use for segmented_progress, counter, timer, and countdown."
+          minimum: 1
+          type: integer
+        percentage:
+          description: Use for progress. Takes precedence over value/upper_limit if
+            both are provided.
+          maximum: 100
+          minimum: 0
+          type: number
+        value:
+          description: Current progress value. Use with upper_limit for progress.
+          type: number
+        upper_limit:
+          description: Maximum progress value. Use with value for progress.
+          type: number
+        type:
+          description: Required on the first PUT or whenever the stream cannot infer
+            the current activity type.
+          enum:
+          - segmented_progress
+          - progress
+          - metrics
+          - counter
+          - timer
+          - countdown
+          type: string
+        color:
+          default: blue
+          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+        step_color:
+          description: Optional. Overrides color for the current step. Only applies
+            to segmented_progress.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
+          type: string
+        step_colors:
+          description: "Optional. Colors for completed steps. When used with segmented_progress,\
+            \ the array length should match current_step."
+          items:
+            enum:
+            - lime
+            - green
+            - cyan
+            - blue
+            - purple
+            - magenta
+            - red
+            - orange
+            - yellow
+            type: string
+          type: array
+        metrics:
+          description: Use for metrics activities.
+          items:
+            $ref: '#/components/schemas/ActivityMetric'
+          minItems: 1
+          type: array
+        auto_dismiss_seconds:
+          description: Optional. Seconds before the ended Live Activity is dismissed.
+          minimum: 0
+          type: integer
+        auto_dismiss_minutes:
+          description: Optional. Minutes before the ended Live Activity is dismissed.
+          minimum: 0
+          type: integer
+      required:
+      - title
+    ActivityMetric:
+      additionalProperties: true
+      example:
+        unit: unit
+        label: label
+        value: 23.02135886934765
+      properties:
+        label:
+          minLength: 1
+          type: string
+        value:
+          maximum: 100
+          minimum: 0
+          type: number
+        unit:
+          type: string
+      required:
+      - label
+      - value
     AlertPayload:
       additionalProperties: true
       example:
@@ -920,9 +1477,19 @@ components:
         content_state:
           color: blue
           step_color: lime
+          step_colors:
+          - lime
+          - lime
           subtitle: subtitle
           percentage: 14.658129805029452
           upper_limit: 5.637376656633329
+          metrics:
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
           title: title
           number_of_steps: 1
           type: segmented_progress
@@ -986,6 +1553,201 @@ components:
       - activity_id
       - success
       - timestamp
+    LiveActivityStreamRequest:
+      additionalProperties: true
+      description: "Send the latest state for a managed Live Activity stream. channels\
+        \ is the streamlined form for stream targeting. target.channels is also accepted\
+        \ for compatibility. If both are provided, they must match."
+      example:
+        content_state:
+          color: blue
+          step_color: lime
+          auto_dismiss_minutes: 0
+          upper_limit: 5.637376656633329
+          title: title
+          type: segmented_progress
+          step_colors:
+          - lime
+          - lime
+          subtitle: subtitle
+          percentage: 14.658129805029452
+          metrics:
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          number_of_steps: 1
+          auto_dismiss_seconds: 0
+          value: 5.962133916683182
+          current_step: 1
+        channels:
+        - channels
+        - channels
+        alert:
+          title: title
+          body: body
+        action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
+        target:
+          channels:
+          - channels
+          - channels
+      properties:
+        content_state:
+          $ref: '#/components/schemas/StreamContentState'
+        action:
+          $ref: '#/components/schemas/LiveActivityAction'
+        alert:
+          $ref: '#/components/schemas/AlertPayload'
+        channels:
+          description: "Channel slugs. When omitted, API key scope determines recipients."
+          items:
+            type: string
+          minItems: 1
+          type: array
+        target:
+          $ref: '#/components/schemas/ChannelTarget'
+      required:
+      - content_state
+    LiveActivityStreamPutResponse:
+      additionalProperties: true
+      description: Returned after a managed stream request is reconciled.
+      example:
+        devices_queued: 6
+        previous_activity_id: previous_activity_id
+        success: true
+        users_notified: 1
+        activity_id: activity_id
+        devices_notified: 0
+        operation: started
+        stream_key: stream_key
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        operation:
+          enum:
+          - started
+          - updated
+          - rotated
+          - noop
+          - paused
+          type: string
+        stream_key:
+          type: string
+        activity_id:
+          nullable: true
+          type: string
+        previous_activity_id:
+          type: string
+        devices_notified:
+          type: integer
+        devices_queued:
+          type: integer
+        users_notified:
+          type: integer
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - operation
+      - stream_key
+      - success
+      - timestamp
+    LiveActivityStreamDeleteRequest:
+      additionalProperties: true
+      description: "Optional payload for ending a managed stream. When omitted, ActivitySmith\
+        \ ends the stream using the latest known state when possible."
+      example:
+        content_state:
+          color: blue
+          step_color: lime
+          auto_dismiss_minutes: 0
+          upper_limit: 5.637376656633329
+          title: title
+          type: segmented_progress
+          step_colors:
+          - lime
+          - lime
+          subtitle: subtitle
+          percentage: 14.658129805029452
+          metrics:
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          number_of_steps: 1
+          auto_dismiss_seconds: 0
+          value: 5.962133916683182
+          current_step: 1
+        alert:
+          title: title
+          body: body
+        action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
+      properties:
+        content_state:
+          $ref: '#/components/schemas/StreamContentState'
+        action:
+          $ref: '#/components/schemas/LiveActivityAction'
+        alert:
+          $ref: '#/components/schemas/AlertPayload'
+    LiveActivityStreamDeleteResponse:
+      additionalProperties: true
+      description: Returned after a managed stream is ended and removed.
+      example:
+        devices_queued: 0
+        success: true
+        activity_id: activity_id
+        devices_notified: 6
+        operation: ended
+        stream_key: stream_key
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        operation:
+          enum:
+          - ended
+          type: string
+        stream_key:
+          type: string
+        activity_id:
+          nullable: true
+          type: string
+        devices_queued:
+          type: integer
+        devices_notified:
+          type: integer
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - operation
+      - stream_key
+      - success
+      - timestamp
     BadRequestError:
       additionalProperties: true
       example:
@@ -1032,6 +1794,19 @@ components:
       required:
       - error
       - message
+    NotFoundError:
+      additionalProperties: true
+      example:
+        error: error
+        message: message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
     RateLimitError:
       additionalProperties: true
       example:
@@ -1069,9 +1844,19 @@ components:
         content_state:
           color: blue
           step_color: lime
+          step_colors:
+          - lime
+          - lime
           subtitle: subtitle
           percentage: 14.658129805029452
           upper_limit: 5.637376656633329
+          metrics:
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
           title: title
           number_of_steps: 1
           type: segmented_progress
@@ -1127,13 +1912,23 @@ components:
         content_state:
           color: blue
           step_color: lime
-          subtitle: subtitle
-          percentage: 14.658129805029452
           auto_dismiss_minutes: 0
           upper_limit: 5.637376656633329
           title: title
-          number_of_steps: 1
           type: segmented_progress
+          step_colors:
+          - lime
+          - lime
+          subtitle: subtitle
+          percentage: 14.658129805029452
+          metrics:
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          number_of_steps: 1
           value: 5.962133916683182
           current_step: 1
         activity_id: activity_id

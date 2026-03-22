@@ -18,7 +18,7 @@ import (
 // checks if the ContentStateStart type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateStart{}
 
-// ContentStateStart Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
+// ContentStateStart Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
 type ContentStateStart struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -32,11 +32,15 @@ type ContentStateStart struct {
 	Value *float32 `json:"value,omitempty"`
 	// Maximum progress value. Use with value for type=progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
+	// Use for type=metrics.
+	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	Type string `json:"type"`
 	// Optional. Accent color for the Live Activity. Defaults to blue.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to type=segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
+	// Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step.
+	StepColors []string `json:"step_colors,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -281,6 +285,38 @@ func (o *ContentStateStart) SetUpperLimit(v float32) {
 	o.UpperLimit = &v
 }
 
+// GetMetrics returns the Metrics field value if set, zero value otherwise.
+func (o *ContentStateStart) GetMetrics() []ActivityMetric {
+	if o == nil || IsNil(o.Metrics) {
+		var ret []ActivityMetric
+		return ret
+	}
+	return o.Metrics
+}
+
+// GetMetricsOk returns a tuple with the Metrics field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateStart) GetMetricsOk() ([]ActivityMetric, bool) {
+	if o == nil || IsNil(o.Metrics) {
+		return nil, false
+	}
+	return o.Metrics, true
+}
+
+// HasMetrics returns a boolean if a field has been set.
+func (o *ContentStateStart) HasMetrics() bool {
+	if o != nil && !IsNil(o.Metrics) {
+		return true
+	}
+
+	return false
+}
+
+// SetMetrics gets a reference to the given []ActivityMetric and assigns it to the Metrics field.
+func (o *ContentStateStart) SetMetrics(v []ActivityMetric) {
+	o.Metrics = v
+}
+
 // GetType returns the Type field value
 func (o *ContentStateStart) GetType() string {
 	if o == nil {
@@ -369,6 +405,38 @@ func (o *ContentStateStart) SetStepColor(v string) {
 	o.StepColor = &v
 }
 
+// GetStepColors returns the StepColors field value if set, zero value otherwise.
+func (o *ContentStateStart) GetStepColors() []string {
+	if o == nil || IsNil(o.StepColors) {
+		var ret []string
+		return ret
+	}
+	return o.StepColors
+}
+
+// GetStepColorsOk returns a tuple with the StepColors field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateStart) GetStepColorsOk() ([]string, bool) {
+	if o == nil || IsNil(o.StepColors) {
+		return nil, false
+	}
+	return o.StepColors, true
+}
+
+// HasStepColors returns a boolean if a field has been set.
+func (o *ContentStateStart) HasStepColors() bool {
+	if o != nil && !IsNil(o.StepColors) {
+		return true
+	}
+
+	return false
+}
+
+// SetStepColors gets a reference to the given []string and assigns it to the StepColors field.
+func (o *ContentStateStart) SetStepColors(v []string) {
+	o.StepColors = v
+}
+
 func (o ContentStateStart) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -398,12 +466,18 @@ func (o ContentStateStart) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UpperLimit) {
 		toSerialize["upper_limit"] = o.UpperLimit
 	}
+	if !IsNil(o.Metrics) {
+		toSerialize["metrics"] = o.Metrics
+	}
 	toSerialize["type"] = o.Type
 	if !IsNil(o.Color) {
 		toSerialize["color"] = o.Color
 	}
 	if !IsNil(o.StepColor) {
 		toSerialize["step_color"] = o.StepColor
+	}
+	if !IsNil(o.StepColors) {
+		toSerialize["step_colors"] = o.StepColors
 	}
 
 	for key, value := range o.AdditionalProperties {
@@ -456,9 +530,11 @@ func (o *ContentStateStart) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "percentage")
 		delete(additionalProperties, "value")
 		delete(additionalProperties, "upper_limit")
+		delete(additionalProperties, "metrics")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "color")
 		delete(additionalProperties, "step_color")
+		delete(additionalProperties, "step_colors")
 		o.AdditionalProperties = additionalProperties
 	}
 
