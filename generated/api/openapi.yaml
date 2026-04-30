@@ -406,10 +406,9 @@ paths:
   /live-activity/start:
     post:
       description: "Starts a Live Activity on devices matched by API key scope and\
-        \ optional target channels. Supports segmented_progress, progress, metrics,\
-        \ and the legacy counter/timer/countdown step-based activity types. For segmented_progress\
-        \ activities, number_of_steps can be changed later during update or end calls\
-        \ if the workflow changes."
+        \ optional target channels. Supports segmented_progress, progress, and metrics\
+        \ activity types. For segmented_progress activities, number_of_steps can be\
+        \ changed later during update or end calls if the workflow changes."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -559,9 +558,8 @@ paths:
     post:
       description: "Updates an existing Live Activity. If the per-activity token is\
         \ not registered yet, the update is queued. Supports segmented_progress, progress,\
-        \ metrics, and the legacy counter/timer/countdown step-based activity types.\
-        \ For segmented_progress activities, you can increase or decrease number_of_steps\
-        \ here as the workflow changes."
+        \ and metrics activity types. For segmented_progress activities, you can increase\
+        \ or decrease number_of_steps here as the workflow changes."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -573,7 +571,7 @@ paths:
                   content_state:
                     title: Nightly database backup
                     subtitle: upload archive
-                    number_of_steps: 4
+                    number_of_steps: 3
                     current_step: 2
               progress:
                 value:
@@ -659,9 +657,9 @@ paths:
   /live-activity/end:
     post:
       description: "Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
-        \ progress, metrics, and the legacy counter/timer/countdown step-based activity\
-        \ types. For segmented_progress activities, you can send the latest number_of_steps\
-        \ here if the workflow changed after start."
+        \ progress, and metrics activity types. For segmented_progress activities,\
+        \ you can send the latest number_of_steps here if the workflow changed after\
+        \ start."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -673,8 +671,8 @@ paths:
                   content_state:
                     title: Nightly database backup
                     subtitle: verify restore
-                    number_of_steps: 4
-                    current_step: 4
+                    number_of_steps: 3
+                    current_step: 3
                     auto_dismiss_minutes: 2
               progress:
                 value:
@@ -762,7 +760,6 @@ components:
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
         \ or value with upper_limit. For metrics include a non-empty metrics array.\
-        \ Legacy counter/timer/countdown types also use current_step and number_of_steps.\
         \ For segmented_progress, number_of_steps is not locked and can be changed\
         \ in later update or end calls."
       example:
@@ -824,9 +821,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue
@@ -879,10 +873,9 @@ components:
       additionalProperties: true
       description: Update payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown
-        types also use current_step and number_of_steps. Type is optional when updating
-        an existing activity. You can increase or decrease number_of_steps during
-        updates.
+        upper_limit. For metrics include a non-empty metrics array. Type is optional
+        when updating an existing activity. You can increase or decrease number_of_steps
+        during updates.
       example:
         color: blue
         step_color: lime
@@ -943,9 +936,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue
@@ -997,10 +987,9 @@ components:
       additionalProperties: true
       description: End payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown
-        types also use current_step and number_of_steps. Type is optional when ending
-        an existing activity. You can send an updated number_of_steps here if the
-        workflow changed after start.
+        upper_limit. For metrics include a non-empty metrics array. Type is optional
+        when ending an existing activity. You can send an updated number_of_steps
+        here if the workflow changed after start.
       example:
         color: blue
         step_color: lime
@@ -1063,9 +1052,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue
@@ -1124,8 +1110,7 @@ components:
       additionalProperties: true
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
-        \ Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown\
-        \ step-based types."
+        \ Supports segmented_progress, progress, and metrics types."
       example:
         color: blue
         step_color: lime
@@ -1155,11 +1140,11 @@ components:
         subtitle:
           type: string
         number_of_steps:
-          description: "Use for segmented_progress, counter, timer, and countdown."
+          description: Use for segmented_progress.
           minimum: 1
           type: integer
         current_step:
-          description: "Use for segmented_progress, counter, timer, and countdown."
+          description: Use for segmented_progress.
           minimum: 1
           type: integer
         percentage:
@@ -1181,9 +1166,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue

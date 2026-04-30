@@ -18,13 +18,13 @@ import (
 // checks if the StreamContentState type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &StreamContentState{}
 
-// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based types.
+// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, and metrics types.
 type StreamContentState struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
-	// Use for segmented_progress, counter, timer, and countdown.
+	// Use for segmented_progress.
 	NumberOfSteps *int32 `json:"number_of_steps,omitempty"`
-	// Use for segmented_progress, counter, timer, and countdown.
+	// Use for segmented_progress.
 	CurrentStep *int32 `json:"current_step,omitempty"`
 	// Use for progress. Takes precedence over value/upper_limit if both are provided.
 	Percentage *float32 `json:"percentage,omitempty"`

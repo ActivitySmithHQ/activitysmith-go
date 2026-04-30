@@ -41,7 +41,7 @@ func (r ApiEndLiveActivityRequest) Execute() (*LiveActivityEndResponse, *http.Re
 /*
 EndLiveActivity End a Live Activity
 
-Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiEndLiveActivityRequest
@@ -478,7 +478,7 @@ func (r ApiStartLiveActivityRequest) Execute() (*LiveActivityStartResponse, *htt
 /*
 StartLiveActivity Start a Live Activity
 
-Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiStartLiveActivityRequest
@@ -631,7 +631,7 @@ func (r ApiUpdateLiveActivityRequest) Execute() (*LiveActivityUpdateResponse, *h
 /*
 UpdateLiveActivity Update a Live Activity
 
-Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
+Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiUpdateLiveActivityRequest
