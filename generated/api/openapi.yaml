@@ -9,8 +9,12 @@ servers:
 security:
 - apiKeyAuth: []
 tags:
-- name: PushNotifications
-- name: LiveActivities
+- description: Send push notifications to paired devices.
+  name: PushNotifications
+- description: "Start, update, stream, and end Live Activities."
+  name: LiveActivities
+- description: Update metric values shown in ActivitySmith widgets.
+  name: Metrics
 paths:
   /push-notification:
     post:
@@ -406,10 +410,9 @@ paths:
   /live-activity/start:
     post:
       description: "Starts a Live Activity on devices matched by API key scope and\
-        \ optional target channels. Supports segmented_progress, progress, metrics,\
-        \ and the legacy counter/timer/countdown step-based activity types. For segmented_progress\
-        \ activities, number_of_steps can be changed later during update or end calls\
-        \ if the workflow changes."
+        \ optional target channels. Supports segmented_progress, progress, and metrics\
+        \ activity types. For segmented_progress activities, number_of_steps can be\
+        \ changed later during update or end calls if the workflow changes."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -550,7 +553,7 @@ paths:
                     limit: 4
                     active: 4
               schema:
-                $ref: '#/components/schemas/RateLimitError'
+                $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
       summary: Start a Live Activity
       tags:
@@ -559,9 +562,8 @@ paths:
     post:
       description: "Updates an existing Live Activity. If the per-activity token is\
         \ not registered yet, the update is queued. Supports segmented_progress, progress,\
-        \ metrics, and the legacy counter/timer/countdown step-based activity types.\
-        \ For segmented_progress activities, you can increase or decrease number_of_steps\
-        \ here as the workflow changes."
+        \ and metrics activity types. For segmented_progress activities, you can increase\
+        \ or decrease number_of_steps here as the workflow changes."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -573,7 +575,7 @@ paths:
                   content_state:
                     title: Nightly database backup
                     subtitle: upload archive
-                    number_of_steps: 4
+                    number_of_steps: 3
                     current_step: 2
               progress:
                 value:
@@ -659,9 +661,9 @@ paths:
   /live-activity/end:
     post:
       description: "Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
-        \ progress, metrics, and the legacy counter/timer/countdown step-based activity\
-        \ types. For segmented_progress activities, you can send the latest number_of_steps\
-        \ here if the workflow changed after start."
+        \ progress, and metrics activity types. For segmented_progress activities,\
+        \ you can send the latest number_of_steps here if the workflow changed after\
+        \ start."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -673,8 +675,8 @@ paths:
                   content_state:
                     title: Nightly database backup
                     subtitle: verify restore
-                    number_of_steps: 4
-                    current_step: 4
+                    number_of_steps: 3
+                    current_step: 3
                     auto_dismiss_minutes: 2
               progress:
                 value:
@@ -755,6 +757,116 @@ paths:
       summary: End a Live Activity
       tags:
       - LiveActivities
+  /metrics/{key}/value:
+    post:
+      description: "Updates the latest value for a metric configured in ActivitySmith\
+        \ widgets. Create the metric in the web app first, then write values using\
+        \ its key. Numeric metric formats accept finite numbers. String metrics accept\
+        \ non-empty text up to 64 characters."
+      operationId: updateMetricValue
+      parameters:
+      - description: "Metric key configured in the web app. Lowercase letters, numbers,\
+          \ dots, underscores, and dashes are allowed."
+        explode: false
+        in: path
+        name: key
+        required: true
+        schema:
+          maxLength: 64
+          minLength: 1
+          pattern: "^[a-z0-9][a-z0-9_.-]{0,63}$"
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            examples:
+              number:
+                value:
+                  value: 42
+              string:
+                value:
+                  value: healthy
+              timestamp:
+                value:
+                  value: 99.9
+                  timestamp: 2026-05-03T12:30:00.000Z
+            schema:
+              $ref: '#/components/schemas/MetricValueUpdateRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                number:
+                  value:
+                    metric:
+                      public_id: m1p94J8hQz2wKfR7aBcD
+                      key: deploy.success_rate
+                      label: Success Rate
+                      currency_code: null
+                      unit: null
+                      unit_spacing: none
+                      format: percent
+                      latest_value: 99.9
+                      latest_value_at: 2026-05-03T12:30:00.000Z
+                      created_at: 2026-05-03T09:00:00.000Z
+                      updated_at: 2026-05-03T12:30:00.000Z
+                string:
+                  value:
+                    metric:
+                      public_id: 9xK2hYbQp0aLmN6vR3tS
+                      key: prod.status
+                      label: Production Status
+                      currency_code: null
+                      unit: null
+                      unit_spacing: none
+                      format: string
+                      latest_value: healthy
+                      latest_value_at: 2026-05-03T12:30:00.000Z
+                      created_at: 2026-05-03T09:00:00.000Z
+                      updated_at: 2026-05-03T12:30:00.000Z
+              schema:
+                $ref: '#/components/schemas/MetricValueUpdateResponse'
+          description: Metric value updated
+        "400":
+          content:
+            application/json:
+              examples:
+                invalid_value:
+                  value:
+                    error: value must be a finite number
+                invalid_timestamp:
+                  value:
+                    error: timestamp must be a valid ISO date
+              schema:
+                $ref: '#/components/schemas/MetricError'
+          description: "Bad request (invalid key, value, or timestamp)"
+        "404":
+          content:
+            application/json:
+              examples:
+                not_found:
+                  value:
+                    error: Metric not found
+              schema:
+                $ref: '#/components/schemas/MetricError'
+          description: Metric not found
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: Update a widget metric value
+      tags:
+      - Metrics
 components:
   schemas:
     ContentStateStart:
@@ -762,7 +874,6 @@ components:
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
         \ or value with upper_limit. For metrics include a non-empty metrics array.\
-        \ Legacy counter/timer/countdown types also use current_step and number_of_steps.\
         \ For segmented_progress, number_of_steps is not locked and can be changed\
         \ in later update or end calls."
       example:
@@ -824,9 +935,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue
@@ -879,10 +987,9 @@ components:
       additionalProperties: true
       description: Update payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown
-        types also use current_step and number_of_steps. Type is optional when updating
-        an existing activity. You can increase or decrease number_of_steps during
-        updates.
+        upper_limit. For metrics include a non-empty metrics array. Type is optional
+        when updating an existing activity. You can increase or decrease number_of_steps
+        during updates.
       example:
         color: blue
         step_color: lime
@@ -943,9 +1050,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue
@@ -997,10 +1101,9 @@ components:
       additionalProperties: true
       description: End payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown
-        types also use current_step and number_of_steps. Type is optional when ending
-        an existing activity. You can send an updated number_of_steps here if the
-        workflow changed after start.
+        upper_limit. For metrics include a non-empty metrics array. Type is optional
+        when ending an existing activity. You can send an updated number_of_steps
+        here if the workflow changed after start.
       example:
         color: blue
         step_color: lime
@@ -1063,9 +1166,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue
@@ -1124,8 +1224,7 @@ components:
       additionalProperties: true
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
-        \ Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown\
-        \ step-based types."
+        \ Supports segmented_progress, progress, and metrics types."
       example:
         color: blue
         step_color: lime
@@ -1155,11 +1254,11 @@ components:
         subtitle:
           type: string
         number_of_steps:
-          description: "Use for segmented_progress, counter, timer, and countdown."
+          description: Use for segmented_progress.
           minimum: 1
           type: integer
         current_step:
-          description: "Use for segmented_progress, counter, timer, and countdown."
+          description: Use for segmented_progress.
           minimum: 1
           type: integer
         percentage:
@@ -1181,9 +1280,6 @@ components:
           - segmented_progress
           - progress
           - metrics
-          - counter
-          - timer
-          - countdown
           type: string
         color:
           default: blue
@@ -1748,6 +1844,134 @@ components:
       - stream_key
       - success
       - timestamp
+    MetricFormat:
+      enum:
+      - number
+      - currency
+      - percent
+      - unit
+      - string
+      type: string
+    MetricUnitSpacing:
+      enum:
+      - none
+      - space
+      type: string
+    WidgetMetric:
+      additionalProperties: true
+      description: A metric configured for ActivitySmith widgets.
+      example:
+        unit: unit
+        latest_value_at: 2000-01-23T04:56:07.000+00:00
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        format: number
+        created_at: 2000-01-23T04:56:07.000+00:00
+        latest_value: 0.8008281904610115
+        label: label
+        key: key
+        currency_code: currency_code
+        public_id: public_id
+        unit_spacing: none
+      properties:
+        public_id:
+          type: string
+        key:
+          maxLength: 64
+          minLength: 1
+          pattern: "^[a-z0-9][a-z0-9_.-]{0,63}$"
+          type: string
+        label:
+          maxLength: 80
+          minLength: 1
+          type: string
+        currency_code:
+          description: Present when format is currency.
+          maxLength: 3
+          minLength: 3
+          nullable: true
+          pattern: "^[A-Z]{3}$"
+          type: string
+        unit:
+          description: Present when format is unit.
+          maxLength: 16
+          nullable: true
+          type: string
+        unit_spacing:
+          $ref: '#/components/schemas/MetricUnitSpacing'
+        format:
+          $ref: '#/components/schemas/MetricFormat'
+        latest_value:
+          $ref: '#/components/schemas/WidgetMetric_latest_value'
+        latest_value_at:
+          format: date-time
+          nullable: true
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+      - created_at
+      - currency_code
+      - format
+      - key
+      - label
+      - latest_value
+      - latest_value_at
+      - public_id
+      - unit
+      - unit_spacing
+      - updated_at
+    MetricValueUpdateRequest:
+      additionalProperties: true
+      description: Latest metric value to display in widgets.
+      example:
+        value: 0.8008281904610115
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        value:
+          $ref: '#/components/schemas/MetricValueUpdateRequest_value'
+        timestamp:
+          description: Optional ISO timestamp for when the metric value was measured.
+            Defaults to the server receive time.
+          format: date-time
+          type: string
+      required:
+      - value
+    MetricValueUpdateResponse:
+      additionalProperties: true
+      example:
+        metric:
+          unit: unit
+          latest_value_at: 2000-01-23T04:56:07.000+00:00
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          format: number
+          created_at: 2000-01-23T04:56:07.000+00:00
+          latest_value: 0.8008281904610115
+          label: label
+          key: key
+          currency_code: currency_code
+          public_id: public_id
+          unit_spacing: none
+      properties:
+        metric:
+          $ref: '#/components/schemas/WidgetMetric'
+      required:
+      - metric
+    MetricError:
+      additionalProperties: true
+      example:
+        error: error
+        message: message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
     BadRequestError:
       additionalProperties: true
       example:
@@ -1978,6 +2202,19 @@ components:
       oneOf:
       - $ref: '#/components/schemas/RateLimitError'
       - $ref: '#/components/schemas/LiveActivityLimitError'
+    WidgetMetric_latest_value:
+      anyOf:
+      - type: number
+      - type: string
+      description: Latest metric value. Numeric formats return a number. String metrics
+        return text.
+      nullable: true
+    MetricValueUpdateRequest_value:
+      oneOf:
+      - type: number
+      - maxLength: 64
+        minLength: 1
+        type: string
   securitySchemes:
     apiKeyAuth:
       bearerFormat: API Key

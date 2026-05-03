@@ -51,6 +51,8 @@ type APIClient struct {
 
 	LiveActivitiesAPI *LiveActivitiesAPIService
 
+	MetricsAPI *MetricsAPIService
+
 	PushNotificationsAPI *PushNotificationsAPIService
 }
 
@@ -71,6 +73,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 
 	// API Services
 	c.LiveActivitiesAPI = (*LiveActivitiesAPIService)(&c.common)
+	c.MetricsAPI = (*MetricsAPIService)(&c.common)
 	c.PushNotificationsAPI = (*PushNotificationsAPIService)(&c.common)
 
 	return c
