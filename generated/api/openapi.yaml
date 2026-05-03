@@ -759,10 +759,9 @@ paths:
       - LiveActivities
   /metrics/{key}/value:
     post:
-      description: "Updates the latest value for a metric configured in ActivitySmith\
-        \ widgets. Create the metric in the web app first, then write values using\
-        \ its key. Numeric metric formats accept finite numbers. String metrics accept\
-        \ non-empty text up to 64 characters."
+      description: "Updates the latest value for a metric displayed in ActivitySmith\
+        \ widgets. Create the metric in the web app first, then update its value using\
+        \ the key."
       operationId: updateMetricValue
       parameters:
       - description: "Metric key configured in the web app. Lowercase letters, numbers,\
@@ -799,34 +798,9 @@ paths:
           content:
             application/json:
               examples:
-                number:
+                success:
                   value:
-                    metric:
-                      public_id: m1p94J8hQz2wKfR7aBcD
-                      key: deploy.success_rate
-                      label: Success Rate
-                      currency_code: null
-                      unit: null
-                      unit_spacing: none
-                      format: percent
-                      latest_value: 99.9
-                      latest_value_at: 2026-05-03T12:30:00.000Z
-                      created_at: 2026-05-03T09:00:00.000Z
-                      updated_at: 2026-05-03T12:30:00.000Z
-                string:
-                  value:
-                    metric:
-                      public_id: 9xK2hYbQp0aLmN6vR3tS
-                      key: prod.status
-                      label: Production Status
-                      currency_code: null
-                      unit: null
-                      unit_spacing: none
-                      format: string
-                      latest_value: healthy
-                      latest_value_at: 2026-05-03T12:30:00.000Z
-                      created_at: 2026-05-03T09:00:00.000Z
-                      updated_at: 2026-05-03T12:30:00.000Z
+                    success: true
               schema:
                 $ref: '#/components/schemas/MetricValueUpdateResponse'
           description: Metric value updated
@@ -1844,86 +1818,6 @@ components:
       - stream_key
       - success
       - timestamp
-    MetricFormat:
-      enum:
-      - number
-      - currency
-      - percent
-      - unit
-      - string
-      type: string
-    MetricUnitSpacing:
-      enum:
-      - none
-      - space
-      type: string
-    WidgetMetric:
-      additionalProperties: true
-      description: A metric configured for ActivitySmith widgets.
-      example:
-        unit: unit
-        latest_value_at: 2000-01-23T04:56:07.000+00:00
-        updated_at: 2000-01-23T04:56:07.000+00:00
-        format: number
-        created_at: 2000-01-23T04:56:07.000+00:00
-        latest_value: 0.8008281904610115
-        label: label
-        key: key
-        currency_code: currency_code
-        public_id: public_id
-        unit_spacing: none
-      properties:
-        public_id:
-          type: string
-        key:
-          maxLength: 64
-          minLength: 1
-          pattern: "^[a-z0-9][a-z0-9_.-]{0,63}$"
-          type: string
-        label:
-          maxLength: 80
-          minLength: 1
-          type: string
-        currency_code:
-          description: Present when format is currency.
-          maxLength: 3
-          minLength: 3
-          nullable: true
-          pattern: "^[A-Z]{3}$"
-          type: string
-        unit:
-          description: Present when format is unit.
-          maxLength: 16
-          nullable: true
-          type: string
-        unit_spacing:
-          $ref: '#/components/schemas/MetricUnitSpacing'
-        format:
-          $ref: '#/components/schemas/MetricFormat'
-        latest_value:
-          $ref: '#/components/schemas/WidgetMetric_latest_value'
-        latest_value_at:
-          format: date-time
-          nullable: true
-          type: string
-        created_at:
-          format: date-time
-          type: string
-        updated_at:
-          format: date-time
-          type: string
-      required:
-      - created_at
-      - currency_code
-      - format
-      - key
-      - label
-      - latest_value
-      - latest_value_at
-      - public_id
-      - unit
-      - unit_spacing
-      - updated_at
     MetricValueUpdateRequest:
       additionalProperties: true
       description: Latest metric value to display in widgets.
@@ -1943,23 +1837,12 @@ components:
     MetricValueUpdateResponse:
       additionalProperties: true
       example:
-        metric:
-          unit: unit
-          latest_value_at: 2000-01-23T04:56:07.000+00:00
-          updated_at: 2000-01-23T04:56:07.000+00:00
-          format: number
-          created_at: 2000-01-23T04:56:07.000+00:00
-          latest_value: 0.8008281904610115
-          label: label
-          key: key
-          currency_code: currency_code
-          public_id: public_id
-          unit_spacing: none
+        success: true
       properties:
-        metric:
-          $ref: '#/components/schemas/WidgetMetric'
+        success:
+          type: boolean
       required:
-      - metric
+      - success
     MetricError:
       additionalProperties: true
       example:
@@ -2202,13 +2085,6 @@ components:
       oneOf:
       - $ref: '#/components/schemas/RateLimitError'
       - $ref: '#/components/schemas/LiveActivityLimitError'
-    WidgetMetric_latest_value:
-      anyOf:
-      - type: number
-      - type: string
-      description: Latest metric value. Numeric formats return a number. String metrics
-        return text.
-      nullable: true
     MetricValueUpdateRequest_value:
       oneOf:
       - type: number
