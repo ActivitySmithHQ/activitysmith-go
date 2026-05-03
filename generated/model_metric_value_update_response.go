@@ -20,7 +20,7 @@ var _ MappedNullable = &MetricValueUpdateResponse{}
 
 // MetricValueUpdateResponse struct for MetricValueUpdateResponse
 type MetricValueUpdateResponse struct {
-	Metric WidgetMetric `json:"metric"`
+	Success bool `json:"success"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -30,9 +30,9 @@ type _MetricValueUpdateResponse MetricValueUpdateResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMetricValueUpdateResponse(metric WidgetMetric) *MetricValueUpdateResponse {
+func NewMetricValueUpdateResponse(success bool) *MetricValueUpdateResponse {
 	this := MetricValueUpdateResponse{}
-	this.Metric = metric
+	this.Success = success
 	return &this
 }
 
@@ -44,28 +44,28 @@ func NewMetricValueUpdateResponseWithDefaults() *MetricValueUpdateResponse {
 	return &this
 }
 
-// GetMetric returns the Metric field value
-func (o *MetricValueUpdateResponse) GetMetric() WidgetMetric {
+// GetSuccess returns the Success field value
+func (o *MetricValueUpdateResponse) GetSuccess() bool {
 	if o == nil {
-		var ret WidgetMetric
+		var ret bool
 		return ret
 	}
 
-	return o.Metric
+	return o.Success
 }
 
-// GetMetricOk returns a tuple with the Metric field value
+// GetSuccessOk returns a tuple with the Success field value
 // and a boolean to check if the value has been set.
-func (o *MetricValueUpdateResponse) GetMetricOk() (*WidgetMetric, bool) {
+func (o *MetricValueUpdateResponse) GetSuccessOk() (*bool, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Metric, true
+	return &o.Success, true
 }
 
-// SetMetric sets field value
-func (o *MetricValueUpdateResponse) SetMetric(v WidgetMetric) {
-	o.Metric = v
+// SetSuccess sets field value
+func (o *MetricValueUpdateResponse) SetSuccess(v bool) {
+	o.Success = v
 }
 
 func (o MetricValueUpdateResponse) MarshalJSON() ([]byte, error) {
@@ -78,7 +78,7 @@ func (o MetricValueUpdateResponse) MarshalJSON() ([]byte, error) {
 
 func (o MetricValueUpdateResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["metric"] = o.Metric
+	toSerialize["success"] = o.Success
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -92,7 +92,7 @@ func (o *MetricValueUpdateResponse) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"metric",
+		"success",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -122,7 +122,7 @@ func (o *MetricValueUpdateResponse) UnmarshalJSON(data []byte) (err error) {
 	additionalProperties := make(map[string]interface{})
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "metric")
+		delete(additionalProperties, "success")
 		o.AdditionalProperties = additionalProperties
 	}
 

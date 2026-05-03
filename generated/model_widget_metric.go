@@ -25,13 +25,14 @@ type WidgetMetric struct {
 	Key string `json:"key" validate:"regexp=^[a-z0-9][a-z0-9_.-]{0,63}$"`
 	Label string `json:"label"`
 	// Present when format is currency.
-	CurrencyCode NullableString `json:"currency_code" validate:"regexp=^[A-Z]{3}$"`
+	CurrencyCode string `json:"currency_code" validate:"regexp=^[A-Z]{3}$"`
 	// Present when format is unit.
-	Unit NullableString `json:"unit"`
+	Unit string `json:"unit"`
 	UnitSpacing MetricUnitSpacing `json:"unit_spacing"`
 	Format MetricFormat `json:"format"`
-	LatestValue NullableWidgetMetricLatestValue `json:"latest_value"`
-	LatestValueAt NullableTime `json:"latest_value_at"`
+	// Latest metric value. Numeric formats return a number. String metrics return text.
+	LatestValue float32 `json:"latest_value"`
+	LatestValueAt time.Time `json:"latest_value_at"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	AdditionalProperties map[string]interface{}
@@ -43,7 +44,7 @@ type _WidgetMetric WidgetMetric
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWidgetMetric(publicId string, key string, label string, currencyCode NullableString, unit NullableString, unitSpacing MetricUnitSpacing, format MetricFormat, latestValue NullableWidgetMetricLatestValue, latestValueAt NullableTime, createdAt time.Time, updatedAt time.Time) *WidgetMetric {
+func NewWidgetMetric(publicId string, key string, label string, currencyCode string, unit string, unitSpacing MetricUnitSpacing, format MetricFormat, latestValue float32, latestValueAt time.Time, createdAt time.Time, updatedAt time.Time) *WidgetMetric {
 	this := WidgetMetric{}
 	this.PublicId = publicId
 	this.Key = key
@@ -140,55 +141,51 @@ func (o *WidgetMetric) SetLabel(v string) {
 }
 
 // GetCurrencyCode returns the CurrencyCode field value
-// If the value is explicit nil, the zero value for string will be returned
 func (o *WidgetMetric) GetCurrencyCode() string {
-	if o == nil || o.CurrencyCode.Get() == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return *o.CurrencyCode.Get()
+	return o.CurrencyCode
 }
 
 // GetCurrencyCodeOk returns a tuple with the CurrencyCode field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *WidgetMetric) GetCurrencyCodeOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CurrencyCode.Get(), o.CurrencyCode.IsSet()
+	return &o.CurrencyCode, true
 }
 
 // SetCurrencyCode sets field value
 func (o *WidgetMetric) SetCurrencyCode(v string) {
-	o.CurrencyCode.Set(&v)
+	o.CurrencyCode = v
 }
 
 // GetUnit returns the Unit field value
-// If the value is explicit nil, the zero value for string will be returned
 func (o *WidgetMetric) GetUnit() string {
-	if o == nil || o.Unit.Get() == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return *o.Unit.Get()
+	return o.Unit
 }
 
 // GetUnitOk returns a tuple with the Unit field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *WidgetMetric) GetUnitOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Unit.Get(), o.Unit.IsSet()
+	return &o.Unit, true
 }
 
 // SetUnit sets field value
 func (o *WidgetMetric) SetUnit(v string) {
-	o.Unit.Set(&v)
+	o.Unit = v
 }
 
 // GetUnitSpacing returns the UnitSpacing field value
@@ -240,55 +237,51 @@ func (o *WidgetMetric) SetFormat(v MetricFormat) {
 }
 
 // GetLatestValue returns the LatestValue field value
-// If the value is explicit nil, the zero value for WidgetMetricLatestValue will be returned
-func (o *WidgetMetric) GetLatestValue() WidgetMetricLatestValue {
-	if o == nil || o.LatestValue.Get() == nil {
-		var ret WidgetMetricLatestValue
+func (o *WidgetMetric) GetLatestValue() float32 {
+	if o == nil {
+		var ret float32
 		return ret
 	}
 
-	return *o.LatestValue.Get()
+	return o.LatestValue
 }
 
 // GetLatestValueOk returns a tuple with the LatestValue field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *WidgetMetric) GetLatestValueOk() (*WidgetMetricLatestValue, bool) {
+func (o *WidgetMetric) GetLatestValueOk() (*float32, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.LatestValue.Get(), o.LatestValue.IsSet()
+	return &o.LatestValue, true
 }
 
 // SetLatestValue sets field value
-func (o *WidgetMetric) SetLatestValue(v WidgetMetricLatestValue) {
-	o.LatestValue.Set(&v)
+func (o *WidgetMetric) SetLatestValue(v float32) {
+	o.LatestValue = v
 }
 
 // GetLatestValueAt returns the LatestValueAt field value
-// If the value is explicit nil, the zero value for time.Time will be returned
 func (o *WidgetMetric) GetLatestValueAt() time.Time {
-	if o == nil || o.LatestValueAt.Get() == nil {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
 
-	return *o.LatestValueAt.Get()
+	return o.LatestValueAt
 }
 
 // GetLatestValueAtOk returns a tuple with the LatestValueAt field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *WidgetMetric) GetLatestValueAtOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.LatestValueAt.Get(), o.LatestValueAt.IsSet()
+	return &o.LatestValueAt, true
 }
 
 // SetLatestValueAt sets field value
 func (o *WidgetMetric) SetLatestValueAt(v time.Time) {
-	o.LatestValueAt.Set(&v)
+	o.LatestValueAt = v
 }
 
 // GetCreatedAt returns the CreatedAt field value
@@ -352,12 +345,12 @@ func (o WidgetMetric) ToMap() (map[string]interface{}, error) {
 	toSerialize["public_id"] = o.PublicId
 	toSerialize["key"] = o.Key
 	toSerialize["label"] = o.Label
-	toSerialize["currency_code"] = o.CurrencyCode.Get()
-	toSerialize["unit"] = o.Unit.Get()
+	toSerialize["currency_code"] = o.CurrencyCode
+	toSerialize["unit"] = o.Unit
 	toSerialize["unit_spacing"] = o.UnitSpacing
 	toSerialize["format"] = o.Format
-	toSerialize["latest_value"] = o.LatestValue.Get()
-	toSerialize["latest_value_at"] = o.LatestValueAt.Get()
+	toSerialize["latest_value"] = o.LatestValue
+	toSerialize["latest_value_at"] = o.LatestValueAt
 	toSerialize["created_at"] = o.CreatedAt
 	toSerialize["updated_at"] = o.UpdatedAt
 

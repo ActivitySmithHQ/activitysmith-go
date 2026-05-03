@@ -7,12 +7,12 @@ Name | Type | Description | Notes
 **PublicId** | **string** |  | 
 **Key** | **string** |  | 
 **Label** | **string** |  | 
-**CurrencyCode** | **NullableString** | Present when format is currency. | 
-**Unit** | **NullableString** | Present when format is unit. | 
+**CurrencyCode** | **string** | Present when format is currency. | 
+**Unit** | **string** | Present when format is unit. | 
 **UnitSpacing** | [**MetricUnitSpacing**](MetricUnitSpacing.md) |  | 
 **Format** | [**MetricFormat**](MetricFormat.md) |  | 
-**LatestValue** | [**NullableWidgetMetricLatestValue**](WidgetMetricLatestValue.md) |  | 
-**LatestValueAt** | **NullableTime** |  | 
+**LatestValue** | **float32** | Latest metric value. Numeric formats return a number. String metrics return text. | 
+**LatestValueAt** | **time.Time** |  | 
 **CreatedAt** | **time.Time** |  | 
 **UpdatedAt** | **time.Time** |  | 
 
@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 
 ### NewWidgetMetric
 
-`func NewWidgetMetric(publicId string, key string, label string, currencyCode NullableString, unit NullableString, unitSpacing MetricUnitSpacing, format MetricFormat, latestValue NullableWidgetMetricLatestValue, latestValueAt NullableTime, createdAt time.Time, updatedAt time.Time, ) *WidgetMetric`
+`func NewWidgetMetric(publicId string, key string, label string, currencyCode string, unit string, unitSpacing MetricUnitSpacing, format MetricFormat, latestValue float32, latestValueAt time.Time, createdAt time.Time, updatedAt time.Time, ) *WidgetMetric`
 
 NewWidgetMetric instantiates a new WidgetMetric object
 This constructor will assign default values to properties that have it defined,
@@ -115,16 +115,6 @@ and a boolean to check if the value has been set.
 SetCurrencyCode sets CurrencyCode field to given value.
 
 
-### SetCurrencyCodeNil
-
-`func (o *WidgetMetric) SetCurrencyCodeNil(b bool)`
-
- SetCurrencyCodeNil sets the value for CurrencyCode to be an explicit nil
-
-### UnsetCurrencyCode
-`func (o *WidgetMetric) UnsetCurrencyCode()`
-
-UnsetCurrencyCode ensures that no value is present for CurrencyCode, not even an explicit nil
 ### GetUnit
 
 `func (o *WidgetMetric) GetUnit() string`
@@ -145,16 +135,6 @@ and a boolean to check if the value has been set.
 SetUnit sets Unit field to given value.
 
 
-### SetUnitNil
-
-`func (o *WidgetMetric) SetUnitNil(b bool)`
-
- SetUnitNil sets the value for Unit to be an explicit nil
-
-### UnsetUnit
-`func (o *WidgetMetric) UnsetUnit()`
-
-UnsetUnit ensures that no value is present for Unit, not even an explicit nil
 ### GetUnitSpacing
 
 `func (o *WidgetMetric) GetUnitSpacing() MetricUnitSpacing`
@@ -197,34 +177,24 @@ SetFormat sets Format field to given value.
 
 ### GetLatestValue
 
-`func (o *WidgetMetric) GetLatestValue() WidgetMetricLatestValue`
+`func (o *WidgetMetric) GetLatestValue() float32`
 
 GetLatestValue returns the LatestValue field if non-nil, zero value otherwise.
 
 ### GetLatestValueOk
 
-`func (o *WidgetMetric) GetLatestValueOk() (*WidgetMetricLatestValue, bool)`
+`func (o *WidgetMetric) GetLatestValueOk() (*float32, bool)`
 
 GetLatestValueOk returns a tuple with the LatestValue field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetLatestValue
 
-`func (o *WidgetMetric) SetLatestValue(v WidgetMetricLatestValue)`
+`func (o *WidgetMetric) SetLatestValue(v float32)`
 
 SetLatestValue sets LatestValue field to given value.
 
 
-### SetLatestValueNil
-
-`func (o *WidgetMetric) SetLatestValueNil(b bool)`
-
- SetLatestValueNil sets the value for LatestValue to be an explicit nil
-
-### UnsetLatestValue
-`func (o *WidgetMetric) UnsetLatestValue()`
-
-UnsetLatestValue ensures that no value is present for LatestValue, not even an explicit nil
 ### GetLatestValueAt
 
 `func (o *WidgetMetric) GetLatestValueAt() time.Time`
@@ -245,16 +215,6 @@ and a boolean to check if the value has been set.
 SetLatestValueAt sets LatestValueAt field to given value.
 
 
-### SetLatestValueAtNil
-
-`func (o *WidgetMetric) SetLatestValueAtNil(b bool)`
-
- SetLatestValueAtNil sets the value for LatestValueAt to be an explicit nil
-
-### UnsetLatestValueAt
-`func (o *WidgetMetric) UnsetLatestValueAt()`
-
-UnsetLatestValueAt ensures that no value is present for LatestValueAt, not even an explicit nil
 ### GetCreatedAt
 
 `func (o *WidgetMetric) GetCreatedAt() time.Time`

@@ -4,13 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Metric** | [**WidgetMetric**](WidgetMetric.md) |  | 
+**Success** | **bool** |  | 
 
 ## Methods
 
 ### NewMetricValueUpdateResponse
 
-`func NewMetricValueUpdateResponse(metric WidgetMetric, ) *MetricValueUpdateResponse`
+`func NewMetricValueUpdateResponse(success bool, ) *MetricValueUpdateResponse`
 
 NewMetricValueUpdateResponse instantiates a new MetricValueUpdateResponse object
 This constructor will assign default values to properties that have it defined,
@@ -25,24 +25,24 @@ NewMetricValueUpdateResponseWithDefaults instantiates a new MetricValueUpdateRes
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetMetric
+### GetSuccess
 
-`func (o *MetricValueUpdateResponse) GetMetric() WidgetMetric`
+`func (o *MetricValueUpdateResponse) GetSuccess() bool`
 
-GetMetric returns the Metric field if non-nil, zero value otherwise.
+GetSuccess returns the Success field if non-nil, zero value otherwise.
 
-### GetMetricOk
+### GetSuccessOk
 
-`func (o *MetricValueUpdateResponse) GetMetricOk() (*WidgetMetric, bool)`
+`func (o *MetricValueUpdateResponse) GetSuccessOk() (*bool, bool)`
 
-GetMetricOk returns a tuple with the Metric field if it's non-nil, zero value otherwise
+GetSuccessOk returns a tuple with the Success field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetMetric
+### SetSuccess
 
-`func (o *MetricValueUpdateResponse) SetMetric(v WidgetMetric)`
+`func (o *MetricValueUpdateResponse) SetSuccess(v bool)`
 
-SetMetric sets Metric field to given value.
+SetSuccess sets Success field to given value.
 
 
 
