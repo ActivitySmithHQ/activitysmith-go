@@ -786,10 +786,6 @@ paths:
               string:
                 value:
                   value: healthy
-              timestamp:
-                value:
-                  value: 99.9
-                  timestamp: 2026-05-03T12:30:00.000Z
             schema:
               $ref: '#/components/schemas/MetricValueUpdateRequest'
         required: true
@@ -811,12 +807,9 @@ paths:
                 invalid_value:
                   value:
                     error: value must be a finite number
-                invalid_timestamp:
-                  value:
-                    error: timestamp must be a valid ISO date
               schema:
                 $ref: '#/components/schemas/MetricError'
-          description: "Bad request (invalid key, value, or timestamp)"
+          description: Bad request (invalid key or value)
         "404":
           content:
             application/json:
@@ -1823,15 +1816,9 @@ components:
       description: Latest metric value to display in widgets.
       example:
         value: 0.8008281904610115
-        timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         value:
           $ref: '#/components/schemas/MetricValueUpdateRequest_value'
-        timestamp:
-          description: Optional ISO timestamp for when the metric value was measured.
-            Defaults to the server receive time.
-          format: date-time
-          type: string
       required:
       - value
     MetricValueUpdateResponse:
