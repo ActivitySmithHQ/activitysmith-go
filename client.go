@@ -11,6 +11,8 @@ import (
 var ErrAPIKeyRequired = errors.New("activitysmith: apiKey is required")
 var ErrPushNotificationMediaActionsConflict = errors.New("activitysmith: media cannot be combined with actions")
 
+const sdkHeaderName = "X-ActivitySmith-SDK"
+
 type Options struct {
 	Context context.Context
 }
@@ -20,6 +22,7 @@ type Client struct {
 	ctx            context.Context
 	Notifications  *NotificationsService
 	LiveActivities *LiveActivitiesService
+	Metrics        *MetricsService
 }
 
 func New(apiKey string, opts ...*Options) (*Client, error) {
@@ -29,6 +32,7 @@ func New(apiKey string, opts ...*Options) (*Client, error) {
 
 	cfg := generated.NewConfiguration()
 	cfg.UserAgent = "activitysmith-go/" + Version
+	cfg.AddDefaultHeader(sdkHeaderName, "go-v"+Version)
 	ctx := context.Background()
 
 	if len(opts) > 0 && opts[0] != nil && opts[0].Context != nil {
@@ -41,6 +45,7 @@ func New(apiKey string, opts ...*Options) (*Client, error) {
 	client := &Client{apiClient: apiClient, ctx: ctx}
 	client.Notifications = &NotificationsService{client: client}
 	client.LiveActivities = &LiveActivitiesService{client: client}
+	client.Metrics = &MetricsService{client: client}
 
 	return client, nil
 }

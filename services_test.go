@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
@@ -14,6 +15,7 @@ import (
 type capturedRequest struct {
 	Path          string
 	Authorization string
+	SDK           string
 	Body          string
 }
 
@@ -31,6 +33,7 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 		requests = append(requests, capturedRequest{
 			Path:          r.URL.Path,
 			Authorization: r.Header.Get("Authorization"),
+			SDK:           r.Header.Get("X-ActivitySmith-SDK"),
 			Body:          string(body),
 		})
 
@@ -52,6 +55,10 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 			} else {
 				http.NotFound(w, r)
 			}
+		case "/metrics/deploy.success_rate/value":
+			_, _ = w.Write([]byte(`{"metric":{"public_id":"metric-1","key":"deploy.success_rate","label":"Success Rate","currency_code":null,"unit":null,"unit_spacing":"none","format":"percent","latest_value":99.9,"latest_value_at":"2026-05-03T12:30:00Z","created_at":"2026-05-03T09:00:00Z","updated_at":"2026-05-03T12:30:00Z"}}`))
+		case "/metrics/prod.status/value":
+			_, _ = w.Write([]byte(`{"metric":{"public_id":"metric-2","key":"prod.status","label":"Production Status","currency_code":null,"unit":null,"unit_spacing":"none","format":"string","latest_value":"healthy","latest_value_at":"2026-05-03T12:30:00Z","created_at":"2026-05-03T09:00:00Z","updated_at":"2026-05-03T12:30:00Z"}}`))
 		default:
 			http.NotFound(w, r)
 		}
@@ -89,6 +96,9 @@ func TestNotificationsShortAndLegacyMethods(t *testing.T) {
 		}
 		if req.Authorization != "Bearer test-api-key" {
 			t.Fatalf("request %d auth mismatch: %s", i, req.Authorization)
+		}
+		if req.SDK != "go-v"+Version {
+			t.Fatalf("request %d sdk header mismatch: %s", i, req.SDK)
 		}
 		if !strings.Contains(req.Body, `"title":"Build Failed"`) {
 			t.Fatalf("request %d body missing title: %s", i, req.Body)
@@ -153,6 +163,9 @@ func TestLiveActivitiesShortAndLegacyMethods(t *testing.T) {
 		gotPaths = append(gotPaths, req.Path)
 		if req.Authorization != "Bearer test-api-key" {
 			t.Fatalf("auth mismatch: %s", req.Authorization)
+		}
+		if req.SDK != "go-v"+Version {
+			t.Fatalf("sdk header mismatch: %s", req.SDK)
 		}
 	}
 
@@ -232,6 +245,9 @@ func TestLiveActivitiesStreamShortAndLegacyMethods(t *testing.T) {
 		if req.Authorization != "Bearer test-api-key" {
 			t.Fatalf("auth mismatch: %s", req.Authorization)
 		}
+		if req.SDK != "go-v"+Version {
+			t.Fatalf("sdk header mismatch: %s", req.SDK)
+		}
 	}
 
 	gotJSON, _ := json.Marshal(gotPaths)
@@ -241,6 +257,70 @@ func TestLiveActivitiesStreamShortAndLegacyMethods(t *testing.T) {
 	}
 	if !strings.Contains((*requests)[0].Body, `"target":{"channels":["ops"]}`) {
 		t.Fatalf("stream body missing target channels: %s", (*requests)[0].Body)
+	}
+}
+
+func TestMetricsShortAndLegacyMethods(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	timestamp, err := time.Parse(time.RFC3339, "2026-05-03T12:30:00Z")
+	if err != nil {
+		t.Fatalf("failed to parse timestamp: %v", err)
+	}
+
+	if _, err := client.Metrics.Update("deploy.success_rate", MetricValueInput{
+		Value:     99.9,
+		Timestamp: &timestamp,
+	}); err != nil {
+		t.Fatalf("Metrics.Update returned error: %v", err)
+	}
+
+	if _, err := client.Metrics.Update("prod.status", "healthy"); err != nil {
+		t.Fatalf("Metrics.Update string returned error: %v", err)
+	}
+
+	value := float32(42)
+	request := *generated.NewMetricValueUpdateRequest(
+		generated.Float32AsMetricValueUpdateRequestValue(&value),
+	)
+	if _, err := client.Metrics.UpdateMetricValue("deploy.success_rate", request); err != nil {
+		t.Fatalf("UpdateMetricValue returned error: %v", err)
+	}
+
+	if len(*requests) != 3 {
+		t.Fatalf("expected 3 requests, got %d", len(*requests))
+	}
+
+	wantPaths := []string{
+		"/metrics/deploy.success_rate/value",
+		"/metrics/prod.status/value",
+		"/metrics/deploy.success_rate/value",
+	}
+	for i, req := range *requests {
+		if req.Path != wantPaths[i] {
+			t.Fatalf("request %d path mismatch: got=%s want=%s", i, req.Path, wantPaths[i])
+		}
+		if req.Authorization != "Bearer test-api-key" {
+			t.Fatalf("request %d auth mismatch: %s", i, req.Authorization)
+		}
+		if req.SDK != "go-v"+Version {
+			t.Fatalf("request %d sdk header mismatch: %s", i, req.SDK)
+		}
+	}
+
+	if !strings.Contains((*requests)[0].Body, `"value":99.9`) ||
+		!strings.Contains((*requests)[0].Body, `"timestamp":"2026-05-03T12:30:00Z"`) {
+		t.Fatalf("metric numeric body mismatch: %s", (*requests)[0].Body)
+	}
+	if !strings.Contains((*requests)[1].Body, `"value":"healthy"`) {
+		t.Fatalf("metric string body mismatch: %s", (*requests)[1].Body)
 	}
 }
 

@@ -14,6 +14,8 @@ var _ = (*LiveActivitiesService).UpdateLiveActivity
 var _ = (*LiveActivitiesService).EndLiveActivity
 var _ = (*LiveActivitiesService).ReconcileLiveActivityStream
 var _ = (*LiveActivitiesService).EndLiveActivityStream
+var _ = (*MetricsService).Update
+var _ = (*MetricsService).UpdateMetricValue
 
 func TestClientConstructs(t *testing.T) {
 	client, err := New("test-api-key")
@@ -27,6 +29,10 @@ func TestClientConstructs(t *testing.T) {
 
 	if client.LiveActivities == nil {
 		t.Fatal("expected LiveActivities service")
+	}
+
+	if client.Metrics == nil {
+		t.Fatal("expected Metrics service")
 	}
 }
 
