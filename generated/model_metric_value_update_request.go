@@ -12,7 +12,6 @@ package generated
 
 import (
 	"encoding/json"
-	"time"
 	"fmt"
 )
 
@@ -22,8 +21,6 @@ var _ MappedNullable = &MetricValueUpdateRequest{}
 // MetricValueUpdateRequest Latest metric value to display in widgets.
 type MetricValueUpdateRequest struct {
 	Value MetricValueUpdateRequestValue `json:"value"`
-	// Optional ISO timestamp for when the metric value was measured. Defaults to the server receive time.
-	Timestamp *time.Time `json:"timestamp,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -71,38 +68,6 @@ func (o *MetricValueUpdateRequest) SetValue(v MetricValueUpdateRequestValue) {
 	o.Value = v
 }
 
-// GetTimestamp returns the Timestamp field value if set, zero value otherwise.
-func (o *MetricValueUpdateRequest) GetTimestamp() time.Time {
-	if o == nil || IsNil(o.Timestamp) {
-		var ret time.Time
-		return ret
-	}
-	return *o.Timestamp
-}
-
-// GetTimestampOk returns a tuple with the Timestamp field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *MetricValueUpdateRequest) GetTimestampOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.Timestamp) {
-		return nil, false
-	}
-	return o.Timestamp, true
-}
-
-// HasTimestamp returns a boolean if a field has been set.
-func (o *MetricValueUpdateRequest) HasTimestamp() bool {
-	if o != nil && !IsNil(o.Timestamp) {
-		return true
-	}
-
-	return false
-}
-
-// SetTimestamp gets a reference to the given time.Time and assigns it to the Timestamp field.
-func (o *MetricValueUpdateRequest) SetTimestamp(v time.Time) {
-	o.Timestamp = &v
-}
-
 func (o MetricValueUpdateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -114,9 +79,6 @@ func (o MetricValueUpdateRequest) MarshalJSON() ([]byte, error) {
 func (o MetricValueUpdateRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["value"] = o.Value
-	if !IsNil(o.Timestamp) {
-		toSerialize["timestamp"] = o.Timestamp
-	}
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -161,7 +123,6 @@ func (o *MetricValueUpdateRequest) UnmarshalJSON(data []byte) (err error) {
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "value")
-		delete(additionalProperties, "timestamp")
 		o.AdditionalProperties = additionalProperties
 	}
 
