@@ -6,8 +6,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Title** | **string** |  | 
 **Subtitle** | Pointer to **string** |  | [optional] 
-**NumberOfSteps** | Pointer to **int32** | Use for segmented_progress, counter, timer, and countdown. | [optional] 
-**CurrentStep** | Pointer to **int32** | Use for segmented_progress, counter, timer, and countdown. | [optional] 
+**NumberOfSteps** | Pointer to **int32** | Use for segmented_progress. | [optional] 
+**CurrentStep** | Pointer to **int32** | Use for segmented_progress. | [optional] 
 **Percentage** | Pointer to **float32** | Use for progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
 **Value** | Pointer to **float32** | Current progress value. Use with upper_limit for progress. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for progress. | [optional] 
