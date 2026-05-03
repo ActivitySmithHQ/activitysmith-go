@@ -56,9 +56,9 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 				http.NotFound(w, r)
 			}
 		case "/metrics/deploy.success_rate/value":
-			_, _ = w.Write([]byte(`{"metric":{"public_id":"metric-1","key":"deploy.success_rate","label":"Success Rate","currency_code":null,"unit":null,"unit_spacing":"none","format":"percent","latest_value":99.9,"latest_value_at":"2026-05-03T12:30:00Z","created_at":"2026-05-03T09:00:00Z","updated_at":"2026-05-03T12:30:00Z"}}`))
+			_, _ = w.Write([]byte(`{"success":true}`))
 		case "/metrics/prod.status/value":
-			_, _ = w.Write([]byte(`{"metric":{"public_id":"metric-2","key":"prod.status","label":"Production Status","currency_code":null,"unit":null,"unit_spacing":"none","format":"string","latest_value":"healthy","latest_value_at":"2026-05-03T12:30:00Z","created_at":"2026-05-03T09:00:00Z","updated_at":"2026-05-03T12:30:00Z"}}`))
+			_, _ = w.Write([]byte(`{"success":true}`))
 		default:
 			http.NotFound(w, r)
 		}
