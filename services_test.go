@@ -68,6 +68,10 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 	return server, &requests
 }
 
+func activityMetricNumber(value float32) generated.ActivityMetricValue {
+	return generated.Float32AsActivityMetricValue(&value)
+}
+
 func TestNotificationsShortAndLegacyMethods(t *testing.T) {
 	server, requests := newAPITestServer(t)
 	defer server.Close()
@@ -200,8 +204,8 @@ func TestLiveActivitiesStreamShortAndLegacyMethods(t *testing.T) {
 		Subtitle: "prod-web-1",
 		Type:     "metrics",
 		Metrics: []generated.ActivityMetric{
-			{Label: "CPU", Value: 9, Unit: generated.PtrString("%")},
-			{Label: "MEM", Value: 45, Unit: generated.PtrString("%")},
+			{Label: "CPU", Value: activityMetricNumber(9), Unit: generated.PtrString("%")},
+			{Label: "MEM", Value: activityMetricNumber(45), Unit: generated.PtrString("%")},
 		},
 		Channels: []string{"ops"},
 	}
@@ -210,8 +214,8 @@ func TestLiveActivitiesStreamShortAndLegacyMethods(t *testing.T) {
 		Subtitle: "prod-web-1",
 		Type:     "metrics",
 		Metrics: []generated.ActivityMetric{
-			{Label: "CPU", Value: 7, Unit: generated.PtrString("%")},
-			{Label: "MEM", Value: 38, Unit: generated.PtrString("%")},
+			{Label: "CPU", Value: activityMetricNumber(7), Unit: generated.PtrString("%")},
+			{Label: "MEM", Value: activityMetricNumber(38), Unit: generated.PtrString("%")},
 		},
 	}
 
