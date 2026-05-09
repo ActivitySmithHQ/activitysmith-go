@@ -18,7 +18,7 @@ import (
 // checks if the ContentStateEnd type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateEnd{}
 
-// ContentStateEnd End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
+// ContentStateEnd End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
 type ContentStateEnd struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -32,7 +32,7 @@ type ContentStateEnd struct {
 	Value *float32 `json:"value,omitempty"`
 	// Maximum progress value. Use with value for type=progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
-	// Use for type=metrics.
+	// Use for type=metrics or type=stats.
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Optional. When omitted, the API uses the existing Live Activity type.
 	Type *string `json:"type,omitempty"`
