@@ -18,7 +18,7 @@ import (
 // checks if the StreamContentState type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &StreamContentState{}
 
-// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, and metrics types.
+// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and stats types.
 type StreamContentState struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -40,7 +40,7 @@ type StreamContentState struct {
 	StepColor *string `json:"step_color,omitempty"`
 	// Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step.
 	StepColors []string `json:"step_colors,omitempty"`
-	// Use for metrics activities.
+	// Use for metrics and stats activities.
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Optional. Seconds before the ended Live Activity is dismissed.
 	AutoDismissSeconds *int32 `json:"auto_dismiss_seconds,omitempty"`

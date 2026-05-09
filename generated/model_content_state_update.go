@@ -18,7 +18,7 @@ import (
 // checks if the ContentStateUpdate type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateUpdate{}
 
-// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
+// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
 type ContentStateUpdate struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -32,7 +32,7 @@ type ContentStateUpdate struct {
 	Value *float32 `json:"value,omitempty"`
 	// Maximum progress value. Use with value for type=progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
-	// Use for type=metrics.
+	// Use for type=metrics or type=stats.
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Optional. When omitted, the API uses the existing Live Activity type.
 	Type *string `json:"type,omitempty"`
