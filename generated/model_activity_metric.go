@@ -21,8 +21,10 @@ var _ MappedNullable = &ActivityMetric{}
 // ActivityMetric struct for ActivityMetric
 type ActivityMetric struct {
 	Label string `json:"label"`
-	Value float32 `json:"value"`
+	Value ActivityMetricValue `json:"value"`
 	Unit *string `json:"unit,omitempty"`
+	// Optional per-metric accent color for metrics and stats activities.
+	Color *string `json:"color,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -32,7 +34,7 @@ type _ActivityMetric ActivityMetric
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActivityMetric(label string, value float32) *ActivityMetric {
+func NewActivityMetric(label string, value ActivityMetricValue) *ActivityMetric {
 	this := ActivityMetric{}
 	this.Label = label
 	this.Value = value
@@ -72,9 +74,9 @@ func (o *ActivityMetric) SetLabel(v string) {
 }
 
 // GetValue returns the Value field value
-func (o *ActivityMetric) GetValue() float32 {
+func (o *ActivityMetric) GetValue() ActivityMetricValue {
 	if o == nil {
-		var ret float32
+		var ret ActivityMetricValue
 		return ret
 	}
 
@@ -83,7 +85,7 @@ func (o *ActivityMetric) GetValue() float32 {
 
 // GetValueOk returns a tuple with the Value field value
 // and a boolean to check if the value has been set.
-func (o *ActivityMetric) GetValueOk() (*float32, bool) {
+func (o *ActivityMetric) GetValueOk() (*ActivityMetricValue, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -91,7 +93,7 @@ func (o *ActivityMetric) GetValueOk() (*float32, bool) {
 }
 
 // SetValue sets field value
-func (o *ActivityMetric) SetValue(v float32) {
+func (o *ActivityMetric) SetValue(v ActivityMetricValue) {
 	o.Value = v
 }
 
@@ -127,6 +129,38 @@ func (o *ActivityMetric) SetUnit(v string) {
 	o.Unit = &v
 }
 
+// GetColor returns the Color field value if set, zero value otherwise.
+func (o *ActivityMetric) GetColor() string {
+	if o == nil || IsNil(o.Color) {
+		var ret string
+		return ret
+	}
+	return *o.Color
+}
+
+// GetColorOk returns a tuple with the Color field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActivityMetric) GetColorOk() (*string, bool) {
+	if o == nil || IsNil(o.Color) {
+		return nil, false
+	}
+	return o.Color, true
+}
+
+// HasColor returns a boolean if a field has been set.
+func (o *ActivityMetric) HasColor() bool {
+	if o != nil && !IsNil(o.Color) {
+		return true
+	}
+
+	return false
+}
+
+// SetColor gets a reference to the given string and assigns it to the Color field.
+func (o *ActivityMetric) SetColor(v string) {
+	o.Color = &v
+}
+
 func (o ActivityMetric) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -141,6 +175,9 @@ func (o ActivityMetric) ToMap() (map[string]interface{}, error) {
 	toSerialize["value"] = o.Value
 	if !IsNil(o.Unit) {
 		toSerialize["unit"] = o.Unit
+	}
+	if !IsNil(o.Color) {
+		toSerialize["color"] = o.Color
 	}
 
 	for key, value := range o.AdditionalProperties {
@@ -189,6 +226,7 @@ func (o *ActivityMetric) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "label")
 		delete(additionalProperties, "value")
 		delete(additionalProperties, "unit")
+		delete(additionalProperties, "color")
 		o.AdditionalProperties = additionalProperties
 	}
 
