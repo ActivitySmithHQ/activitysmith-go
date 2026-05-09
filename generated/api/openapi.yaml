@@ -155,6 +155,73 @@ paths:
       summary: Send a push notification
       tags:
       - PushNotifications
+      x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.notifications.send({
+            title: "New subscription 💸",
+            message: "Customer upgraded to Pro plan",
+          });
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.notifications.send({
+              "title": "New subscription 💸",
+              "message": "Customer upgraded to Pro plan",
+          })
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{\n\
+          \t\tTitle:   \"New subscription 💸\",\n\t\tMessage: \"Customer upgraded\
+          \ to Pro plan\",\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->notifications->send([
+              'title' => 'New subscription 💸',
+              'message' => 'Customer upgraded to Pro plan',
+          ]);
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.notifications.send(
+            title: "New subscription 💸",
+            message: "Customer upgraded to Pro plan"
+          )
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X POST "https://activitysmith.com/api/push-notification" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "title": "New subscription 💸",
+              "message": "Customer upgraded to Pro plan"
+            }'
   /live-activity/stream/{stream_key}:
     delete:
       description: "Use this endpoint when the process you are tracking is finished\
@@ -258,6 +325,119 @@ paths:
       summary: End a stream
       tags:
       - LiveActivities
+      x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.liveActivities.endStream("prod-web-1", {
+            content_state: {
+              title: "Server Health",
+              subtitle: "prod-web-1",
+              type: "metrics",
+              metrics: [
+                { label: "CPU", value: 7, unit: "%" },
+                { label: "MEM", value: 38, unit: "%" },
+              ],
+            },
+          });
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.live_activities.end_stream(
+              "prod-web-1",
+              {
+                  "content_state": {
+                      "title": "Server Health",
+                      "subtitle": "prod-web-1",
+                      "type": "metrics",
+                      "metrics": [
+                          {"label": "CPU", "value": 7, "unit": "%"},
+                          {"label": "MEM", "value": 38, "unit": "%"},
+                      ],
+                  },
+              },
+          )
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n\t\"github.com/ActivitySmithHQ/activitysmith-go/generated\"\n)\n\nfunc\
+          \ main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.EndStream(\"\
+          prod-web-1\", activitysmithsdk.LiveActivityStreamEndInput{\n\t\tTitle: \
+          \   \"Server Health\",\n\t\tSubtitle: \"prod-web-1\",\n\t\tType:     \"\
+          metrics\",\n\t\tMetrics: []generated.ActivityMetric{\n\t\t\t{Label: \"CPU\"\
+          , Value: 7, Unit: generated.PtrString(\"%\")},\n\t\t\t{Label: \"MEM\", Value:\
+          \ 38, Unit: generated.PtrString(\"%\")},\n\t\t},\n\t})\n\tif err != nil\
+          \ {\n\t\tlog.Fatal(err)\n\t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->liveActivities->endStream('prod-web-1', [
+              'content_state' => [
+                  'title' => 'Server Health',
+                  'subtitle' => 'prod-web-1',
+                  'type' => 'metrics',
+                  'metrics' => [
+                      ['label' => 'CPU', 'value' => 7, 'unit' => '%'],
+                      ['label' => 'MEM', 'value' => 38, 'unit' => '%'],
+                  ],
+              ],
+          ]);
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.live_activities.end_stream(
+            "prod-web-1",
+            {
+              content_state: {
+                title: "Server Health",
+                subtitle: "prod-web-1",
+                type: "metrics",
+                metrics: [
+                  { label: "CPU", value: 7, unit: "%" },
+                  { label: "MEM", value: 38, unit: "%" }
+                ]
+              }
+            }
+          )
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X DELETE "https://activitysmith.com/api/live-activity/stream/prod-web-1" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "content_state": {
+                "title": "Server Health",
+                "subtitle": "prod-web-1",
+                "type": "metrics",
+                "metrics": [
+                  { "label": "CPU", "value": 7, "unit": "%" },
+                  { "label": "MEM", "value": 38, "unit": "%" }
+                ]
+              }
+            }'
     put:
       description: "Use this endpoint when you want the easiest, stateless way to\
         \ trigger Live Activities. You do not need to store activity_id or manage\
@@ -407,12 +587,105 @@ paths:
       summary: Send a stream update
       tags:
       - LiveActivities
+      x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.liveActivities.stream("search-reindex", {
+            content_state: {
+              title: "Search Reindex",
+              subtitle: "catalog-v2",
+              type: "progress",
+              percentage: 42,
+            },
+          });
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.live_activities.stream(
+              "search-reindex",
+              {
+                  "content_state": {
+                      "title": "Search Reindex",
+                      "subtitle": "catalog-v2",
+                      "type": "progress",
+                      "percentage": 42,
+                  },
+              },
+          )
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.Stream(\"\
+          search-reindex\", activitysmithsdk.LiveActivityStreamInput{\n\t\tTitle:\
+          \      \"Search Reindex\",\n\t\tSubtitle:   \"catalog-v2\",\n\t\tType: \
+          \      \"progress\",\n\t\tPercentage: 42,\n\t})\n\tif err != nil {\n\t\t\
+          log.Fatal(err)\n\t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->liveActivities->stream('search-reindex', [
+              'content_state' => [
+                  'title' => 'Search Reindex',
+                  'subtitle' => 'catalog-v2',
+                  'type' => 'progress',
+                  'percentage' => 42,
+              ],
+          ]);
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.live_activities.stream(
+            "search-reindex",
+            content_state: {
+              title: "Search Reindex",
+              subtitle: "catalog-v2",
+              type: "progress",
+              percentage: 42
+            }
+          )
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X PUT "https://activitysmith.com/api/live-activity/stream/search-reindex" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "content_state": {
+                "title": "Search Reindex",
+                "subtitle": "catalog-v2",
+                "type": "progress",
+                "percentage": 42
+              }
+            }'
   /live-activity/start:
     post:
       description: "Starts a Live Activity on devices matched by API key scope and\
-        \ optional target channels. Supports segmented_progress, progress, and metrics\
-        \ activity types. For segmented_progress activities, number_of_steps can be\
-        \ changed later during update or end calls if the workflow changes."
+        \ optional target channels. Supports segmented_progress, progress, metrics,\
+        \ and stats activity types. For segmented_progress activities, number_of_steps\
+        \ can be changed later during update or end calls if the workflow changes."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -558,12 +831,120 @@ paths:
       summary: Start a Live Activity
       tags:
       - LiveActivities
+      x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          const start = await activitysmith.liveActivities.start({
+            content_state: {
+              title: "Nightly database backup",
+              subtitle: "create snapshot",
+              number_of_steps: 3,
+              current_step: 1,
+              type: "segmented_progress",
+              color: "yellow",
+            },
+          });
+
+          const activityId = start.activity_id;
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          start = activitysmith.live_activities.start({
+              "content_state": {
+                  "title": "Nightly database backup",
+                  "subtitle": "create snapshot",
+                  "number_of_steps": 3,
+                  "current_step": 1,
+                  "type": "segmented_progress",
+                  "color": "yellow",
+              },
+          })
+
+          activity_id = start.activity_id
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tstart, err := activitysmith.LiveActivities.Start(activitysmithsdk.LiveActivityStartInput{\n\
+          \t\tTitle:         \"Nightly database backup\",\n\t\tSubtitle:      \"create\
+          \ snapshot\",\n\t\tNumberOfSteps: 3,\n\t\tCurrentStep:   1,\n\t\tType: \
+          \         \"segmented_progress\",\n\t\tColor:         \"yellow\",\n\t})\n\
+          \tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tactivityID := start.GetActivityId()\n\
+          \t_ = activityID\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $start = $activitysmith->liveActivities->start([
+              'content_state' => [
+                  'title' => 'Nightly database backup',
+                  'subtitle' => 'create snapshot',
+                  'number_of_steps' => 3,
+                  'current_step' => 1,
+                  'type' => 'segmented_progress',
+                  'color' => 'yellow',
+              ],
+          ]);
+
+          $activityId = $start->getActivityId();
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          start = activitysmith.live_activities.start(
+            content_state: {
+              title: "Nightly database backup",
+              subtitle: "create snapshot",
+              number_of_steps: 3,
+              current_step: 1,
+              type: "segmented_progress",
+              color: "yellow"
+            }
+          )
+
+          activity_id = start.activity_id
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X POST "https://activitysmith.com/api/live-activity/start" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "content_state": {
+                "title": "Nightly database backup",
+                "subtitle": "create snapshot",
+                "number_of_steps": 3,
+                "current_step": 1,
+                "type": "segmented_progress",
+                "color": "yellow"
+              }
+            }'
   /live-activity/update:
     post:
       description: "Updates an existing Live Activity. If the per-activity token is\
         \ not registered yet, the update is queued. Supports segmented_progress, progress,\
-        \ and metrics activity types. For segmented_progress activities, you can increase\
-        \ or decrease number_of_steps here as the workflow changes."
+        \ metrics, and stats activity types. For segmented_progress activities, you\
+        \ can increase or decrease number_of_steps here as the workflow changes."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -658,10 +1039,104 @@ paths:
       summary: Update a Live Activity
       tags:
       - LiveActivities
+      x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.liveActivities.update({
+            activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+            content_state: {
+              title: "Nightly database backup",
+              subtitle: "upload archive",
+              number_of_steps: 3,
+              current_step: 2,
+            },
+          });
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.live_activities.update({
+              "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+              "content_state": {
+                  "title": "Nightly database backup",
+                  "subtitle": "upload archive",
+                  "number_of_steps": 3,
+                  "current_step": 2,
+              },
+          })
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.Update(activitysmithsdk.LiveActivityUpdateInput{\n\
+          \t\tActivityID:    \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n\t\tTitle:   \
+          \      \"Nightly database backup\",\n\t\tSubtitle:      \"upload archive\"\
+          ,\n\t\tNumberOfSteps: 3,\n\t\tCurrentStep:   2,\n\t})\n\tif err != nil {\n\
+          \t\tlog.Fatal(err)\n\t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->liveActivities->update([
+              'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+              'content_state' => [
+                  'title' => 'Nightly database backup',
+                  'subtitle' => 'upload archive',
+                  'number_of_steps' => 3,
+                  'current_step' => 2,
+              ],
+          ]);
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.live_activities.update(
+            activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+            content_state: {
+              title: "Nightly database backup",
+              subtitle: "upload archive",
+              number_of_steps: 3,
+              current_step: 2
+            }
+          )
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X POST "https://activitysmith.com/api/live-activity/update" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+              "content_state": {
+                "title": "Nightly database backup",
+                "subtitle": "upload archive",
+                "number_of_steps": 3,
+                "current_step": 2
+              }
+            }'
   /live-activity/end:
     post:
       description: "Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
-        \ progress, and metrics activity types. For segmented_progress activities,\
+        \ progress, metrics, and stats activity types. For segmented_progress activities,\
         \ you can send the latest number_of_steps here if the workflow changed after\
         \ start."
       operationId: endLiveActivity
@@ -757,6 +1232,106 @@ paths:
       summary: End a Live Activity
       tags:
       - LiveActivities
+      x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.liveActivities.end({
+            activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+            content_state: {
+              title: "Nightly database backup",
+              subtitle: "verify restore",
+              number_of_steps: 3,
+              current_step: 3,
+              auto_dismiss_minutes: 2,
+            },
+          });
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.live_activities.end({
+              "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+              "content_state": {
+                  "title": "Nightly database backup",
+                  "subtitle": "verify restore",
+                  "number_of_steps": 3,
+                  "current_step": 3,
+                  "auto_dismiss_minutes": 2,
+              },
+          })
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.LiveActivities.End(activitysmithsdk.LiveActivityEndInput{\n\
+          \t\tActivityID:         \"pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW\",\n\t\tTitle:\
+          \              \"Nightly database backup\",\n\t\tSubtitle:           \"\
+          verify restore\",\n\t\tNumberOfSteps:      3,\n\t\tCurrentStep:        3,\n\
+          \t\tAutoDismissMinutes: 2,\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\
+          \t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->liveActivities->end([
+              'activity_id' => 'pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW',
+              'content_state' => [
+                  'title' => 'Nightly database backup',
+                  'subtitle' => 'verify restore',
+                  'number_of_steps' => 3,
+                  'current_step' => 3,
+                  'auto_dismiss_minutes' => 2,
+              ],
+          ]);
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.live_activities.end(
+            activity_id: "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+            content_state: {
+              title: "Nightly database backup",
+              subtitle: "verify restore",
+              number_of_steps: 3,
+              current_step: 3,
+              auto_dismiss_minutes: 2
+            }
+          )
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X POST "https://activitysmith.com/api/live-activity/end" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "activity_id": "pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW",
+              "content_state": {
+                "title": "Nightly database backup",
+                "subtitle": "verify restore",
+                "number_of_steps": 3,
+                "current_step": 3,
+                "auto_dismiss_minutes": 2
+              }
+            }'
   /metrics/{key}/value:
     post:
       description: "Updates the latest value for a metric displayed in ActivitySmith\
@@ -786,10 +1361,6 @@ paths:
               string:
                 value:
                   value: healthy
-              timestamp:
-                value:
-                  value: 99.9
-                  timestamp: 2026-05-03T12:30:00.000Z
             schema:
               $ref: '#/components/schemas/MetricValueUpdateRequest'
         required: true
@@ -811,12 +1382,9 @@ paths:
                 invalid_value:
                   value:
                     error: value must be a finite number
-                invalid_timestamp:
-                  value:
-                    error: timestamp must be a valid ISO date
               schema:
                 $ref: '#/components/schemas/MetricError'
-          description: "Bad request (invalid key, value, or timestamp)"
+          description: Bad request (invalid key or value)
         "404":
           content:
             application/json:
@@ -841,15 +1409,67 @@ paths:
       summary: Update a widget metric value
       tags:
       - Metrics
+      x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.metrics.update("deploy.success_rate", 99.9);
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.metrics.update("deploy.success_rate", 99.9)
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.Metrics.Update(\"\
+          deploy.success_rate\", 99.9)\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t\
+          }\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->metrics->update('deploy.success_rate', 99.9);
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.metrics.update("deploy.success_rate", 99.9)
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X POST "https://activitysmith.com/api/metrics/deploy.success_rate/value" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{ "value": 99.9 }'
 components:
   schemas:
     ContentStateStart:
       additionalProperties: true
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
-        \ or value with upper_limit. For metrics include a non-empty metrics array.\
-        \ For segmented_progress, number_of_steps is not locked and can be changed\
-        \ in later update or end calls."
+        \ or value with upper_limit. For metrics and stats include a non-empty metrics\
+        \ array. For segmented_progress, number_of_steps is not locked and can be\
+        \ changed in later update or end calls."
       example:
         color: blue
         step_color: lime
@@ -860,6 +1480,15 @@ components:
         percentage: 14.658129805029452
         upper_limit: 5.637376656633329
         metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
         - unit: unit
           label: label
           value: 23.02135886934765
@@ -899,9 +1528,10 @@ components:
           description: Maximum progress value. Use with value for type=progress.
           type: number
         metrics:
-          description: Use for type=metrics.
+          description: Use for type=metrics or type=stats.
           items:
             $ref: '#/components/schemas/ActivityMetric'
+          maxItems: 8
           minItems: 1
           type: array
         type:
@@ -909,6 +1539,7 @@ components:
           - segmented_progress
           - progress
           - metrics
+          - stats
           type: string
         color:
           default: blue
@@ -961,9 +1592,9 @@ components:
       additionalProperties: true
       description: Update payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics include a non-empty metrics array. Type is optional
-        when updating an existing activity. You can increase or decrease number_of_steps
-        during updates.
+        upper_limit. For metrics and stats include a non-empty metrics array. Type
+        is optional when updating an existing activity. You can increase or decrease
+        number_of_steps during updates.
       example:
         color: blue
         step_color: lime
@@ -974,6 +1605,15 @@ components:
         percentage: 14.658129805029452
         upper_limit: 5.637376656633329
         metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
         - unit: unit
           label: label
           value: 23.02135886934765
@@ -1012,9 +1652,10 @@ components:
           description: Maximum progress value. Use with value for type=progress.
           type: number
         metrics:
-          description: Use for type=metrics.
+          description: Use for type=metrics or type=stats.
           items:
             $ref: '#/components/schemas/ActivityMetric'
+          maxItems: 8
           minItems: 1
           type: array
         type:
@@ -1024,6 +1665,7 @@ components:
           - segmented_progress
           - progress
           - metrics
+          - stats
           type: string
         color:
           default: blue
@@ -1075,8 +1717,8 @@ components:
       additionalProperties: true
       description: End payload requires title. For segmented_progress include current_step
         and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics include a non-empty metrics array. Type is optional
-        when ending an existing activity. You can send an updated number_of_steps
+        upper_limit. For metrics and stats include a non-empty metrics array. Type
+        is optional when ending an existing activity. You can send an updated number_of_steps
         here if the workflow changed after start.
       example:
         color: blue
@@ -1091,6 +1733,15 @@ components:
         subtitle: subtitle
         percentage: 14.658129805029452
         metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
         - unit: unit
           label: label
           value: 23.02135886934765
@@ -1128,9 +1779,10 @@ components:
           description: Maximum progress value. Use with value for type=progress.
           type: number
         metrics:
-          description: Use for type=metrics.
+          description: Use for type=metrics or type=stats.
           items:
             $ref: '#/components/schemas/ActivityMetric'
+          maxItems: 8
           minItems: 1
           type: array
         type:
@@ -1140,6 +1792,7 @@ components:
           - segmented_progress
           - progress
           - metrics
+          - stats
           type: string
         color:
           default: blue
@@ -1198,7 +1851,7 @@ components:
       additionalProperties: true
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
-        \ Supports segmented_progress, progress, and metrics types."
+        \ Supports segmented_progress, progress, metrics, and stats types."
       example:
         color: blue
         step_color: lime
@@ -1212,6 +1865,15 @@ components:
         subtitle: subtitle
         percentage: 14.658129805029452
         metrics:
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
+        - unit: unit
+          label: label
+          value: 23.02135886934765
         - unit: unit
           label: label
           value: 23.02135886934765
@@ -1254,6 +1916,7 @@ components:
           - segmented_progress
           - progress
           - metrics
+          - stats
           type: string
         color:
           default: blue
@@ -1300,9 +1963,10 @@ components:
             type: string
           type: array
         metrics:
-          description: Use for metrics activities.
+          description: Use for metrics and stats activities.
           items:
             $ref: '#/components/schemas/ActivityMetric'
+          maxItems: 8
           minItems: 1
           type: array
         auto_dismiss_seconds:
@@ -1560,6 +2224,15 @@ components:
           - unit: unit
             label: label
             value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
           title: title
           number_of_steps: 1
           type: segmented_progress
@@ -1642,6 +2315,15 @@ components:
           subtitle: subtitle
           percentage: 14.658129805029452
           metrics:
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
           - unit: unit
             label: label
             value: 23.02135886934765
@@ -1762,6 +2444,15 @@ components:
           - unit: unit
             label: label
             value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
           number_of_steps: 1
           auto_dismiss_seconds: 0
           value: 5.962133916683182
@@ -1823,15 +2514,9 @@ components:
       description: Latest metric value to display in widgets.
       example:
         value: 0.8008281904610115
-        timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         value:
           $ref: '#/components/schemas/MetricValueUpdateRequest_value'
-        timestamp:
-          description: Optional ISO timestamp for when the metric value was measured.
-            Defaults to the server receive time.
-          format: date-time
-          type: string
       required:
       - value
     MetricValueUpdateResponse:
@@ -1964,6 +2649,15 @@ components:
           - unit: unit
             label: label
             value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
           title: title
           number_of_steps: 1
           type: segmented_progress
@@ -2029,6 +2723,15 @@ components:
           subtitle: subtitle
           percentage: 14.658129805029452
           metrics:
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
+          - unit: unit
+            label: label
+            value: 23.02135886934765
           - unit: unit
             label: label
             value: 23.02135886934765
