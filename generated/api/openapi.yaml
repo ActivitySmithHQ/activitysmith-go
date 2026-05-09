@@ -1481,20 +1481,25 @@ components:
         upper_limit: 5.637376656633329
         metrics:
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         title: title
         number_of_steps: 1
         type: segmented_progress
@@ -1606,20 +1611,25 @@ components:
         upper_limit: 5.637376656633329
         metrics:
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         title: title
         number_of_steps: 1
         type: segmented_progress
@@ -1734,20 +1744,25 @@ components:
         percentage: 14.658129805029452
         metrics:
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         number_of_steps: 1
         value: 5.962133916683182
         current_step: 1
@@ -1866,20 +1881,25 @@ components:
         percentage: 14.658129805029452
         metrics:
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         - unit: unit
+          color: lime
           label: label
-          value: 23.02135886934765
+          value: 0.23021358869347652
         number_of_steps: 1
         auto_dismiss_seconds: 0
         value: 5.962133916683182
@@ -1983,17 +2003,29 @@ components:
       additionalProperties: true
       example:
         unit: unit
+        color: lime
         label: label
-        value: 23.02135886934765
+        value: 0.23021358869347652
       properties:
         label:
           minLength: 1
           type: string
         value:
-          maximum: 100
-          minimum: 0
-          type: number
+          $ref: '#/components/schemas/ActivityMetric_value'
         unit:
+          type: string
+        color:
+          description: Optional per-metric accent color for metrics and stats activities.
+          enum:
+          - lime
+          - green
+          - cyan
+          - blue
+          - purple
+          - magenta
+          - red
+          - orange
+          - yellow
           type: string
       required:
       - label
@@ -2219,20 +2251,25 @@ components:
           upper_limit: 5.637376656633329
           metrics:
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           title: title
           number_of_steps: 1
           type: segmented_progress
@@ -2316,20 +2353,25 @@ components:
           percentage: 14.658129805029452
           metrics:
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           number_of_steps: 1
           auto_dismiss_seconds: 0
           value: 5.962133916683182
@@ -2439,20 +2481,25 @@ components:
           percentage: 14.658129805029452
           metrics:
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           number_of_steps: 1
           auto_dismiss_seconds: 0
           value: 5.962133916683182
@@ -2650,20 +2697,25 @@ components:
           upper_limit: 5.637376656633329
           metrics:
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           title: title
           number_of_steps: 1
           type: segmented_progress
@@ -2730,20 +2782,25 @@ components:
           percentage: 14.658129805029452
           metrics:
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           - unit: unit
+            color: lime
             label: label
-            value: 23.02135886934765
+            value: 0.23021358869347652
           number_of_steps: 1
           value: 5.962133916683182
           current_step: 1
@@ -2794,6 +2851,13 @@ components:
       oneOf:
       - $ref: '#/components/schemas/RateLimitError'
       - $ref: '#/components/schemas/LiveActivityLimitError'
+    ActivityMetric_value:
+      oneOf:
+      - minimum: 0
+        type: number
+      - maxLength: 64
+        minLength: 1
+        type: string
     MetricValueUpdateRequest_value:
       oneOf:
       - type: number
