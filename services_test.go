@@ -571,6 +571,77 @@ func TestProgressInputsSerializeProgressFieldsWithoutSegmentedFields(t *testing.
 	}
 }
 
+func TestStatsInputsSerializeMetricValuesAndColors(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	revenue, err := NewActivityMetric("Revenue", "$2430", WithActivityMetricColor("blue"))
+	if err != nil {
+		t.Fatalf("NewActivityMetric returned error: %v", err)
+	}
+	orders, err := NewActivityMetric("Orders", 37, WithActivityMetricColor("green"))
+	if err != nil {
+		t.Fatalf("NewActivityMetric returned error: %v", err)
+	}
+
+	startInput := LiveActivityStartInput{
+		Title:    "Sales",
+		Subtitle: "last hour",
+		Type:     LiveActivityTypeStats,
+		Metrics:  []generated.ActivityMetric{revenue, orders},
+	}
+	updateInput := LiveActivityUpdateInput{
+		ActivityID: "act-1",
+		Title:      "Sales",
+		Type:       LiveActivityTypeStats,
+		Metrics:    []generated.ActivityMetric{revenue},
+	}
+	endInput := LiveActivityEndInput{
+		ActivityID: "act-1",
+		Title:      "Sales",
+		Type:       LiveActivityTypeStats,
+		Metrics:    []generated.ActivityMetric{orders},
+	}
+
+	if _, err := client.LiveActivities.Start(startInput); err != nil {
+		t.Fatalf("Start returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.Update(updateInput); err != nil {
+		t.Fatalf("Update returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.End(endInput); err != nil {
+		t.Fatalf("End returned error: %v", err)
+	}
+
+	if len(*requests) != 3 {
+		t.Fatalf("expected 3 requests, got %d", len(*requests))
+	}
+
+	startBody := (*requests)[0].Body
+	if !strings.Contains(startBody, `"type":"stats"`) {
+		t.Fatalf("start body missing stats type: %s", startBody)
+	}
+	if !strings.Contains(startBody, `"value":"$2430"`) {
+		t.Fatalf("start body missing string metric value: %s", startBody)
+	}
+	if !strings.Contains(startBody, `"color":"blue"`) || !strings.Contains(startBody, `"color":"green"`) {
+		t.Fatalf("start body missing metric colors: %s", startBody)
+	}
+
+	if !strings.Contains((*requests)[1].Body, `"metrics"`) {
+		t.Fatalf("update body missing metrics: %s", (*requests)[1].Body)
+	}
+	if !strings.Contains((*requests)[2].Body, `"metrics"`) {
+		t.Fatalf("end body missing metrics: %s", (*requests)[2].Body)
+	}
+}
+
 func TestServicesRejectUnsupportedInputTypes(t *testing.T) {
 	server, _ := newAPITestServer(t)
 	defer server.Close()

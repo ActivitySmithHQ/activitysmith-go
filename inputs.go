@@ -1,10 +1,74 @@
 package activitysmith
 
 import (
+	"fmt"
 	"maps"
 
 	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
+
+const (
+	LiveActivityTypeSegmentedProgress = "segmented_progress"
+	LiveActivityTypeProgress          = "progress"
+	LiveActivityTypeMetrics           = "metrics"
+	LiveActivityTypeStats             = "stats"
+)
+
+type ActivityMetricOption func(*generated.ActivityMetric)
+
+func NewActivityMetric(label string, value any, options ...ActivityMetricOption) (generated.ActivityMetric, error) {
+	metricValue, err := activityMetricValue(value)
+	if err != nil {
+		return generated.ActivityMetric{}, err
+	}
+
+	metric := generated.ActivityMetric{
+		Label: label,
+		Value: metricValue,
+	}
+	for _, option := range options {
+		option(&metric)
+	}
+	return metric, nil
+}
+
+func WithActivityMetricUnit(unit string) ActivityMetricOption {
+	return func(metric *generated.ActivityMetric) {
+		metric.SetUnit(unit)
+	}
+}
+
+func WithActivityMetricColor(color string) ActivityMetricOption {
+	return func(metric *generated.ActivityMetric) {
+		metric.SetColor(color)
+	}
+}
+
+func activityMetricValue(input any) (generated.ActivityMetricValue, error) {
+	switch v := input.(type) {
+	case string:
+		return generated.StringAsActivityMetricValue(&v), nil
+	case float32:
+		return generated.Float32AsActivityMetricValue(&v), nil
+	case float64:
+		value := float32(v)
+		return generated.Float32AsActivityMetricValue(&value), nil
+	case int:
+		value := float32(v)
+		return generated.Float32AsActivityMetricValue(&value), nil
+	case int32:
+		value := float32(v)
+		return generated.Float32AsActivityMetricValue(&value), nil
+	case int64:
+		value := float32(v)
+		return generated.Float32AsActivityMetricValue(&value), nil
+	default:
+		return generated.ActivityMetricValue{}, fmt.Errorf(
+			"activitysmith: unsupported activity metric value input type %T",
+			input,
+		)
+	}
+}
 
 // PushNotificationInput is a handwritten DX input with plain optional values.
 type PushNotificationInput struct {
@@ -78,6 +142,7 @@ type LiveActivityStartInput struct {
 	Subtitle      string
 	Color         string
 	StepColor     string
+	Metrics       []generated.ActivityMetric
 	Action        *LiveActivityActionInput
 	Channels      []string
 
@@ -114,6 +179,9 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	}
 	if in.StepColor != "" {
 		req.ContentState.SetStepColor(in.StepColor)
+	}
+	if len(in.Metrics) > 0 {
+		req.ContentState.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
@@ -170,6 +238,7 @@ type LiveActivityUpdateInput struct {
 	Color         string
 	StepColor     string
 	NumberOfSteps int32
+	Metrics       []generated.ActivityMetric
 	Action        *LiveActivityActionInput
 
 	numberOfStepsSet bool
@@ -209,6 +278,9 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	}
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
+	}
+	if len(in.Metrics) > 0 {
+		req.ContentState.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
@@ -263,6 +335,7 @@ type LiveActivityEndInput struct {
 	StepColor          string
 	NumberOfSteps      int32
 	AutoDismissMinutes int32
+	Metrics            []generated.ActivityMetric
 	Action             *LiveActivityActionInput
 
 	numberOfStepsSet      bool
@@ -306,6 +379,9 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	}
 	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
 		req.ContentState.SetAutoDismissMinutes(in.AutoDismissMinutes)
+	}
+	if len(in.Metrics) > 0 {
+		req.ContentState.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
