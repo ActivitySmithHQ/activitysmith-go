@@ -17,6 +17,7 @@ See [API reference](https://activitysmith.com/docs/api-reference/introduction).
 - [Live Activities](#live-activities)
   - [Simple: Let ActivitySmith manage the Live Activity for you](#simple-let-activitysmith-manage-the-live-activity-for-you)
   - [Advanced: Full lifecycle control](#advanced-full-lifecycle-control)
+  - [Stats Type](#stats-type)
   - [Metrics Type](#metrics-type)
   - [Segmented Progress Type](#segmented-progress-type)
   - [Progress Type](#progress-type)
@@ -154,8 +155,9 @@ if err != nil {
   <img src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png" alt="Metrics Live Activity screenshot" width="680" />
 </p>
 
-There are three types of Live Activities:
+There are four types of Live Activities:
 
+- `stats`: best for compact business or product stats like revenue, orders, conversion, and average order value
 - `metrics`: best for live operational stats like server CPU and memory, queue depth, or replica lag
 - `segmented_progress`: best for step-based workflows like deployments, backups, and ETL pipelines
 - `progress`: best for continuous jobs like uploads, reindexes, and long-running migrations tracked as a percentage
@@ -181,6 +183,33 @@ Use a stable `streamKey` to identify the system or workflow you are tracking,
 such as a server, deployment, build pipeline, cron job, or charging session.
 This is especially useful for cron jobs and other scheduled tasks where you do
 not want to store `activityID` between runs.
+
+#### Stats
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats stream example" width="680" />
+</p>
+
+```go
+streamInput := activitysmithsdk.LiveActivityStreamInput{
+	Title:    "Sales",
+	Subtitle: "last hour",
+	Type:     "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+	},
+}
+
+status, err := activitysmith.LiveActivities.Stream("sales-hourly", streamInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
 
 #### Metrics
 
@@ -291,6 +320,92 @@ Use these methods when you want to manage the Live Activity lifecycle yourself:
 2. Save the returned `activityID`.
 3. Call `activitysmith.LiveActivities.Update(...)` as progress changes.
 4. Call `activitysmith.LiveActivities.End(...)` when the work is finished.
+
+### Stats Type
+
+Keep your key numbers on your Lock Screen. `stats` fits 1 to 8 labeled values,
+such as revenue, orders, conversion, uptime, or any other business metric you
+want visible at a glance. Each metric can use a formatted string or number as
+its `Value`. Add `Color` to a metric to show an accent dot next to its label;
+omit `Color` to show the label without a dot.
+
+#### Start
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats Live Activity with sales revenue, orders, conversion, and average order value" width="680" />
+</p>
+
+```go
+startInput := activitysmithsdk.LiveActivityStartInput{
+	Title:    "Sales",
+	Subtitle: "last hour",
+	Type:     "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+	},
+}
+
+start, err := activitysmith.LiveActivities.Start(startInput)
+if err != nil {
+	log.Fatal(err)
+}
+
+activityID := start.GetActivityId()
+```
+
+#### Update
+
+```go
+updateInput := activitysmithsdk.LiveActivityUpdateInput{
+	ActivityID: activityID,
+	Title:      "Sales",
+	Subtitle:   "last hour",
+	Type:       "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$3180", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "51", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "5.2%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$62.35", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$126", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "24", Color: generated.PtrString("cyan")},
+	},
+}
+
+_, err := activitysmith.LiveActivities.Update(updateInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+#### End
+
+```go
+endInput := activitysmithsdk.LiveActivityEndInput{
+	ActivityID: activityID,
+	Title:      "Sales",
+	Subtitle:   "last hour",
+	Type:       "stats",
+	Metrics: []generated.ActivityMetric{
+		{Label: "Revenue", Value: "$3460", Color: generated.PtrString("blue")},
+		{Label: "Orders", Value: "58", Color: generated.PtrString("green")},
+		{Label: "Conversion", Value: "5.4%", Color: generated.PtrString("magenta")},
+		{Label: "Avg Order", Value: "$59.66", Color: generated.PtrString("yellow")},
+		{Label: "Refunds", Value: "$92", Color: generated.PtrString("red")},
+		{Label: "New Buyers", Value: "31", Color: generated.PtrString("cyan")},
+	},
+	AutoDismissMinutes: 2,
+}
+
+_, err := activitysmith.LiveActivities.End(endInput)
+if err != nil {
+	log.Fatal(err)
+}
+```
 
 ### Metrics Type
 
