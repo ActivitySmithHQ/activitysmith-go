@@ -439,13 +439,9 @@ paths:
               }
             }'
     put:
-      description: "Use this endpoint when you want the easiest, stateless way to\
-        \ trigger Live Activities. You do not need to store activity_id or manage\
-        \ the Live Activity lifecycle yourself. Send the latest state for a stable\
-        \ stream_key and ActivitySmith will handle the rest for you: if there is no\
-        \ Live Activity yet, it starts one; if there is already one for this stream,\
-        \ it updates it. If you need direct lifecycle control, use /live-activity/start,\
-        \ /live-activity/update, and /live-activity/end instead."
+      description: "Use a stable stream_key for each ongoing thing you want to show\
+        \ as a Live Activity. Send the latest content_state whenever it changes, and\
+        \ ActivitySmith will keep the Live Activity in sync."
       operationId: reconcileLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -584,9 +580,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
-      summary: Send a stream update
+      summary: Start a new Live Activity or update an existing one
       tags:
       - LiveActivities
+      x-activitysmith-lifecycle: recommended_managed
       x-codeSamples:
       - lang: javascript
         label: Node
@@ -682,10 +679,14 @@ paths:
             }'
   /live-activity/start:
     post:
-      description: "Starts a Live Activity on devices matched by API key scope and\
-        \ optional target channels. Supports segmented_progress, progress, metrics,\
-        \ and stats activity types. For segmented_progress activities, number_of_steps\
-        \ can be changed later during update or end calls if the workflow changes."
+      description: "Legacy manual lifecycle endpoint. For new integrations, use PUT\
+        \ /live-activity/stream/{stream_key} so ActivitySmith can manage start, update,\
+        \ rotation, and end state for you. This endpoint remains supported for existing\
+        \ integrations and advanced lifecycle control. Starts a Live Activity on devices\
+        \ matched by API key scope and optional target channels. Supports segmented_progress,\
+        \ progress, metrics, and stats activity types. For segmented_progress activities,\
+        \ number_of_steps can be changed later during update or end calls if the workflow\
+        \ changes."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -828,9 +829,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
-      summary: Start a Live Activity
+      summary: Start a Live Activity (legacy manual lifecycle)
       tags:
       - LiveActivities
+      x-activitysmith-lifecycle: legacy_manual
+      x-activitysmith-recommended-alternative: "PUT /live-activity/stream/{stream_key}"
       x-codeSamples:
       - lang: javascript
         label: Node
@@ -941,10 +944,14 @@ paths:
             }'
   /live-activity/update:
     post:
-      description: "Updates an existing Live Activity. If the per-activity token is\
-        \ not registered yet, the update is queued. Supports segmented_progress, progress,\
-        \ metrics, and stats activity types. For segmented_progress activities, you\
-        \ can increase or decrease number_of_steps here as the workflow changes."
+      description: "Legacy manual lifecycle endpoint. For new integrations, use PUT\
+        \ /live-activity/stream/{stream_key} so ActivitySmith can manage start, update,\
+        \ rotation, and end state for you. This endpoint remains supported for existing\
+        \ integrations and advanced lifecycle control. Updates an existing Live Activity.\
+        \ If the per-activity token is not registered yet, the update is queued. Supports\
+        \ segmented_progress, progress, metrics, and stats activity types. For segmented_progress\
+        \ activities, you can increase or decrease number_of_steps here as the workflow\
+        \ changes."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -1036,9 +1043,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
-      summary: Update a Live Activity
+      summary: Update a Live Activity (legacy manual lifecycle)
       tags:
       - LiveActivities
+      x-activitysmith-lifecycle: legacy_manual
+      x-activitysmith-recommended-alternative: "PUT /live-activity/stream/{stream_key}"
       x-codeSamples:
       - lang: javascript
         label: Node
@@ -1135,7 +1144,10 @@ paths:
             }'
   /live-activity/end:
     post:
-      description: "Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
+      description: "Legacy manual lifecycle endpoint. For new integrations, use DELETE\
+        \ /live-activity/stream/{stream_key} to end a managed Live Activity stream.\
+        \ This endpoint remains supported for existing integrations and advanced lifecycle\
+        \ control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
         \ progress, metrics, and stats activity types. For segmented_progress activities,\
         \ you can send the latest number_of_steps here if the workflow changed after\
         \ start."
@@ -1229,9 +1241,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
-      summary: End a Live Activity
+      summary: End a Live Activity (legacy manual lifecycle)
       tags:
       - LiveActivities
+      x-activitysmith-lifecycle: legacy_manual
+      x-activitysmith-recommended-alternative: "DELETE /live-activity/stream/{stream_key}"
       x-codeSamples:
       - lang: javascript
         label: Node

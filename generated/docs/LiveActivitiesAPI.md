@@ -4,11 +4,11 @@ All URIs are relative to *https://activitysmith.com/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**EndLiveActivity**](LiveActivitiesAPI.md#EndLiveActivity) | **Post** /live-activity/end | End a Live Activity
+[**EndLiveActivity**](LiveActivitiesAPI.md#EndLiveActivity) | **Post** /live-activity/end | End a Live Activity (legacy manual lifecycle)
 [**EndLiveActivityStream**](LiveActivitiesAPI.md#EndLiveActivityStream) | **Delete** /live-activity/stream/{stream_key} | End a stream
-[**ReconcileLiveActivityStream**](LiveActivitiesAPI.md#ReconcileLiveActivityStream) | **Put** /live-activity/stream/{stream_key} | Send a stream update
-[**StartLiveActivity**](LiveActivitiesAPI.md#StartLiveActivity) | **Post** /live-activity/start | Start a Live Activity
-[**UpdateLiveActivity**](LiveActivitiesAPI.md#UpdateLiveActivity) | **Post** /live-activity/update | Update a Live Activity
+[**ReconcileLiveActivityStream**](LiveActivitiesAPI.md#ReconcileLiveActivityStream) | **Put** /live-activity/stream/{stream_key} | Start a new Live Activity or update an existing one
+[**StartLiveActivity**](LiveActivitiesAPI.md#StartLiveActivity) | **Post** /live-activity/start | Start a Live Activity (legacy manual lifecycle)
+[**UpdateLiveActivity**](LiveActivitiesAPI.md#UpdateLiveActivity) | **Post** /live-activity/update | Update a Live Activity (legacy manual lifecycle)
 
 
 
@@ -16,7 +16,7 @@ Method | HTTP request | Description
 
 > LiveActivityEndResponse EndLiveActivity(ctx).LiveActivityEndRequest(liveActivityEndRequest).Execute()
 
-End a Live Activity
+End a Live Activity (legacy manual lifecycle)
 
 
 
@@ -154,7 +154,7 @@ Name | Type | Description  | Notes
 
 > LiveActivityStreamPutResponse ReconcileLiveActivityStream(ctx, streamKey).LiveActivityStreamRequest(liveActivityStreamRequest).Execute()
 
-Send a stream update
+Start a new Live Activity or update an existing one
 
 
 
@@ -226,7 +226,7 @@ Name | Type | Description  | Notes
 
 > LiveActivityStartResponse StartLiveActivity(ctx).LiveActivityStartRequest(liveActivityStartRequest).Execute()
 
-Start a Live Activity
+Start a Live Activity (legacy manual lifecycle)
 
 
 
@@ -292,7 +292,7 @@ Name | Type | Description  | Notes
 
 > LiveActivityUpdateResponse UpdateLiveActivity(ctx).LiveActivityUpdateRequest(liveActivityUpdateRequest).Execute()
 
-Update a Live Activity
+Update a Live Activity (legacy manual lifecycle)
 
 
 

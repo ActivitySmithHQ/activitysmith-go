@@ -39,9 +39,9 @@ func (r ApiEndLiveActivityRequest) Execute() (*LiveActivityEndResponse, *http.Re
 }
 
 /*
-EndLiveActivity End a Live Activity
+EndLiveActivity End a Live Activity (legacy manual lifecycle)
 
-Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiEndLiveActivityRequest
@@ -317,9 +317,9 @@ func (r ApiReconcileLiveActivityStreamRequest) Execute() (*LiveActivityStreamPut
 }
 
 /*
-ReconcileLiveActivityStream Send a stream update
+ReconcileLiveActivityStream Start a new Live Activity or update an existing one
 
-Use this endpoint when you want the easiest, stateless way to trigger Live Activities. You do not need to store activity_id or manage the Live Activity lifecycle yourself. Send the latest state for a stable stream_key and ActivitySmith will handle the rest for you: if there is no Live Activity yet, it starts one; if there is already one for this stream, it updates it. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.
+Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param streamKey Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
@@ -476,9 +476,9 @@ func (r ApiStartLiveActivityRequest) Execute() (*LiveActivityStartResponse, *htt
 }
 
 /*
-StartLiveActivity Start a Live Activity
+StartLiveActivity Start a Live Activity (legacy manual lifecycle)
 
-Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiStartLiveActivityRequest
@@ -629,9 +629,9 @@ func (r ApiUpdateLiveActivityRequest) Execute() (*LiveActivityUpdateResponse, *h
 }
 
 /*
-UpdateLiveActivity Update a Live Activity
+UpdateLiveActivity Update a Live Activity (legacy manual lifecycle)
 
-Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
+Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and stats activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiUpdateLiveActivityRequest
