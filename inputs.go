@@ -16,6 +16,17 @@ const (
 
 type ActivityMetricOption func(*generated.ActivityMetric)
 
+type ActivityMetric = generated.ActivityMetric
+type PushNotificationAction = generated.PushNotificationAction
+
+func Metric(label string, value any, options ...ActivityMetricOption) ActivityMetric {
+	metric, err := NewActivityMetric(label, value, options...)
+	if err != nil {
+		panic(err)
+	}
+	return metric
+}
+
 func NewActivityMetric(label string, value any, options ...ActivityMetricOption) (generated.ActivityMetric, error) {
 	metricValue, err := activityMetricValue(value)
 	if err != nil {
@@ -32,10 +43,18 @@ func NewActivityMetric(label string, value any, options ...ActivityMetricOption)
 	return metric, nil
 }
 
+func MetricUnit(unit string) ActivityMetricOption {
+	return WithActivityMetricUnit(unit)
+}
+
 func WithActivityMetricUnit(unit string) ActivityMetricOption {
 	return func(metric *generated.ActivityMetric) {
 		metric.SetUnit(unit)
 	}
+}
+
+func MetricColor(color string) ActivityMetricOption {
+	return WithActivityMetricColor(color)
 }
 
 func WithActivityMetricColor(color string) ActivityMetricOption {
@@ -70,6 +89,32 @@ func activityMetricValue(input any) (generated.ActivityMetricValue, error) {
 	}
 }
 
+type PushNotificationActionOption func(*generated.PushNotificationAction)
+
+func PushAction(title string, type_ string, url string, options ...PushNotificationActionOption) PushNotificationAction {
+	action := generated.PushNotificationAction{
+		Title: title,
+		Type:  generated.PushNotificationActionType(type_),
+		Url:   url,
+	}
+	for _, option := range options {
+		option(&action)
+	}
+	return action
+}
+
+func PushActionMethod(method string) PushNotificationActionOption {
+	return func(action *generated.PushNotificationAction) {
+		action.SetMethod(generated.PushNotificationWebhookMethod(method))
+	}
+}
+
+func PushActionBody(body map[string]interface{}) PushNotificationActionOption {
+	return func(action *generated.PushNotificationAction) {
+		action.SetBody(maps.Clone(body))
+	}
+}
+
 // PushNotificationInput is a handwritten DX input with plain optional values.
 type PushNotificationInput struct {
 	Title       string
@@ -77,7 +122,7 @@ type PushNotificationInput struct {
 	Subtitle    string
 	Media       string
 	Redirection string
-	Actions     []generated.PushNotificationAction
+	Actions     []PushNotificationAction
 	Channels    []string
 }
 
@@ -130,8 +175,221 @@ func (in LiveActivityActionInput) toGenerated() generated.LiveActivityAction {
 	return action
 }
 
+// LiveActivityContentStateInput keeps the visible Live Activity state separate
+// from top-level routing fields such as action and channels.
+type LiveActivityContentStateInput struct {
+	Title              string
+	NumberOfSteps      int32
+	CurrentStep        int32
+	Percentage         float32
+	Value              float32
+	UpperLimit         float32
+	Type               string
+	Subtitle           string
+	Color              string
+	StepColor          string
+	AutoDismissMinutes int32
+	Metrics            []ActivityMetric
+
+	numberOfStepsSet      bool
+	percentageSet         bool
+	valueSet              bool
+	upperLimitSet         bool
+	autoDismissMinutesSet bool
+}
+
+func (in LiveActivityContentStateInput) isSet() bool {
+	return in.Title != "" ||
+		in.Type != "" ||
+		in.Subtitle != "" ||
+		in.Color != "" ||
+		in.StepColor != "" ||
+		in.NumberOfSteps != 0 ||
+		in.CurrentStep != 0 ||
+		in.Percentage != 0 ||
+		in.Value != 0 ||
+		in.UpperLimit != 0 ||
+		in.AutoDismissMinutes != 0 ||
+		len(in.Metrics) > 0 ||
+		in.numberOfStepsSet ||
+		in.percentageSet ||
+		in.valueSet ||
+		in.upperLimitSet ||
+		in.autoDismissMinutesSet
+}
+
+func (in LiveActivityContentStateInput) applyStart(state *generated.ContentStateStart) {
+	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
+		state.SetNumberOfSteps(in.NumberOfSteps)
+	}
+	if in.CurrentStep != 0 {
+		state.SetCurrentStep(in.CurrentStep)
+	}
+	if in.Percentage != 0 || in.percentageSet {
+		state.SetPercentage(in.Percentage)
+	}
+	if in.Value != 0 || in.valueSet {
+		state.SetValue(in.Value)
+	}
+	if in.UpperLimit != 0 || in.upperLimitSet {
+		state.SetUpperLimit(in.UpperLimit)
+	}
+	if in.Subtitle != "" {
+		state.SetSubtitle(in.Subtitle)
+	}
+	if in.Color != "" {
+		state.SetColor(in.Color)
+	}
+	if in.StepColor != "" {
+		state.SetStepColor(in.StepColor)
+	}
+	if len(in.Metrics) > 0 {
+		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
+	}
+}
+
+func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStateUpdate) {
+	if in.CurrentStep != 0 {
+		state.SetCurrentStep(in.CurrentStep)
+	}
+	if in.Percentage != 0 || in.percentageSet {
+		state.SetPercentage(in.Percentage)
+	}
+	if in.Value != 0 || in.valueSet {
+		state.SetValue(in.Value)
+	}
+	if in.UpperLimit != 0 || in.upperLimitSet {
+		state.SetUpperLimit(in.UpperLimit)
+	}
+	if in.Type != "" {
+		state.SetType(in.Type)
+	}
+	if in.Subtitle != "" {
+		state.SetSubtitle(in.Subtitle)
+	}
+	if in.Color != "" {
+		state.SetColor(in.Color)
+	}
+	if in.StepColor != "" {
+		state.SetStepColor(in.StepColor)
+	}
+	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
+		state.SetNumberOfSteps(in.NumberOfSteps)
+	}
+	if len(in.Metrics) > 0 {
+		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
+	}
+}
+
+func (in LiveActivityContentStateInput) applyEnd(state *generated.ContentStateEnd) {
+	in.applyEndBase(state)
+	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
+		state.SetAutoDismissMinutes(in.AutoDismissMinutes)
+	}
+}
+
+func (in LiveActivityContentStateInput) applyEndBase(state *generated.ContentStateEnd) {
+	if in.CurrentStep != 0 {
+		state.SetCurrentStep(in.CurrentStep)
+	}
+	if in.Percentage != 0 || in.percentageSet {
+		state.SetPercentage(in.Percentage)
+	}
+	if in.Value != 0 || in.valueSet {
+		state.SetValue(in.Value)
+	}
+	if in.UpperLimit != 0 || in.upperLimitSet {
+		state.SetUpperLimit(in.UpperLimit)
+	}
+	if in.Type != "" {
+		state.SetType(in.Type)
+	}
+	if in.Subtitle != "" {
+		state.SetSubtitle(in.Subtitle)
+	}
+	if in.Color != "" {
+		state.SetColor(in.Color)
+	}
+	if in.StepColor != "" {
+		state.SetStepColor(in.StepColor)
+	}
+	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
+		state.SetNumberOfSteps(in.NumberOfSteps)
+	}
+	if len(in.Metrics) > 0 {
+		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
+	}
+}
+
+func (in LiveActivityContentStateInput) applyStream(state *generated.StreamContentState) {
+	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
+		state.SetNumberOfSteps(in.NumberOfSteps)
+	}
+	if in.CurrentStep != 0 {
+		state.SetCurrentStep(in.CurrentStep)
+	}
+	if in.Percentage != 0 || in.percentageSet {
+		state.SetPercentage(in.Percentage)
+	}
+	if in.Value != 0 || in.valueSet {
+		state.SetValue(in.Value)
+	}
+	if in.UpperLimit != 0 || in.upperLimitSet {
+		state.SetUpperLimit(in.UpperLimit)
+	}
+	if in.Type != "" {
+		state.SetType(in.Type)
+	}
+	if in.Subtitle != "" {
+		state.SetSubtitle(in.Subtitle)
+	}
+	if in.Color != "" {
+		state.SetColor(in.Color)
+	}
+	if in.StepColor != "" {
+		state.SetStepColor(in.StepColor)
+	}
+	if len(in.Metrics) > 0 {
+		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
+	}
+	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
+		state.SetAutoDismissMinutes(in.AutoDismissMinutes)
+	}
+}
+
+func (in LiveActivityContentStateInput) WithNumberOfSteps(v int32) LiveActivityContentStateInput {
+	in.NumberOfSteps = v
+	in.numberOfStepsSet = true
+	return in
+}
+
+func (in LiveActivityContentStateInput) WithPercentage(v float32) LiveActivityContentStateInput {
+	in.Percentage = v
+	in.percentageSet = true
+	return in
+}
+
+func (in LiveActivityContentStateInput) WithValue(v float32) LiveActivityContentStateInput {
+	in.Value = v
+	in.valueSet = true
+	return in
+}
+
+func (in LiveActivityContentStateInput) WithUpperLimit(v float32) LiveActivityContentStateInput {
+	in.UpperLimit = v
+	in.upperLimitSet = true
+	return in
+}
+
+func (in LiveActivityContentStateInput) WithAutoDismissMinutes(v int32) LiveActivityContentStateInput {
+	in.AutoDismissMinutes = v
+	in.autoDismissMinutesSet = true
+	return in
+}
+
 // LiveActivityStartInput is a handwritten DX input with plain optional values.
 type LiveActivityStartInput struct {
+	ContentState  LiveActivityContentStateInput
 	Title         string
 	NumberOfSteps int32
 	CurrentStep   int32
@@ -153,9 +411,14 @@ type LiveActivityStartInput struct {
 }
 
 func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartRequest {
-	req := generated.LiveActivityStartRequest{
-		ContentState: *generated.NewContentStateStart(in.Title, in.Type),
+	contentState := in.ContentState
+	if !contentState.isSet() {
+		contentState = LiveActivityContentStateInput{Title: in.Title, Type: in.Type}
 	}
+	req := generated.LiveActivityStartRequest{
+		ContentState: *generated.NewContentStateStart(contentState.Title, contentState.Type),
+	}
+	contentState.applyStart(&req.ContentState)
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
 	}
@@ -228,6 +491,7 @@ func (in LiveActivityStartInput) WithAction(v LiveActivityActionInput) LiveActiv
 // LiveActivityUpdateInput is a handwritten DX input with plain optional values.
 type LiveActivityUpdateInput struct {
 	ActivityID    string
+	ContentState  LiveActivityContentStateInput
 	Title         string
 	CurrentStep   int32
 	Percentage    float32
@@ -248,10 +512,15 @@ type LiveActivityUpdateInput struct {
 }
 
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
+	contentState := in.ContentState
+	if !contentState.isSet() {
+		contentState = LiveActivityContentStateInput{Title: in.Title}
+	}
 	req := generated.LiveActivityUpdateRequest{
 		ActivityId:   in.ActivityID,
-		ContentState: *generated.NewContentStateUpdate(in.Title),
+		ContentState: *generated.NewContentStateUpdate(contentState.Title),
 	}
+	contentState.applyUpdate(&req.ContentState)
 	if in.CurrentStep != 0 {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
@@ -324,6 +593,7 @@ func (in LiveActivityUpdateInput) WithAction(v LiveActivityActionInput) LiveActi
 // LiveActivityEndInput is a handwritten DX input with plain optional values.
 type LiveActivityEndInput struct {
 	ActivityID         string
+	ContentState       LiveActivityContentStateInput
 	Title              string
 	CurrentStep        int32
 	Percentage         float32
@@ -346,10 +616,15 @@ type LiveActivityEndInput struct {
 }
 
 func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
+	contentState := in.ContentState
+	if !contentState.isSet() {
+		contentState = LiveActivityContentStateInput{Title: in.Title}
+	}
 	req := generated.LiveActivityEndRequest{
 		ActivityId:   in.ActivityID,
-		ContentState: *generated.NewContentStateEnd(in.Title),
+		ContentState: *generated.NewContentStateEnd(contentState.Title),
 	}
+	contentState.applyEnd(&req.ContentState)
 	if in.CurrentStep != 0 {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
@@ -431,6 +706,7 @@ func (in LiveActivityEndInput) WithAction(v LiveActivityActionInput) LiveActivit
 
 // LiveActivityStreamInput is a handwritten DX input with plain optional values.
 type LiveActivityStreamInput struct {
+	ContentState  LiveActivityContentStateInput
 	Title         string
 	NumberOfSteps int32
 	CurrentStep   int32
@@ -453,9 +729,14 @@ type LiveActivityStreamInput struct {
 }
 
 func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequest {
-	req := generated.LiveActivityStreamRequest{
-		ContentState: *generated.NewStreamContentState(in.Title),
+	contentState := in.ContentState
+	if !contentState.isSet() {
+		contentState = LiveActivityContentStateInput{Title: in.Title}
 	}
+	req := generated.LiveActivityStreamRequest{
+		ContentState: *generated.NewStreamContentState(contentState.Title),
+	}
+	contentState.applyStream(&req.ContentState)
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
 	}
@@ -529,6 +810,7 @@ func (in LiveActivityStreamInput) WithAction(v LiveActivityActionInput) LiveActi
 
 // LiveActivityStreamEndInput is an optional payload for ending a managed stream.
 type LiveActivityStreamEndInput struct {
+	ContentState  LiveActivityContentStateInput
 	Title         string
 	NumberOfSteps int32
 	CurrentStep   int32
@@ -551,8 +833,13 @@ type LiveActivityStreamEndInput struct {
 
 func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamDeleteRequest {
 	req := generated.NewLiveActivityStreamDeleteRequest()
-	if in.Title != "" {
-		contentState := *generated.NewStreamContentState(in.Title)
+	contentStateInput := in.ContentState
+	if !contentStateInput.isSet() && in.Title != "" {
+		contentStateInput = LiveActivityContentStateInput{Title: in.Title}
+	}
+	if contentStateInput.isSet() {
+		contentState := *generated.NewStreamContentState(contentStateInput.Title)
+		contentStateInput.applyStream(&contentState)
 		if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 			contentState.SetNumberOfSteps(in.NumberOfSteps)
 		}

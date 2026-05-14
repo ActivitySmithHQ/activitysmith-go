@@ -676,18 +676,18 @@ func TestNotificationsRejectMediaAndActionsCombination(t *testing.T) {
 	}
 	overrideHostForTests(client, server.URL)
 
-	action := generated.NewPushNotificationAction("Open", generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL, "https://example.com")
+	action := PushAction("Open", "open_url", "https://example.com")
 	if _, err := client.Notifications.Send(PushNotificationInput{
 		Title:   "Build Failed",
 		Media:   "https://cdn.example.com/output/homepage.png",
-		Actions: []generated.PushNotificationAction{*action},
+		Actions: []PushNotificationAction{action},
 	}); err == nil || err.Error() != ErrPushNotificationMediaActionsConflict.Error() {
 		t.Fatalf("expected ErrPushNotificationMediaActionsConflict, got %v", err)
 	}
 
 	request := generated.PushNotificationRequest{Title: "Build Failed"}
 	request.SetMedia("https://cdn.example.com/output/homepage.png")
-	request.SetActions([]generated.PushNotificationAction{*action})
+	request.SetActions([]generated.PushNotificationAction{action})
 
 	if _, err := client.Notifications.Send(request); err == nil || err.Error() != ErrPushNotificationMediaActionsConflict.Error() {
 		t.Fatalf("expected ErrPushNotificationMediaActionsConflict for generated request, got %v", err)

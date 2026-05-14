@@ -117,33 +117,28 @@ Actionable push notifications can open a URL on tap or trigger actions when some
 Webhooks are executed by the ActivitySmith backend.
 
 ```go
-request := generated.NewPushNotificationRequest("New subscription 💸")
-request.SetMessage("Customer upgraded to Pro plan")
-request.SetRedirection("https://crm.example.com/customers/cus_9f3a1d") // Optional
-
-crmAction := generated.NewPushNotificationAction(
-	"Open CRM Profile",
-	generated.PUSHNOTIFICATIONACTIONTYPE_OPEN_URL,
-	"https://crm.example.com/customers/cus_9f3a1d",
-)
-
-onboardingAction := generated.NewPushNotificationAction(
-	"Start Onboarding Workflow",
-	generated.PUSHNOTIFICATIONACTIONTYPE_WEBHOOK,
-	"https://hooks.example.com/activitysmith/onboarding/start",
-)
-onboardingAction.SetMethod(generated.PUSHNOTIFICATIONACTIONMETHOD_POST)
-onboardingAction.SetBody(map[string]interface{}{
-	"customer_id": "cus_9f3a1d",
-	"plan": "pro",
+_, err := activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+	Title:       "New subscription 💸",
+	Message:     "Customer upgraded to Pro plan",
+	Redirection: "https://crm.example.com/customers/cus_9f3a1d",
+	Actions: []activitysmithsdk.PushNotificationAction{
+		activitysmithsdk.PushAction(
+			"Open CRM Profile",
+			"open_url",
+			"https://crm.example.com/customers/cus_9f3a1d",
+		),
+		activitysmithsdk.PushAction(
+			"Start Onboarding Workflow",
+			"webhook",
+			"https://hooks.example.com/activitysmith/onboarding/start",
+			activitysmithsdk.PushActionMethod("POST"),
+			activitysmithsdk.PushActionBody(map[string]interface{}{
+				"customer_id": "cus_9f3a1d",
+				"plan":        "pro",
+			}),
+		),
+	},
 })
-
-request.SetActions([]generated.PushNotificationAction{
-	*crmAction,
-	*onboardingAction,
-}) // Optional (max 4)
-
-_, err := activitysmith.Notifications.Send(request)
 if err != nil {
 	log.Fatal(err)
 }
@@ -192,16 +187,18 @@ not want to store `activityID` between runs.
 
 ```go
 streamInput := activitysmithsdk.LiveActivityStreamInput{
-	Title:    "Sales",
-	Subtitle: "last hour",
-	Type:     "stats",
-	Metrics: []generated.ActivityMetric{
-		{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
-		{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
-		{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
-		{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
-		{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
-		{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Sales",
+		Subtitle: "last hour",
+		Type:     "stats",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("Revenue", "$2430", activitysmithsdk.MetricColor("blue")),
+			activitysmithsdk.Metric("Orders", "37", activitysmithsdk.MetricColor("green")),
+			activitysmithsdk.Metric("Conversion", "4.8%", activitysmithsdk.MetricColor("magenta")),
+			activitysmithsdk.Metric("Avg Order", "$65.68", activitysmithsdk.MetricColor("yellow")),
+			activitysmithsdk.Metric("Refunds", "$84", activitysmithsdk.MetricColor("red")),
+			activitysmithsdk.Metric("New Buyers", "18", activitysmithsdk.MetricColor("cyan")),
+		},
 	},
 }
 
@@ -219,12 +216,14 @@ if err != nil {
 
 ```go
 streamInput := activitysmithsdk.LiveActivityStreamInput{
-	Title:    "Server Health",
-	Subtitle: "prod-web-1",
-	Type:     "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 9, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 45, Unit: generated.PtrString("%")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 9, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 45, activitysmithsdk.MetricUnit("%")),
+		},
 	},
 }
 
@@ -242,11 +241,13 @@ if err != nil {
 
 ```go
 streamInput := activitysmithsdk.LiveActivityStreamInput{
-	Title:         "Nightly Backup",
-	Subtitle:      "upload archive",
-	Type:          "segmented_progress",
-	NumberOfSteps: 3,
-	CurrentStep:   2,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:         "Nightly Backup",
+		Subtitle:      "upload archive",
+		Type:          "segmented_progress",
+		NumberOfSteps: 3,
+		CurrentStep:   2,
+	},
 }
 
 _, err := activitysmith.LiveActivities.Stream("nightly-backup", streamInput)
@@ -263,10 +264,12 @@ if err != nil {
 
 ```go
 streamInput := activitysmithsdk.LiveActivityStreamInput{
-	Title:      "Search Reindex",
-	Subtitle:   "catalog-v2",
-	Type:       "progress",
-	Percentage: 42,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:      "Search Reindex",
+		Subtitle:   "catalog-v2",
+		Type:       "progress",
+		Percentage: 42,
+	},
 }
 
 _, err := activitysmith.LiveActivities.Stream("search-reindex", streamInput)
@@ -285,12 +288,14 @@ to end the stream with a final state.
 
 ```go
 endInput := activitysmithsdk.LiveActivityStreamEndInput{
-	Title:    "Server Health",
-	Subtitle: "prod-web-1",
-	Type:     "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 7, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 38, Unit: generated.PtrString("%")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 7, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 38, activitysmithsdk.MetricUnit("%")),
+		},
 	},
 }
 
@@ -323,7 +328,7 @@ Use these methods when you want to manage the Live Activity lifecycle yourself:
 
 ### Stats Type
 
-Keep your key numbers on your Lock Screen. `stats` fits 1 to 8 labeled values,
+Keep your key numbers on your Lock Screen. `stats` fits up to 8 labeled values,
 such as revenue, orders, conversion, uptime, or any other business metric you
 want visible at a glance. Each metric can use a formatted string or number as
 its `Value`. Add `Color` to a metric to show an accent dot next to its label;
@@ -337,16 +342,18 @@ omit `Color` to show the label without a dot.
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:    "Sales",
-	Subtitle: "last hour",
-	Type:     "stats",
-	Metrics: []generated.ActivityMetric{
-		{Label: "Revenue", Value: "$2430", Color: generated.PtrString("blue")},
-		{Label: "Orders", Value: "37", Color: generated.PtrString("green")},
-		{Label: "Conversion", Value: "4.8%", Color: generated.PtrString("magenta")},
-		{Label: "Avg Order", Value: "$65.68", Color: generated.PtrString("yellow")},
-		{Label: "Refunds", Value: "$84", Color: generated.PtrString("red")},
-		{Label: "New Buyers", Value: "18", Color: generated.PtrString("cyan")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Sales",
+		Subtitle: "last hour",
+		Type:     "stats",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("Revenue", "$2430", activitysmithsdk.MetricColor("blue")),
+			activitysmithsdk.Metric("Orders", "37", activitysmithsdk.MetricColor("green")),
+			activitysmithsdk.Metric("Conversion", "4.8%", activitysmithsdk.MetricColor("magenta")),
+			activitysmithsdk.Metric("Avg Order", "$65.68", activitysmithsdk.MetricColor("yellow")),
+			activitysmithsdk.Metric("Refunds", "$84", activitysmithsdk.MetricColor("red")),
+			activitysmithsdk.Metric("New Buyers", "18", activitysmithsdk.MetricColor("cyan")),
+		},
 	},
 }
 
@@ -363,16 +370,18 @@ activityID := start.GetActivityId()
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID: activityID,
-	Title:      "Sales",
-	Subtitle:   "last hour",
-	Type:       "stats",
-	Metrics: []generated.ActivityMetric{
-		{Label: "Revenue", Value: "$3180", Color: generated.PtrString("blue")},
-		{Label: "Orders", Value: "51", Color: generated.PtrString("green")},
-		{Label: "Conversion", Value: "5.2%", Color: generated.PtrString("magenta")},
-		{Label: "Avg Order", Value: "$62.35", Color: generated.PtrString("yellow")},
-		{Label: "Refunds", Value: "$126", Color: generated.PtrString("red")},
-		{Label: "New Buyers", Value: "24", Color: generated.PtrString("cyan")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Sales",
+		Subtitle: "last hour",
+		Type:     "stats",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("Revenue", "$3180", activitysmithsdk.MetricColor("blue")),
+			activitysmithsdk.Metric("Orders", "51", activitysmithsdk.MetricColor("green")),
+			activitysmithsdk.Metric("Conversion", "5.2%", activitysmithsdk.MetricColor("magenta")),
+			activitysmithsdk.Metric("Avg Order", "$62.35", activitysmithsdk.MetricColor("yellow")),
+			activitysmithsdk.Metric("Refunds", "$126", activitysmithsdk.MetricColor("red")),
+			activitysmithsdk.Metric("New Buyers", "24", activitysmithsdk.MetricColor("cyan")),
+		},
 	},
 }
 
@@ -387,18 +396,20 @@ if err != nil {
 ```go
 endInput := activitysmithsdk.LiveActivityEndInput{
 	ActivityID: activityID,
-	Title:      "Sales",
-	Subtitle:   "last hour",
-	Type:       "stats",
-	Metrics: []generated.ActivityMetric{
-		{Label: "Revenue", Value: "$3460", Color: generated.PtrString("blue")},
-		{Label: "Orders", Value: "58", Color: generated.PtrString("green")},
-		{Label: "Conversion", Value: "5.4%", Color: generated.PtrString("magenta")},
-		{Label: "Avg Order", Value: "$59.66", Color: generated.PtrString("yellow")},
-		{Label: "Refunds", Value: "$92", Color: generated.PtrString("red")},
-		{Label: "New Buyers", Value: "31", Color: generated.PtrString("cyan")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Sales",
+		Subtitle: "last hour",
+		Type:     "stats",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("Revenue", "$3460", activitysmithsdk.MetricColor("blue")),
+			activitysmithsdk.Metric("Orders", "58", activitysmithsdk.MetricColor("green")),
+			activitysmithsdk.Metric("Conversion", "5.4%", activitysmithsdk.MetricColor("magenta")),
+			activitysmithsdk.Metric("Avg Order", "$59.66", activitysmithsdk.MetricColor("yellow")),
+			activitysmithsdk.Metric("Refunds", "$92", activitysmithsdk.MetricColor("red")),
+			activitysmithsdk.Metric("New Buyers", "31", activitysmithsdk.MetricColor("cyan")),
+		},
+		AutoDismissMinutes: 2,
 	},
-	AutoDismissMinutes: 2,
 }
 
 _, err := activitysmith.LiveActivities.End(endInput)
@@ -420,12 +431,14 @@ server health, queue pressure, or database load.
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:    "Server Health",
-	Subtitle: "prod-web-1",
-	Type:     "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 9, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 45, Unit: generated.PtrString("%")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 9, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 45, activitysmithsdk.MetricUnit("%")),
+		},
 	},
 }
 
@@ -446,12 +459,14 @@ activityID := start.GetActivityId()
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID: activityID,
-	Title:      "Server Health",
-	Subtitle:   "prod-web-1",
-	Type:       "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 76, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 52, Unit: generated.PtrString("%")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 76, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 52, activitysmithsdk.MetricUnit("%")),
+		},
 	},
 }
 
@@ -470,14 +485,16 @@ if err != nil {
 ```go
 endInput := activitysmithsdk.LiveActivityEndInput{
 	ActivityID: activityID,
-	Title:      "Server Health",
-	Subtitle:   "prod-web-1",
-	Type:       "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 7, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 38, Unit: generated.PtrString("%")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 7, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 38, activitysmithsdk.MetricUnit("%")),
+		},
+		AutoDismissMinutes: 2,
 	},
-	AutoDismissMinutes: 2,
 }
 
 _, err := activitysmith.LiveActivities.End(endInput)
@@ -501,12 +518,14 @@ workflow changes.
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:         "Nightly database backup",
-	Subtitle:      "create snapshot",
-	NumberOfSteps: 3,
-	CurrentStep:   1,
-	Type:          "segmented_progress",
-	Color:         "yellow",
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:         "Nightly database backup",
+		Subtitle:      "create snapshot",
+		Type:          "segmented_progress",
+		NumberOfSteps: 3,
+		CurrentStep:   1,
+		Color:         "yellow",
+	},
 }
 
 start, err := activitysmith.LiveActivities.Start(startInput)
@@ -525,11 +544,13 @@ activityID := start.GetActivityId()
 
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID:    activityID,
-	Title:         "Nightly database backup",
-	Subtitle:      "upload archive",
-	NumberOfSteps: 3,
-	CurrentStep:   2,
+	ActivityID: activityID,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:         "Nightly database backup",
+		Subtitle:      "upload archive",
+		NumberOfSteps: 3,
+		CurrentStep:   2,
+	},
 }
 
 _, err := activitysmith.LiveActivities.Update(updateInput)
@@ -546,12 +567,14 @@ if err != nil {
 
 ```go
 endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID:         activityID,
-	Title:              "Nightly database backup",
-	Subtitle:           "verify restore",
-	NumberOfSteps:      3,
-	CurrentStep:        3,
-	AutoDismissMinutes: 2,
+	ActivityID: activityID,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:              "Nightly database backup",
+		Subtitle:           "verify restore",
+		NumberOfSteps:      3,
+		CurrentStep:        3,
+		AutoDismissMinutes: 2,
+	},
 }
 
 _, err := activitysmith.LiveActivities.End(endInput)
@@ -574,10 +597,12 @@ numeric range is the clearest signal.
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:      "EV Charging",
-	Subtitle:   "Added 30 mi range",
-	Type:       "progress",
-	Percentage: 15,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:      "EV Charging",
+		Subtitle:   "Added 30 mi range",
+		Type:       "progress",
+		Percentage: 15,
+	},
 }
 
 start, err := activitysmith.LiveActivities.Start(startInput)
@@ -597,9 +622,11 @@ activityID := start.GetActivityId()
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID: activityID,
-	Title:      "EV Charging",
-	Subtitle:   "Added 120 mi range",
-	Percentage: 60,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:      "EV Charging",
+		Subtitle:   "Added 120 mi range",
+		Percentage: 60,
+	},
 }
 
 _, err := activitysmith.LiveActivities.Update(updateInput)
@@ -616,11 +643,13 @@ if err != nil {
 
 ```go
 endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID:         activityID,
-	Title:              "EV Charging",
-	Subtitle:           "Added 200 mi range",
-	Percentage:         100,
-	AutoDismissMinutes: 2,
+	ActivityID: activityID,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:              "EV Charging",
+		Subtitle:           "Added 200 mi range",
+		Percentage:         100,
+		AutoDismissMinutes: 2,
+	},
 }
 
 _, err := activitysmith.LiveActivities.End(endInput)
@@ -641,12 +670,14 @@ Just like Actionable Push Notifications, Live Activities can have a button that 
 
 ```go
 startInput := activitysmithsdk.LiveActivityStartInput{
-	Title:    "Server Health",
-	Subtitle: "prod-web-1",
-	Type:     "metrics",
-	Metrics: []generated.ActivityMetric{
-		{Label: "CPU", Value: 76, Unit: generated.PtrString("%")},
-		{Label: "MEM", Value: 52, Unit: generated.PtrString("%")},
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 76, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 52, activitysmithsdk.MetricUnit("%")),
+		},
 	},
 	Action: &activitysmithsdk.LiveActivityActionInput{
 		Title: "Open Dashboard",
@@ -672,10 +703,12 @@ activityID := start.GetActivityId()
 ```go
 updateInput := activitysmithsdk.LiveActivityUpdateInput{
 	ActivityID: activityID,
-	Title:      "Reindexing product search",
-	Subtitle:   "Shard 7 of 12",
-	NumberOfSteps: 12,
-	CurrentStep: 7,
+	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+		Title:         "Reindexing product search",
+		Subtitle:      "Shard 7 of 12",
+		NumberOfSteps: 12,
+		CurrentStep:   7,
+	},
 	Action: &activitysmithsdk.LiveActivityActionInput{
 		Title:  "Pause Reindex",
 		Type:   "webhook",
