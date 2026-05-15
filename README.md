@@ -15,12 +15,8 @@ See [API reference](https://activitysmith.com/docs/api-reference/introduction).
   - [Rich Push Notifications with Media](#rich-push-notifications-with-media)
   - [Actionable Push Notifications](#actionable-push-notifications)
 - [Live Activities](#live-activities)
-  - [Simple: Let ActivitySmith manage the Live Activity for you](#simple-let-activitysmith-manage-the-live-activity-for-you)
-  - [Advanced: Full lifecycle control](#advanced-full-lifecycle-control)
-  - [Stats Type](#stats-type)
-  - [Metrics Type](#metrics-type)
-  - [Segmented Progress Type](#segmented-progress-type)
-  - [Progress Type](#progress-type)
+  - [Start & Update Live Activity](#start--update-live-activity)
+  - [End Live Activity](#end-live-activity)
   - [Live Activity Action](#live-activity-action)
 - [Channels](#channels)
 - [Widgets](#widgets)
@@ -146,48 +142,31 @@ if err != nil {
 
 ## Live Activities
 
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png" alt="Metrics Live Activity screenshot" width="680" />
-</p>
-
 There are four types of Live Activities:
 
-- `stats`: best for compact business or product stats like revenue, orders, conversion, and average order value
-- `metrics`: best for live operational stats like server CPU and memory, queue depth, or replica lag
-- `segmented_progress`: best for step-based workflows like deployments, backups, and ETL pipelines
-- `progress`: best for continuous jobs like uploads, reindexes, and long-running migrations tracked as a percentage
+- `stats`: best for showing business numbers side by side, such as revenue, sales, new users, conversion, refunds, or any other value you want visible at a glance
+- `metrics`: best for live percentage values that change often, like server CPU, memory usage, disk usage, or error rate
+- `segmented_progress`: best for anything that moves through clear stages, like deployments, onboarding flows, backups, ETL pipelines, migrations, and AI agent runs
+- `progress`: best for tracking real-time progress with percentage, like tasks, backups, migrations, syncs, or uploads
 
-When working with Live Activities via our API, you have two approaches tailored
-to different needs. First, the stateless mode is the simplest path - one API
-call can initiate or update an activity, and another ends it - no state
-tracking on your side.
+### Start & Update Live Activity
 
-This is ideal if you want minimal complexity, perfect for automated workflows
-like cron jobs.
-
-In contrast, if you need precise lifecycle control, the classic approach offers
-distinct calls for start, updates, and end, giving you full control over the
-activity's state.
-
-In the following sections, we'll break down how to implement each method so you
-can choose what fits your use case best.
-
-### Simple: Let ActivitySmith manage the Live Activity for you
-
-Use a stable `streamKey` to identify the system or workflow you are tracking,
-such as a server, deployment, build pipeline, cron job, or charging session.
-This is especially useful for cron jobs and other scheduled tasks where you do
-not want to store `activityID` between runs.
+Use a stable `streamKey` to identify the metric, job, deployment, or system you want to keep visible. The first `Stream(...)` call starts the Live Activity. Later calls with the same `streamKey` update it.
 
 #### Stats
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/stats-live-activity.png"
+    alt="Stats Live Activity stream example"
+    width="680"
+  />
 </p>
 
 ```go
-streamInput := activitysmithsdk.LiveActivityStreamInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+activitysmith.LiveActivities.Stream(
+	"sales-hourly",
+	activitysmithsdk.LiveActivityStreamInput{
 		Title:    "Sales",
 		Subtitle: "last hour",
 		Type:     "stats",
@@ -200,23 +179,23 @@ streamInput := activitysmithsdk.LiveActivityStreamInput{
 			activitysmithsdk.Metric("New Buyers", "18", activitysmithsdk.MetricColor("cyan")),
 		},
 	},
-}
-
-status, err := activitysmith.LiveActivities.Stream("sales-hourly", streamInput)
-if err != nil {
-	log.Fatal(err)
-}
+)
 ```
 
 #### Metrics
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
+    alt="Metrics Live Activity stream example"
+    width="680"
+  />
 </p>
 
 ```go
-streamInput := activitysmithsdk.LiveActivityStreamInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+activitysmith.LiveActivities.Stream(
+	"prod-web-1",
+	activitysmithsdk.LiveActivityStreamInput{
 		Title:    "Server Health",
 		Subtitle: "prod-web-1",
 		Type:     "metrics",
@@ -225,267 +204,62 @@ streamInput := activitysmithsdk.LiveActivityStreamInput{
 			activitysmithsdk.Metric("MEM", 45, activitysmithsdk.MetricUnit("%")),
 		},
 	},
-}
-
-status, err := activitysmith.LiveActivities.Stream("prod-web-1", streamInput)
-if err != nil {
-	log.Fatal(err)
-}
+)
 ```
 
-#### Segmented progress
+#### Segmented Progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/update-live-activity.png"
+    alt="Segmented Progress Live Activity stream example"
+    width="680"
+  />
 </p>
 
 ```go
-streamInput := activitysmithsdk.LiveActivityStreamInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+activitysmith.LiveActivities.Stream(
+	"nightly-backup",
+	activitysmithsdk.LiveActivityStreamInput{
 		Title:         "Nightly Backup",
 		Subtitle:      "upload archive",
 		Type:          "segmented_progress",
 		NumberOfSteps: 3,
 		CurrentStep:   2,
 	},
-}
-
-_, err := activitysmith.LiveActivities.Stream("nightly-backup", streamInput)
-if err != nil {
-	log.Fatal(err)
-}
+)
 ```
 
 #### Progress
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity.png" alt="Progress stream example" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity.png"
+    alt="Progress Live Activity stream example"
+    width="680"
+  />
 </p>
 
 ```go
-streamInput := activitysmithsdk.LiveActivityStreamInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+activitysmith.LiveActivities.Stream(
+	"search-reindex",
+	activitysmithsdk.LiveActivityStreamInput{
 		Title:      "Search Reindex",
 		Subtitle:   "catalog-v2",
 		Type:       "progress",
 		Percentage: 42,
 	},
-}
-
-_, err := activitysmith.LiveActivities.Stream("search-reindex", streamInput)
-if err != nil {
-	log.Fatal(err)
-}
+)
 ```
 
-Call `Stream(...)` again with the same `streamKey` whenever the state changes.
+### End Live Activity
 
-#### End a stream
-
-Use this when the tracked process is finished and you no longer want the Live
-Activity on devices. `content_state` is optional here; include it if you want
-to end the stream with a final state.
+Call `EndStream(...)` with the same `streamKey` to dismiss the Live Activity. You can include final values before it is removed. By default, iOS removes the Live Activity after two minutes. Set `AutoDismissMinutes` to choose a different dismissal time, including `0` for immediate dismissal.
 
 ```go
-endInput := activitysmithsdk.LiveActivityStreamEndInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:    "Server Health",
-		Subtitle: "prod-web-1",
-		Type:     "metrics",
-		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("CPU", 7, activitysmithsdk.MetricUnit("%")),
-			activitysmithsdk.Metric("MEM", 38, activitysmithsdk.MetricUnit("%")),
-		},
-	},
-}
-
-_, err := activitysmith.LiveActivities.EndStream("prod-web-1", endInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-If you later send another `Stream(...)` request with the same `streamKey`,
-ActivitySmith starts a new Live Activity for that stream again.
-
-Stream responses include an `Operation` field:
-
-- `started`: ActivitySmith started a new Live Activity for this `streamKey`
-- `updated`: ActivitySmith updated the current Live Activity
-- `rotated`: ActivitySmith ended the previous Live Activity and started a new one
-- `noop`: the incoming state matched the current state, so no update was sent
-- `paused`: the stream is paused, so no Live Activity was started or updated
-- `ended`: returned by `EndStream(...)` after the stream is ended
-
-### Advanced: Full lifecycle control
-
-Use these methods when you want to manage the Live Activity lifecycle yourself:
-
-1. Call `activitysmith.LiveActivities.Start(...)`.
-2. Save the returned `activityID`.
-3. Call `activitysmith.LiveActivities.Update(...)` as progress changes.
-4. Call `activitysmith.LiveActivities.End(...)` when the work is finished.
-
-### Stats Type
-
-Keep your key numbers on your Lock Screen. `stats` fits up to 8 labeled values,
-such as revenue, orders, conversion, uptime, or any other business metric you
-want visible at a glance. Each metric can use a formatted string or number as
-its `Value`. Add `Color` to a metric to show an accent dot next to its label;
-omit `Color` to show the label without a dot.
-
-#### Start
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/stats-live-activity.png" alt="Stats Live Activity with sales revenue, orders, conversion, and average order value" width="680" />
-</p>
-
-```go
-startInput := activitysmithsdk.LiveActivityStartInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:    "Sales",
-		Subtitle: "last hour",
-		Type:     "stats",
-		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("Revenue", "$2430", activitysmithsdk.MetricColor("blue")),
-			activitysmithsdk.Metric("Orders", "37", activitysmithsdk.MetricColor("green")),
-			activitysmithsdk.Metric("Conversion", "4.8%", activitysmithsdk.MetricColor("magenta")),
-			activitysmithsdk.Metric("Avg Order", "$65.68", activitysmithsdk.MetricColor("yellow")),
-			activitysmithsdk.Metric("Refunds", "$84", activitysmithsdk.MetricColor("red")),
-			activitysmithsdk.Metric("New Buyers", "18", activitysmithsdk.MetricColor("cyan")),
-		},
-	},
-}
-
-start, err := activitysmith.LiveActivities.Start(startInput)
-if err != nil {
-	log.Fatal(err)
-}
-
-activityID := start.GetActivityId()
-```
-
-#### Update
-
-```go
-updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:    "Sales",
-		Subtitle: "last hour",
-		Type:     "stats",
-		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("Revenue", "$3180", activitysmithsdk.MetricColor("blue")),
-			activitysmithsdk.Metric("Orders", "51", activitysmithsdk.MetricColor("green")),
-			activitysmithsdk.Metric("Conversion", "5.2%", activitysmithsdk.MetricColor("magenta")),
-			activitysmithsdk.Metric("Avg Order", "$62.35", activitysmithsdk.MetricColor("yellow")),
-			activitysmithsdk.Metric("Refunds", "$126", activitysmithsdk.MetricColor("red")),
-			activitysmithsdk.Metric("New Buyers", "24", activitysmithsdk.MetricColor("cyan")),
-		},
-	},
-}
-
-_, err := activitysmith.LiveActivities.Update(updateInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-#### End
-
-```go
-endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:    "Sales",
-		Subtitle: "last hour",
-		Type:     "stats",
-		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("Revenue", "$3460", activitysmithsdk.MetricColor("blue")),
-			activitysmithsdk.Metric("Orders", "58", activitysmithsdk.MetricColor("green")),
-			activitysmithsdk.Metric("Conversion", "5.4%", activitysmithsdk.MetricColor("magenta")),
-			activitysmithsdk.Metric("Avg Order", "$59.66", activitysmithsdk.MetricColor("yellow")),
-			activitysmithsdk.Metric("Refunds", "$92", activitysmithsdk.MetricColor("red")),
-			activitysmithsdk.Metric("New Buyers", "31", activitysmithsdk.MetricColor("cyan")),
-		},
-		AutoDismissMinutes: 2,
-	},
-}
-
-_, err := activitysmith.LiveActivities.End(endInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-### Metrics Type
-
-Use `metrics` when you want to keep a small set of live stats visible, such as
-server health, queue pressure, or database load.
-
-#### Start
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png" alt="Metrics start example" width="680" />
-</p>
-
-```go
-startInput := activitysmithsdk.LiveActivityStartInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:    "Server Health",
-		Subtitle: "prod-web-1",
-		Type:     "metrics",
-		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("CPU", 9, activitysmithsdk.MetricUnit("%")),
-			activitysmithsdk.Metric("MEM", 45, activitysmithsdk.MetricUnit("%")),
-		},
-	},
-}
-
-start, err := activitysmith.LiveActivities.Start(startInput)
-if err != nil {
-	log.Fatal(err)
-}
-
-activityID := start.GetActivityId()
-```
-
-#### Update
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-update.png" alt="Metrics update example" width="680" />
-</p>
-
-```go
-updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:    "Server Health",
-		Subtitle: "prod-web-1",
-		Type:     "metrics",
-		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("CPU", 76, activitysmithsdk.MetricUnit("%")),
-			activitysmithsdk.Metric("MEM", 52, activitysmithsdk.MetricUnit("%")),
-		},
-	},
-}
-
-_, err := activitysmith.LiveActivities.Update(updateInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-#### End
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-end.png" alt="Metrics end example" width="680" />
-</p>
-
-```go
-endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+activitysmith.LiveActivities.EndStream(
+	"prod-web-1",
+	activitysmithsdk.LiveActivityStreamEndInput{
 		Title:    "Server Health",
 		Subtitle: "prod-web-1",
 		Type:     "metrics",
@@ -495,182 +269,27 @@ endInput := activitysmithsdk.LiveActivityEndInput{
 		},
 		AutoDismissMinutes: 2,
 	},
-}
-
-_, err := activitysmith.LiveActivities.End(endInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-### Segmented Progress Type
-
-Use `segmented_progress` for jobs and workflows that move through clear steps or
-phases. It fits jobs like backups, deployments, ETL pipelines, and checklists.
-`NumberOfSteps` is dynamic, so you can increase or decrease it later if the
-workflow changes.
-
-#### Start
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Segmented progress start example" width="680" />
-</p>
-
-```go
-startInput := activitysmithsdk.LiveActivityStartInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:         "Nightly database backup",
-		Subtitle:      "create snapshot",
-		Type:          "segmented_progress",
-		NumberOfSteps: 3,
-		CurrentStep:   1,
-		Color:         "yellow",
-	},
-}
-
-start, err := activitysmith.LiveActivities.Start(startInput)
-if err != nil {
-	log.Fatal(err)
-}
-
-activityID := start.GetActivityId()
-```
-
-#### Update
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Segmented progress update example" width="680" />
-</p>
-
-```go
-updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:         "Nightly database backup",
-		Subtitle:      "upload archive",
-		NumberOfSteps: 3,
-		CurrentStep:   2,
-	},
-}
-
-_, err := activitysmith.LiveActivities.Update(updateInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-#### End
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="Segmented progress end example" width="680" />
-</p>
-
-```go
-endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:              "Nightly database backup",
-		Subtitle:           "verify restore",
-		NumberOfSteps:      3,
-		CurrentStep:        3,
-		AutoDismissMinutes: 2,
-	},
-}
-
-_, err := activitysmith.LiveActivities.End(endInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-### Progress Type
-
-Use `progress` when the state is naturally continuous. It fits charging,
-downloads, sync jobs, uploads, timers, and any flow where a percentage or
-numeric range is the clearest signal.
-
-#### Start
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-start.png" alt="Progress start example" width="680" />
-</p>
-
-```go
-startInput := activitysmithsdk.LiveActivityStartInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:      "EV Charging",
-		Subtitle:   "Added 30 mi range",
-		Type:       "progress",
-		Percentage: 15,
-	},
-}
-
-start, err := activitysmith.LiveActivities.Start(startInput)
-if err != nil {
-	log.Fatal(err)
-}
-
-activityID := start.GetActivityId()
-```
-
-#### Update
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-update.png" alt="Progress update example" width="680" />
-</p>
-
-```go
-updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:      "EV Charging",
-		Subtitle:   "Added 120 mi range",
-		Percentage: 60,
-	},
-}
-
-_, err := activitysmith.LiveActivities.Update(updateInput)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-#### End
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/progress-live-activity-end.png" alt="Progress end example" width="680" />
-</p>
-
-```go
-endInput := activitysmithsdk.LiveActivityEndInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
-		Title:              "EV Charging",
-		Subtitle:           "Added 200 mi range",
-		Percentage:         100,
-		AutoDismissMinutes: 2,
-	},
-}
-
-_, err := activitysmith.LiveActivities.End(endInput)
-if err != nil {
-	log.Fatal(err)
-}
+)
 ```
 
 ### Live Activity Action
 
-Just like Actionable Push Notifications, Live Activities can have a button that opens provided URL in a browser or triggers a webhook. Webhooks are executed by the ActivitySmith backend.
+Live Activities can include one optional action button. Use it to open a URL from the Live Activity or trigger a backend webhook.
 
 <p align="center">
-  <img src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png" alt="Metrics Live Activity with action" width="680" />
+  <img
+    src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1"
+    alt="Live Activity with action button"
+    width="680"
+  />
 </p>
 
 #### Open URL action
 
 ```go
-startInput := activitysmithsdk.LiveActivityStartInput{
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+activitysmith.LiveActivities.Stream(
+	"prod-web-1",
+	activitysmithsdk.LiveActivityStreamInput{
 		Title:    "Server Health",
 		Subtitle: "prod-web-1",
 		Type:     "metrics",
@@ -678,53 +297,38 @@ startInput := activitysmithsdk.LiveActivityStartInput{
 			activitysmithsdk.Metric("CPU", 76, activitysmithsdk.MetricUnit("%")),
 			activitysmithsdk.Metric("MEM", 52, activitysmithsdk.MetricUnit("%")),
 		},
+		Action: &activitysmithsdk.LiveActivityActionInput{
+			Title: "Open Dashboard",
+			Type:  "open_url",
+			URL:   "https://ops.example.com/servers/prod-web-1",
+		},
 	},
-	Action: &activitysmithsdk.LiveActivityActionInput{
-		Title: "Open Dashboard",
-		Type:  "open_url",
-		URL:   "https://ops.example.com/servers/prod-web-1",
-	},
-}
-
-start, err := activitysmith.LiveActivities.Start(startInput)
-if err != nil {
-	log.Fatal(err)
-}
-
-activityID := start.GetActivityId()
+)
 ```
 
 #### Webhook action
 
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/live-activity-with-action.png?v=20260319-1" alt="Live Activity with action" width="680" />
-</p>
-
 ```go
-updateInput := activitysmithsdk.LiveActivityUpdateInput{
-	ActivityID: activityID,
-	ContentState: activitysmithsdk.LiveActivityContentStateInput{
+activitysmith.LiveActivities.Stream(
+	"search-reindex",
+	activitysmithsdk.LiveActivityStreamInput{
 		Title:         "Reindexing product search",
 		Subtitle:      "Shard 7 of 12",
+		Type:          "segmented_progress",
 		NumberOfSteps: 12,
 		CurrentStep:   7,
-	},
-	Action: &activitysmithsdk.LiveActivityActionInput{
-		Title:  "Pause Reindex",
-		Type:   "webhook",
-		URL:    "https://ops.example.com/hooks/search/reindex/pause",
-		Method: "POST",
-		Body: map[string]interface{}{
-			"job_id":       "reindex-2026-03-19",
-			"requested_by": "activitysmith-go",
+		Action: &activitysmithsdk.LiveActivityActionInput{
+			Title:  "Pause Reindex",
+			Type:   "webhook",
+			URL:    "https://ops.example.com/hooks/search/reindex/pause",
+			Method: "POST",
+			Body: map[string]interface{}{
+				"job_id":       "reindex-2026-03-19",
+				"requested_by": "activitysmith-go",
+			},
 		},
 	},
-}
-
-_, err = activitysmith.LiveActivities.Update(updateInput)
-if err != nil {
-	log.Fatal(err)
-}
+)
 ```
 
 ## Channels
