@@ -642,6 +642,53 @@ func TestStatsInputsSerializeMetricValuesAndColors(t *testing.T) {
 	}
 }
 
+func TestAlertInputsSerializeMessageIconAndBadge(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	icon := AlertIcon("sparkles", "yellow")
+	badge := AlertBadge("Customer", "magenta")
+	streamInput := LiveActivityStreamInput{
+		Title:   "Reactivation",
+		Type:    LiveActivityTypeAlert,
+		Message: "Lumen came back after 2 weeks",
+		Icon:    &icon,
+		Badge:   &badge,
+		Color:   "red",
+	}
+
+	if _, err := client.LiveActivities.Stream("prod-web-1", streamInput); err != nil {
+		t.Fatalf("Stream returned error: %v", err)
+	}
+
+	if len(*requests) != 1 {
+		t.Fatalf("expected 1 request, got %d", len(*requests))
+	}
+
+	body := (*requests)[0].Body
+	if !strings.Contains(body, `"type":"alert"`) {
+		t.Fatalf("alert body missing type: %s", body)
+	}
+	if !strings.Contains(body, `"message":"Lumen came back after 2 weeks"`) {
+		t.Fatalf("alert body missing message: %s", body)
+	}
+	if !strings.Contains(body, `"icon":{"color":"yellow","symbol":"sparkles"}`) {
+		t.Fatalf("alert body missing icon: %s", body)
+	}
+	if !strings.Contains(body, `"badge":{"color":"magenta","title":"Customer"}`) {
+		t.Fatalf("alert body missing badge: %s", body)
+	}
+	if strings.Contains(body, `"color":"red"`) || strings.Contains(body, `"color":"blue"`) {
+		t.Fatalf("alert body should not include root color: %s", body)
+	}
+}
+
 func TestServicesRejectUnsupportedInputTypes(t *testing.T) {
 	server, _ := newAPITestServer(t)
 	defer server.Close()
