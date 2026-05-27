@@ -12,10 +12,13 @@ Name | Type | Description | Notes
 **Value** | Pointer to **float32** | Current progress value. Use with upper_limit for progress. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for progress. | [optional] 
 **Type** | Pointer to **string** | Required on the first PUT or whenever the stream cannot infer the current activity type. | [optional] 
-**Color** | Pointer to **string** | Optional. Accent color for the Live Activity. Defaults to blue. | [optional] [default to "blue"]
+**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included. | [optional] 
 **StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to segmented_progress. | [optional] 
 **StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
 **Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for metrics and stats activities. | [optional] 
+**Message** | Pointer to **string** | Required for type&#x3D;alert. | [optional] 
+**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon for type&#x3D;alert. | [optional] 
+**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge for type&#x3D;alert. | [optional] 
 **AutoDismissSeconds** | Pointer to **int32** | Optional. Seconds before the ended Live Activity is dismissed. | [optional] 
 **AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. | [optional] 
 
@@ -332,6 +335,81 @@ SetMetrics sets Metrics field to given value.
 `func (o *StreamContentState) HasMetrics() bool`
 
 HasMetrics returns a boolean if a field has been set.
+
+### GetMessage
+
+`func (o *StreamContentState) GetMessage() string`
+
+GetMessage returns the Message field if non-nil, zero value otherwise.
+
+### GetMessageOk
+
+`func (o *StreamContentState) GetMessageOk() (*string, bool)`
+
+GetMessageOk returns a tuple with the Message field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessage
+
+`func (o *StreamContentState) SetMessage(v string)`
+
+SetMessage sets Message field to given value.
+
+### HasMessage
+
+`func (o *StreamContentState) HasMessage() bool`
+
+HasMessage returns a boolean if a field has been set.
+
+### GetIcon
+
+`func (o *StreamContentState) GetIcon() LiveActivityAlertIcon`
+
+GetIcon returns the Icon field if non-nil, zero value otherwise.
+
+### GetIconOk
+
+`func (o *StreamContentState) GetIconOk() (*LiveActivityAlertIcon, bool)`
+
+GetIconOk returns a tuple with the Icon field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIcon
+
+`func (o *StreamContentState) SetIcon(v LiveActivityAlertIcon)`
+
+SetIcon sets Icon field to given value.
+
+### HasIcon
+
+`func (o *StreamContentState) HasIcon() bool`
+
+HasIcon returns a boolean if a field has been set.
+
+### GetBadge
+
+`func (o *StreamContentState) GetBadge() LiveActivityAlertBadge`
+
+GetBadge returns the Badge field if non-nil, zero value otherwise.
+
+### GetBadgeOk
+
+`func (o *StreamContentState) GetBadgeOk() (*LiveActivityAlertBadge, bool)`
+
+GetBadgeOk returns a tuple with the Badge field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetBadge
+
+`func (o *StreamContentState) SetBadge(v LiveActivityAlertBadge)`
+
+SetBadge sets Badge field to given value.
+
+### HasBadge
+
+`func (o *StreamContentState) HasBadge() bool`
+
+HasBadge returns a boolean if a field has been set.
 
 ### GetAutoDismissSeconds
 

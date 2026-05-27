@@ -18,7 +18,7 @@ import (
 // checks if the ContentStateUpdate type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateUpdate{}
 
-// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
+// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message, with optional icon and badge. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
 type ContentStateUpdate struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -34,9 +34,15 @@ type ContentStateUpdate struct {
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
 	// Use for type=metrics or type=stats.
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
+	// Alert message. Use for type=alert.
+	Message *string `json:"message,omitempty"`
+	// Optional SF Symbol icon for type=alert.
+	Icon *LiveActivityAlertIcon `json:"icon,omitempty"`
+	// Optional badge for type=alert.
+	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
 	// Optional. When omitted, the API uses the existing Live Activity type.
 	Type *string `json:"type,omitempty"`
-	// Optional. Accent color for the Live Activity. Defaults to blue.
+	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to type=segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
@@ -54,8 +60,6 @@ type _ContentStateUpdate ContentStateUpdate
 func NewContentStateUpdate(title string) *ContentStateUpdate {
 	this := ContentStateUpdate{}
 	this.Title = title
-	var color string = "blue"
-	this.Color = &color
 	return &this
 }
 
@@ -64,8 +68,6 @@ func NewContentStateUpdate(title string) *ContentStateUpdate {
 // but it doesn't guarantee that properties required by API are set
 func NewContentStateUpdateWithDefaults() *ContentStateUpdate {
 	this := ContentStateUpdate{}
-	var color string = "blue"
-	this.Color = &color
 	return &this
 }
 
@@ -317,6 +319,102 @@ func (o *ContentStateUpdate) SetMetrics(v []ActivityMetric) {
 	o.Metrics = v
 }
 
+// GetMessage returns the Message field value if set, zero value otherwise.
+func (o *ContentStateUpdate) GetMessage() string {
+	if o == nil || IsNil(o.Message) {
+		var ret string
+		return ret
+	}
+	return *o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateUpdate) GetMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *ContentStateUpdate) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
+func (o *ContentStateUpdate) SetMessage(v string) {
+	o.Message = &v
+}
+
+// GetIcon returns the Icon field value if set, zero value otherwise.
+func (o *ContentStateUpdate) GetIcon() LiveActivityAlertIcon {
+	if o == nil || IsNil(o.Icon) {
+		var ret LiveActivityAlertIcon
+		return ret
+	}
+	return *o.Icon
+}
+
+// GetIconOk returns a tuple with the Icon field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateUpdate) GetIconOk() (*LiveActivityAlertIcon, bool) {
+	if o == nil || IsNil(o.Icon) {
+		return nil, false
+	}
+	return o.Icon, true
+}
+
+// HasIcon returns a boolean if a field has been set.
+func (o *ContentStateUpdate) HasIcon() bool {
+	if o != nil && !IsNil(o.Icon) {
+		return true
+	}
+
+	return false
+}
+
+// SetIcon gets a reference to the given LiveActivityAlertIcon and assigns it to the Icon field.
+func (o *ContentStateUpdate) SetIcon(v LiveActivityAlertIcon) {
+	o.Icon = &v
+}
+
+// GetBadge returns the Badge field value if set, zero value otherwise.
+func (o *ContentStateUpdate) GetBadge() LiveActivityAlertBadge {
+	if o == nil || IsNil(o.Badge) {
+		var ret LiveActivityAlertBadge
+		return ret
+	}
+	return *o.Badge
+}
+
+// GetBadgeOk returns a tuple with the Badge field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateUpdate) GetBadgeOk() (*LiveActivityAlertBadge, bool) {
+	if o == nil || IsNil(o.Badge) {
+		return nil, false
+	}
+	return o.Badge, true
+}
+
+// HasBadge returns a boolean if a field has been set.
+func (o *ContentStateUpdate) HasBadge() bool {
+	if o != nil && !IsNil(o.Badge) {
+		return true
+	}
+
+	return false
+}
+
+// SetBadge gets a reference to the given LiveActivityAlertBadge and assigns it to the Badge field.
+func (o *ContentStateUpdate) SetBadge(v LiveActivityAlertBadge) {
+	o.Badge = &v
+}
+
 // GetType returns the Type field value if set, zero value otherwise.
 func (o *ContentStateUpdate) GetType() string {
 	if o == nil || IsNil(o.Type) {
@@ -477,6 +575,15 @@ func (o ContentStateUpdate) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Metrics) {
 		toSerialize["metrics"] = o.Metrics
 	}
+	if !IsNil(o.Message) {
+		toSerialize["message"] = o.Message
+	}
+	if !IsNil(o.Icon) {
+		toSerialize["icon"] = o.Icon
+	}
+	if !IsNil(o.Badge) {
+		toSerialize["badge"] = o.Badge
+	}
 	if !IsNil(o.Type) {
 		toSerialize["type"] = o.Type
 	}
@@ -540,6 +647,9 @@ func (o *ContentStateUpdate) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "value")
 		delete(additionalProperties, "upper_limit")
 		delete(additionalProperties, "metrics")
+		delete(additionalProperties, "message")
+		delete(additionalProperties, "icon")
+		delete(additionalProperties, "badge")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "color")
 		delete(additionalProperties, "step_color")
