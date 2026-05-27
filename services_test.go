@@ -652,14 +652,12 @@ func TestAlertInputsSerializeMessageIconAndBadge(t *testing.T) {
 	}
 	overrideHostForTests(client, server.URL)
 
-	icon := AlertIcon("sparkles", "yellow")
-	badge := AlertBadge("Customer", "magenta")
 	streamInput := LiveActivityStreamInput{
 		Title:   "Reactivation",
 		Type:    LiveActivityTypeAlert,
 		Message: "Lumen came back after 2 weeks",
-		Icon:    &icon,
-		Badge:   &badge,
+		Icon:    AlertIcon("cloud.sun", "yellow"),
+		Badge:   AlertBadge("Customer", "magenta"),
 		Color:   "red",
 	}
 
@@ -678,14 +676,14 @@ func TestAlertInputsSerializeMessageIconAndBadge(t *testing.T) {
 	if !strings.Contains(body, `"message":"Lumen came back after 2 weeks"`) {
 		t.Fatalf("alert body missing message: %s", body)
 	}
-	if !strings.Contains(body, `"icon":{"color":"yellow","symbol":"sparkles"}`) {
+	if !strings.Contains(body, `"icon":{"color":"yellow","symbol":"cloud.sun"}`) {
 		t.Fatalf("alert body missing icon: %s", body)
 	}
 	if !strings.Contains(body, `"badge":{"color":"magenta","title":"Customer"}`) {
 		t.Fatalf("alert body missing badge: %s", body)
 	}
-	if strings.Contains(body, `"color":"red"`) || strings.Contains(body, `"color":"blue"`) {
-		t.Fatalf("alert body should not include root color: %s", body)
+	if !strings.Contains(body, `"color":"red"`) {
+		t.Fatalf("alert body missing action color: %s", body)
 	}
 }
 
