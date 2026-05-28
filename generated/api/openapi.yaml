@@ -1526,7 +1526,7 @@ components:
           value: 0.23021358869347652
         number_of_steps: 1
         value: 5.962133916683182
-        current_step: 1
+        current_step: 0
       properties:
         title:
           type: string
@@ -1539,8 +1539,10 @@ components:
           minimum: 1
           type: integer
         current_step:
-          description: Current step. Use for type=segmented_progress.
-          minimum: 1
+          description: Current completed step count. Use for type=segmented_progress.
+            Set 0 when the activity has started but no segment is complete yet. Must
+            be less than or equal to number_of_steps.
+          minimum: 0
           type: integer
         percentage:
           description: Progress percentage (0–100). Use for type=progress. Takes precedence
@@ -1677,7 +1679,7 @@ components:
           value: 0.23021358869347652
         number_of_steps: 1
         value: 5.962133916683182
-        current_step: 1
+        current_step: 0
       properties:
         title:
           type: string
@@ -1689,8 +1691,10 @@ components:
           minimum: 1
           type: integer
         current_step:
-          description: Current step. Use for type=segmented_progress.
-          minimum: 1
+          description: Current completed step count. Use for type=segmented_progress.
+            Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps
+            when number_of_steps is provided.
+          minimum: 0
           type: integer
         percentage:
           description: Progress percentage (0–100). Use for type=progress. Takes precedence
@@ -1829,7 +1833,7 @@ components:
           value: 0.23021358869347652
         number_of_steps: 1
         value: 5.962133916683182
-        current_step: 1
+        current_step: 0
       properties:
         title:
           type: string
@@ -1842,8 +1846,10 @@ components:
           minimum: 1
           type: integer
         current_step:
-          description: Current step. Use for type=segmented_progress.
-          minimum: 1
+          description: Current completed step count. Use for type=segmented_progress.
+            Must be less than or equal to number_of_steps when number_of_steps is
+            provided.
+          minimum: 0
           type: integer
         percentage:
           description: Progress percentage (0–100). Use for type=progress. Takes precedence
@@ -1987,7 +1993,7 @@ components:
         number_of_steps: 1
         auto_dismiss_seconds: 0
         value: 5.962133916683182
-        current_step: 1
+        current_step: 0
       properties:
         title:
           type: string
@@ -1998,8 +2004,10 @@ components:
           minimum: 1
           type: integer
         current_step:
-          description: Use for segmented_progress.
-          minimum: 1
+          description: Use for segmented_progress. Set 0 when no segment is complete
+            yet. Must be less than or equal to number_of_steps when number_of_steps
+            is provided.
+          minimum: 0
           type: integer
         percentage:
           description: Use for progress. Takes precedence over value/upper_limit if
@@ -2421,7 +2429,7 @@ components:
             value: 0.23021358869347652
           number_of_steps: 1
           value: 5.962133916683182
-          current_step: 1
+          current_step: 0
         alert:
           title: title
           body: body
@@ -2529,7 +2537,7 @@ components:
           number_of_steps: 1
           auto_dismiss_seconds: 0
           value: 5.962133916683182
-          current_step: 1
+          current_step: 0
         channels:
         - channels
         - channels
@@ -2664,7 +2672,7 @@ components:
           number_of_steps: 1
           auto_dismiss_seconds: 0
           value: 5.962133916683182
-          current_step: 1
+          current_step: 0
         alert:
           title: title
           body: body
@@ -2888,7 +2896,7 @@ components:
             value: 0.23021358869347652
           number_of_steps: 1
           value: 5.962133916683182
-          current_step: 1
+          current_step: 0
         activity_id: activity_id
         action:
           method: POST
@@ -2978,7 +2986,7 @@ components:
             value: 0.23021358869347652
           number_of_steps: 1
           value: 5.962133916683182
-          current_step: 1
+          current_step: 0
         activity_id: activity_id
         action:
           method: POST

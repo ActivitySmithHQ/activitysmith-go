@@ -24,7 +24,7 @@ type StreamContentState struct {
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Use for segmented_progress.
 	NumberOfSteps *int32 `json:"number_of_steps,omitempty"`
-	// Use for segmented_progress.
+	// Use for segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided.
 	CurrentStep *int32 `json:"current_step,omitempty"`
 	// Use for progress. Takes precedence over value/upper_limit if both are provided.
 	Percentage *float32 `json:"percentage,omitempty"`
