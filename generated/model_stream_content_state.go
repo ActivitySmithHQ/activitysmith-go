@@ -18,7 +18,7 @@ import (
 // checks if the StreamContentState type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &StreamContentState{}
 
-// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and stats types.
+// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, and alert types.
 type StreamContentState struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -34,7 +34,7 @@ type StreamContentState struct {
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
 	// Required on the first PUT or whenever the stream cannot infer the current activity type.
 	Type *string `json:"type,omitempty"`
-	// Optional. Accent color for the Live Activity. Defaults to blue.
+	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
@@ -42,6 +42,12 @@ type StreamContentState struct {
 	StepColors []string `json:"step_colors,omitempty"`
 	// Use for metrics and stats activities.
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
+	// Required for type=alert.
+	Message *string `json:"message,omitempty"`
+	// Optional SF Symbol icon for type=alert.
+	Icon *LiveActivityAlertIcon `json:"icon,omitempty"`
+	// Optional badge for type=alert.
+	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
 	// Optional. Seconds before the ended Live Activity is dismissed.
 	AutoDismissSeconds *int32 `json:"auto_dismiss_seconds,omitempty"`
 	// Optional. Minutes before the ended Live Activity is dismissed.
@@ -58,8 +64,6 @@ type _StreamContentState StreamContentState
 func NewStreamContentState(title string) *StreamContentState {
 	this := StreamContentState{}
 	this.Title = title
-	var color string = "blue"
-	this.Color = &color
 	return &this
 }
 
@@ -68,8 +72,6 @@ func NewStreamContentState(title string) *StreamContentState {
 // but it doesn't guarantee that properties required by API are set
 func NewStreamContentStateWithDefaults() *StreamContentState {
 	this := StreamContentState{}
-	var color string = "blue"
-	this.Color = &color
 	return &this
 }
 
@@ -449,6 +451,102 @@ func (o *StreamContentState) SetMetrics(v []ActivityMetric) {
 	o.Metrics = v
 }
 
+// GetMessage returns the Message field value if set, zero value otherwise.
+func (o *StreamContentState) GetMessage() string {
+	if o == nil || IsNil(o.Message) {
+		var ret string
+		return ret
+	}
+	return *o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *StreamContentState) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
+func (o *StreamContentState) SetMessage(v string) {
+	o.Message = &v
+}
+
+// GetIcon returns the Icon field value if set, zero value otherwise.
+func (o *StreamContentState) GetIcon() LiveActivityAlertIcon {
+	if o == nil || IsNil(o.Icon) {
+		var ret LiveActivityAlertIcon
+		return ret
+	}
+	return *o.Icon
+}
+
+// GetIconOk returns a tuple with the Icon field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetIconOk() (*LiveActivityAlertIcon, bool) {
+	if o == nil || IsNil(o.Icon) {
+		return nil, false
+	}
+	return o.Icon, true
+}
+
+// HasIcon returns a boolean if a field has been set.
+func (o *StreamContentState) HasIcon() bool {
+	if o != nil && !IsNil(o.Icon) {
+		return true
+	}
+
+	return false
+}
+
+// SetIcon gets a reference to the given LiveActivityAlertIcon and assigns it to the Icon field.
+func (o *StreamContentState) SetIcon(v LiveActivityAlertIcon) {
+	o.Icon = &v
+}
+
+// GetBadge returns the Badge field value if set, zero value otherwise.
+func (o *StreamContentState) GetBadge() LiveActivityAlertBadge {
+	if o == nil || IsNil(o.Badge) {
+		var ret LiveActivityAlertBadge
+		return ret
+	}
+	return *o.Badge
+}
+
+// GetBadgeOk returns a tuple with the Badge field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetBadgeOk() (*LiveActivityAlertBadge, bool) {
+	if o == nil || IsNil(o.Badge) {
+		return nil, false
+	}
+	return o.Badge, true
+}
+
+// HasBadge returns a boolean if a field has been set.
+func (o *StreamContentState) HasBadge() bool {
+	if o != nil && !IsNil(o.Badge) {
+		return true
+	}
+
+	return false
+}
+
+// SetBadge gets a reference to the given LiveActivityAlertBadge and assigns it to the Badge field.
+func (o *StreamContentState) SetBadge(v LiveActivityAlertBadge) {
+	o.Badge = &v
+}
+
 // GetAutoDismissSeconds returns the AutoDismissSeconds field value if set, zero value otherwise.
 func (o *StreamContentState) GetAutoDismissSeconds() int32 {
 	if o == nil || IsNil(o.AutoDismissSeconds) {
@@ -557,6 +655,15 @@ func (o StreamContentState) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Metrics) {
 		toSerialize["metrics"] = o.Metrics
 	}
+	if !IsNil(o.Message) {
+		toSerialize["message"] = o.Message
+	}
+	if !IsNil(o.Icon) {
+		toSerialize["icon"] = o.Icon
+	}
+	if !IsNil(o.Badge) {
+		toSerialize["badge"] = o.Badge
+	}
 	if !IsNil(o.AutoDismissSeconds) {
 		toSerialize["auto_dismiss_seconds"] = o.AutoDismissSeconds
 	}
@@ -618,6 +725,9 @@ func (o *StreamContentState) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "step_color")
 		delete(additionalProperties, "step_colors")
 		delete(additionalProperties, "metrics")
+		delete(additionalProperties, "message")
+		delete(additionalProperties, "icon")
+		delete(additionalProperties, "badge")
 		delete(additionalProperties, "auto_dismiss_seconds")
 		delete(additionalProperties, "auto_dismiss_minutes")
 		o.AdditionalProperties = additionalProperties

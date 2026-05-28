@@ -12,12 +12,71 @@ const (
 	LiveActivityTypeProgress          = "progress"
 	LiveActivityTypeMetrics           = "metrics"
 	LiveActivityTypeStats             = "stats"
+	LiveActivityTypeAlert             = "alert"
 )
 
 type ActivityMetricOption func(*generated.ActivityMetric)
 
 type ActivityMetric = generated.ActivityMetric
 type PushNotificationAction = generated.PushNotificationAction
+
+type LiveActivityAlertIconInput struct {
+	Symbol string
+	Color  string
+}
+
+type LiveActivityAlertBadgeInput struct {
+	Title string
+	Color string
+}
+
+func AlertIcon(symbol string, color ...string) LiveActivityAlertIconInput {
+	icon := LiveActivityAlertIconInput{Symbol: symbol}
+	if len(color) > 0 {
+		icon.Color = color[0]
+	}
+	return icon
+}
+
+func AlertBadge(title string, color ...string) LiveActivityAlertBadgeInput {
+	badge := LiveActivityAlertBadgeInput{Title: title}
+	if len(color) > 0 {
+		badge.Color = color[0]
+	}
+	return badge
+}
+
+func alertIconMap(icon LiveActivityAlertIconInput) map[string]interface{} {
+	if icon.Symbol == "" {
+		return nil
+	}
+	value := map[string]interface{}{"symbol": icon.Symbol}
+	if icon.Color != "" {
+		value["color"] = icon.Color
+	}
+	return value
+}
+
+func alertBadgeMap(badge LiveActivityAlertBadgeInput) map[string]interface{} {
+	if badge.Title == "" {
+		return nil
+	}
+	value := map[string]interface{}{"title": badge.Title}
+	if badge.Color != "" {
+		value["color"] = badge.Color
+	}
+	return value
+}
+
+func setAdditionalProperty(properties *map[string]interface{}, key string, value interface{}) {
+	if value == nil {
+		return
+	}
+	if *properties == nil {
+		*properties = map[string]interface{}{}
+	}
+	(*properties)[key] = value
+}
 
 func Metric(label string, value any, options ...ActivityMetricOption) ActivityMetric {
 	metric, err := NewActivityMetric(label, value, options...)
@@ -186,6 +245,9 @@ type LiveActivityContentStateInput struct {
 	UpperLimit         float32
 	Type               string
 	Subtitle           string
+	Message            string
+	Icon               LiveActivityAlertIconInput
+	Badge              LiveActivityAlertBadgeInput
 	Color              string
 	StepColor          string
 	AutoDismissMinutes int32
@@ -202,6 +264,9 @@ func (in LiveActivityContentStateInput) isSet() bool {
 	return in.Title != "" ||
 		in.Type != "" ||
 		in.Subtitle != "" ||
+		in.Message != "" ||
+		in.Icon.Symbol != "" ||
+		in.Badge.Title != "" ||
 		in.Color != "" ||
 		in.StepColor != "" ||
 		in.NumberOfSteps != 0 ||
@@ -216,6 +281,14 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.valueSet ||
 		in.upperLimitSet ||
 		in.autoDismissMinutesSet
+}
+
+func (in LiveActivityContentStateInput) applyAlertFields(properties *map[string]interface{}) {
+	if in.Message != "" {
+		setAdditionalProperty(properties, "message", in.Message)
+	}
+	setAdditionalProperty(properties, "icon", alertIconMap(in.Icon))
+	setAdditionalProperty(properties, "badge", alertBadgeMap(in.Badge))
 }
 
 func (in LiveActivityContentStateInput) applyStart(state *generated.ContentStateStart) {
@@ -246,6 +319,7 @@ func (in LiveActivityContentStateInput) applyStart(state *generated.ContentState
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
+	in.applyAlertFields(&state.AdditionalProperties)
 }
 
 func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStateUpdate) {
@@ -279,6 +353,7 @@ func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStat
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
+	in.applyAlertFields(&state.AdditionalProperties)
 }
 
 func (in LiveActivityContentStateInput) applyEnd(state *generated.ContentStateEnd) {
@@ -319,6 +394,7 @@ func (in LiveActivityContentStateInput) applyEndBase(state *generated.ContentSta
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
+	in.applyAlertFields(&state.AdditionalProperties)
 }
 
 func (in LiveActivityContentStateInput) applyStream(state *generated.StreamContentState) {
@@ -355,6 +431,7 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
 		state.SetAutoDismissMinutes(in.AutoDismissMinutes)
 	}
+	in.applyAlertFields(&state.AdditionalProperties)
 }
 
 func (in LiveActivityContentStateInput) WithNumberOfSteps(v int32) LiveActivityContentStateInput {
@@ -398,6 +475,9 @@ type LiveActivityStartInput struct {
 	UpperLimit    float32
 	Type          string
 	Subtitle      string
+	Message       string
+	Icon          LiveActivityAlertIconInput
+	Badge         LiveActivityAlertBadgeInput
 	Color         string
 	StepColor     string
 	Metrics       []generated.ActivityMetric
@@ -413,7 +493,13 @@ type LiveActivityStartInput struct {
 func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartRequest {
 	contentState := in.ContentState
 	if !contentState.isSet() {
-		contentState = LiveActivityContentStateInput{Title: in.Title, Type: in.Type}
+		contentState = LiveActivityContentStateInput{
+			Title:   in.Title,
+			Type:    in.Type,
+			Message: in.Message,
+			Icon:    in.Icon,
+			Badge:   in.Badge,
+		}
 	}
 	req := generated.LiveActivityStartRequest{
 		ContentState: *generated.NewContentStateStart(contentState.Title, contentState.Type),
@@ -437,6 +523,11 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
+	if in.Message != "" {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
+	}
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -499,6 +590,9 @@ type LiveActivityUpdateInput struct {
 	UpperLimit    float32
 	Type          string
 	Subtitle      string
+	Message       string
+	Icon          LiveActivityAlertIconInput
+	Badge         LiveActivityAlertBadgeInput
 	Color         string
 	StepColor     string
 	NumberOfSteps int32
@@ -514,7 +608,13 @@ type LiveActivityUpdateInput struct {
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
 	contentState := in.ContentState
 	if !contentState.isSet() {
-		contentState = LiveActivityContentStateInput{Title: in.Title}
+		contentState = LiveActivityContentStateInput{
+			Title:   in.Title,
+			Type:    in.Type,
+			Message: in.Message,
+			Icon:    in.Icon,
+			Badge:   in.Badge,
+		}
 	}
 	req := generated.LiveActivityUpdateRequest{
 		ActivityId:   in.ActivityID,
@@ -539,6 +639,11 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
+	if in.Message != "" {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
+	}
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -601,6 +706,9 @@ type LiveActivityEndInput struct {
 	UpperLimit         float32
 	Type               string
 	Subtitle           string
+	Message            string
+	Icon               LiveActivityAlertIconInput
+	Badge              LiveActivityAlertBadgeInput
 	Color              string
 	StepColor          string
 	NumberOfSteps      int32
@@ -618,7 +726,13 @@ type LiveActivityEndInput struct {
 func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	contentState := in.ContentState
 	if !contentState.isSet() {
-		contentState = LiveActivityContentStateInput{Title: in.Title}
+		contentState = LiveActivityContentStateInput{
+			Title:   in.Title,
+			Type:    in.Type,
+			Message: in.Message,
+			Icon:    in.Icon,
+			Badge:   in.Badge,
+		}
 	}
 	req := generated.LiveActivityEndRequest{
 		ActivityId:   in.ActivityID,
@@ -643,6 +757,11 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
+	if in.Message != "" {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
+	}
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -715,6 +834,9 @@ type LiveActivityStreamInput struct {
 	UpperLimit    float32
 	Type          string
 	Subtitle      string
+	Message       string
+	Icon          LiveActivityAlertIconInput
+	Badge         LiveActivityAlertBadgeInput
 	Color         string
 	StepColor     string
 	Metrics       []generated.ActivityMetric
@@ -731,7 +853,13 @@ type LiveActivityStreamInput struct {
 func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequest {
 	contentState := in.ContentState
 	if !contentState.isSet() {
-		contentState = LiveActivityContentStateInput{Title: in.Title}
+		contentState = LiveActivityContentStateInput{
+			Title:   in.Title,
+			Type:    in.Type,
+			Message: in.Message,
+			Icon:    in.Icon,
+			Badge:   in.Badge,
+		}
 	}
 	req := generated.LiveActivityStreamRequest{
 		ContentState: *generated.NewStreamContentState(contentState.Title),
@@ -758,6 +886,11 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
+	if in.Message != "" {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
+	}
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
+	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -819,6 +952,9 @@ type LiveActivityStreamEndInput struct {
 	UpperLimit    float32
 	Type          string
 	Subtitle      string
+	Message       string
+	Icon          LiveActivityAlertIconInput
+	Badge         LiveActivityAlertBadgeInput
 	Color         string
 	StepColor     string
 	Metrics       []generated.ActivityMetric
@@ -835,7 +971,13 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 	req := generated.NewLiveActivityStreamDeleteRequest()
 	contentStateInput := in.ContentState
 	if !contentStateInput.isSet() && in.Title != "" {
-		contentStateInput = LiveActivityContentStateInput{Title: in.Title}
+		contentStateInput = LiveActivityContentStateInput{
+			Title:   in.Title,
+			Type:    in.Type,
+			Message: in.Message,
+			Icon:    in.Icon,
+			Badge:   in.Badge,
+		}
 	}
 	if contentStateInput.isSet() {
 		contentState := *generated.NewStreamContentState(contentStateInput.Title)
@@ -861,6 +1003,11 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 		if in.Subtitle != "" {
 			contentState.SetSubtitle(in.Subtitle)
 		}
+		if in.Message != "" {
+			setAdditionalProperty(&contentState.AdditionalProperties, "message", in.Message)
+		}
+		setAdditionalProperty(&contentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
+		setAdditionalProperty(&contentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
 		if in.Color != "" {
 			contentState.SetColor(in.Color)
 		}

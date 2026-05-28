@@ -684,9 +684,9 @@ paths:
         \ rotation, and end state for you. This endpoint remains supported for existing\
         \ integrations and advanced lifecycle control. Starts a Live Activity on devices\
         \ matched by API key scope and optional target channels. Supports segmented_progress,\
-        \ progress, metrics, and stats activity types. For segmented_progress activities,\
-        \ number_of_steps can be changed later during update or end calls if the workflow\
-        \ changes."
+        \ progress, metrics, stats, and alert activity types. For segmented_progress\
+        \ activities, number_of_steps can be changed later during update or end calls\
+        \ if the workflow changes."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -949,9 +949,9 @@ paths:
         \ rotation, and end state for you. This endpoint remains supported for existing\
         \ integrations and advanced lifecycle control. Updates an existing Live Activity.\
         \ If the per-activity token is not registered yet, the update is queued. Supports\
-        \ segmented_progress, progress, metrics, and stats activity types. For segmented_progress\
-        \ activities, you can increase or decrease number_of_steps here as the workflow\
-        \ changes."
+        \ segmented_progress, progress, metrics, stats, and alert activity types.\
+        \ For segmented_progress activities, you can increase or decrease number_of_steps\
+        \ here as the workflow changes."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -1148,9 +1148,9 @@ paths:
         \ /live-activity/stream/{stream_key} to end a managed Live Activity stream.\
         \ This endpoint remains supported for existing integrations and advanced lifecycle\
         \ control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
-        \ progress, metrics, and stats activity types. For segmented_progress activities,\
-        \ you can send the latest number_of_steps here if the workflow changed after\
-        \ start."
+        \ progress, metrics, stats, and alert activity types. For segmented_progress\
+        \ activities, you can send the latest number_of_steps here if the workflow\
+        \ changed after start."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -1482,17 +1482,27 @@ components:
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
-        \ array. For segmented_progress, number_of_steps is not locked and can be\
-        \ changed in later update or end calls."
+        \ array. For alert include message, with optional icon and badge. For segmented_progress,\
+        \ number_of_steps is not locked and can be changed in later update or end\
+        \ calls."
       example:
-        color: blue
+        color: lime
         step_color: lime
+        icon:
+          symbol: symbol
+          color: lime
+        upper_limit: 5.637376656633329
+        title: title
+        message: message
+        type: segmented_progress
+        badge:
+          color: null
+          title: title
         step_colors:
         - lime
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
-        upper_limit: 5.637376656633329
         metrics:
         - unit: unit
           color: lime
@@ -1514,9 +1524,7 @@ components:
           color: lime
           label: label
           value: 0.23021358869347652
-        title: title
         number_of_steps: 1
-        type: segmented_progress
         value: 5.962133916683182
         current_step: 1
       properties:
@@ -1553,16 +1561,26 @@ components:
           maxItems: 8
           minItems: 1
           type: array
+        message:
+          description: Required for type=alert.
+          minLength: 1
+          type: string
+        icon:
+          $ref: '#/components/schemas/LiveActivityAlertIcon'
+        badge:
+          $ref: '#/components/schemas/LiveActivityAlertBadge'
         type:
           enum:
           - segmented_progress
           - progress
           - metrics
           - stats
+          - alert
           type: string
         color:
-          default: blue
-          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          description: "Optional. Accent color for progress, segmented_progress, and\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
+            \ button when action is included."
           enum:
           - lime
           - green
@@ -1573,6 +1591,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_color:
           description: Optional. Overrides color for the current step. Only applies
@@ -1587,6 +1606,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_colors:
           description: "Optional. Colors for completed steps. When used with segmented_progress,\
@@ -1602,6 +1622,7 @@ components:
             - red
             - orange
             - yellow
+            - gray
             type: string
           type: array
       required:
@@ -1609,20 +1630,30 @@ components:
       - type
     ContentStateUpdate:
       additionalProperties: true
-      description: Update payload requires title. For segmented_progress include current_step
-        and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics and stats include a non-empty metrics array. Type
-        is optional when updating an existing activity. You can increase or decrease
-        number_of_steps during updates.
+      description: "Update payload requires title. For segmented_progress include\
+        \ current_step and optionally number_of_steps. For progress include percentage\
+        \ or value with upper_limit. For metrics and stats include a non-empty metrics\
+        \ array. For alert include message, with optional icon and badge. Type is\
+        \ optional when updating an existing activity. You can increase or decrease\
+        \ number_of_steps during updates."
       example:
-        color: blue
+        color: lime
         step_color: lime
+        icon:
+          symbol: symbol
+          color: lime
+        upper_limit: 5.637376656633329
+        title: title
+        message: message
+        type: segmented_progress
+        badge:
+          color: null
+          title: title
         step_colors:
         - lime
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
-        upper_limit: 5.637376656633329
         metrics:
         - unit: unit
           color: lime
@@ -1644,9 +1675,7 @@ components:
           color: lime
           label: label
           value: 0.23021358869347652
-        title: title
         number_of_steps: 1
-        type: segmented_progress
         value: 5.962133916683182
         current_step: 1
       properties:
@@ -1682,6 +1711,14 @@ components:
           maxItems: 8
           minItems: 1
           type: array
+        message:
+          description: Alert message. Use for type=alert.
+          minLength: 1
+          type: string
+        icon:
+          $ref: '#/components/schemas/LiveActivityAlertIcon'
+        badge:
+          $ref: '#/components/schemas/LiveActivityAlertBadge'
         type:
           description: "Optional. When omitted, the API uses the existing Live Activity\
             \ type."
@@ -1690,10 +1727,12 @@ components:
           - progress
           - metrics
           - stats
+          - alert
           type: string
         color:
-          default: blue
-          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          description: "Optional. Accent color for progress, segmented_progress, and\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
+            \ button when action is included."
           enum:
           - lime
           - green
@@ -1704,6 +1743,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_color:
           description: Optional. Overrides color for the current step. Only applies
@@ -1718,6 +1758,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_colors:
           description: "Optional. Colors for completed steps. When used with segmented_progress,\
@@ -1733,24 +1774,33 @@ components:
             - red
             - orange
             - yellow
+            - gray
             type: string
           type: array
       required:
       - title
     ContentStateEnd:
       additionalProperties: true
-      description: End payload requires title. For segmented_progress include current_step
-        and optionally number_of_steps. For progress include percentage or value with
-        upper_limit. For metrics and stats include a non-empty metrics array. Type
-        is optional when ending an existing activity. You can send an updated number_of_steps
-        here if the workflow changed after start.
+      description: "End payload requires title. For segmented_progress include current_step\
+        \ and optionally number_of_steps. For progress include percentage or value\
+        \ with upper_limit. For metrics and stats include a non-empty metrics array.\
+        \ For alert include message, with optional icon and badge. Type is optional\
+        \ when ending an existing activity. You can send an updated number_of_steps\
+        \ here if the workflow changed after start."
       example:
-        color: blue
+        color: lime
         step_color: lime
+        icon:
+          symbol: symbol
+          color: lime
         auto_dismiss_minutes: 0
         upper_limit: 5.637376656633329
         title: title
+        message: message
         type: segmented_progress
+        badge:
+          color: null
+          title: title
         step_colors:
         - lime
         - lime
@@ -1814,6 +1864,14 @@ components:
           maxItems: 8
           minItems: 1
           type: array
+        message:
+          description: Alert message. Use for type=alert.
+          minLength: 1
+          type: string
+        icon:
+          $ref: '#/components/schemas/LiveActivityAlertIcon'
+        badge:
+          $ref: '#/components/schemas/LiveActivityAlertBadge'
         type:
           description: "Optional. When omitted, the API uses the existing Live Activity\
             \ type."
@@ -1822,10 +1880,12 @@ components:
           - progress
           - metrics
           - stats
+          - alert
           type: string
         color:
-          default: blue
-          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          description: "Optional. Accent color for progress, segmented_progress, and\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
+            \ button when action is included."
           enum:
           - lime
           - green
@@ -1836,6 +1896,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_color:
           description: Optional. Overrides color for the current step. Only applies
@@ -1850,6 +1911,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_colors:
           description: "Optional. Colors for completed steps. When used with segmented_progress,\
@@ -1865,6 +1927,7 @@ components:
             - red
             - orange
             - yellow
+            - gray
             type: string
           type: array
         auto_dismiss_minutes:
@@ -1880,14 +1943,21 @@ components:
       additionalProperties: true
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
-        \ Supports segmented_progress, progress, metrics, and stats types."
+        \ Supports segmented_progress, progress, metrics, stats, and alert types."
       example:
-        color: blue
+        color: lime
         step_color: lime
+        icon:
+          symbol: symbol
+          color: lime
         auto_dismiss_minutes: 0
         upper_limit: 5.637376656633329
         title: title
         type: segmented_progress
+        message: message
+        badge:
+          color: null
+          title: title
         step_colors:
         - lime
         - lime
@@ -1951,10 +2021,12 @@ components:
           - progress
           - metrics
           - stats
+          - alert
           type: string
         color:
-          default: blue
-          description: Optional. Accent color for the Live Activity. Defaults to blue.
+          description: "Optional. Accent color for progress, segmented_progress, and\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
+            \ button when action is included."
           enum:
           - lime
           - green
@@ -1965,6 +2037,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_color:
           description: Optional. Overrides color for the current step. Only applies
@@ -1979,6 +2052,7 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
         step_colors:
           description: "Optional. Colors for completed steps. When used with segmented_progress,\
@@ -1994,6 +2068,7 @@ components:
             - red
             - orange
             - yellow
+            - gray
             type: string
           type: array
         metrics:
@@ -2003,6 +2078,14 @@ components:
           maxItems: 8
           minItems: 1
           type: array
+        message:
+          description: Required for type=alert.
+          minLength: 1
+          type: string
+        icon:
+          $ref: '#/components/schemas/LiveActivityAlertIcon'
+        badge:
+          $ref: '#/components/schemas/LiveActivityAlertBadge'
         auto_dismiss_seconds:
           description: Optional. Seconds before the ended Live Activity is dismissed.
           minimum: 0
@@ -2040,10 +2123,53 @@ components:
           - red
           - orange
           - yellow
+          - gray
           type: string
       required:
       - label
       - value
+    LiveActivityColor:
+      enum:
+      - lime
+      - green
+      - cyan
+      - blue
+      - purple
+      - magenta
+      - red
+      - orange
+      - yellow
+      - gray
+      type: string
+    LiveActivityAlertIcon:
+      additionalProperties: true
+      description: Optional SF Symbol icon for Alert Live Activities.
+      example:
+        symbol: symbol
+        color: lime
+      properties:
+        symbol:
+          description: Apple SF Symbol name.
+          minLength: 1
+          type: string
+        color:
+          $ref: '#/components/schemas/LiveActivityColor'
+      required:
+      - symbol
+    LiveActivityAlertBadge:
+      additionalProperties: true
+      description: Optional badge for Alert Live Activities.
+      example:
+        color: null
+        title: title
+      properties:
+        title:
+          minLength: 1
+          type: string
+        color:
+          $ref: '#/components/schemas/LiveActivityColor'
+      required:
+      - title
     AlertPayload:
       additionalProperties: true
       example:
@@ -2255,14 +2381,23 @@ components:
         later update and end calls.
       example:
         content_state:
-          color: blue
+          color: lime
           step_color: lime
+          icon:
+            symbol: symbol
+            color: lime
+          upper_limit: 5.637376656633329
+          title: title
+          message: message
+          type: segmented_progress
+          badge:
+            color: null
+            title: title
           step_colors:
           - lime
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
-          upper_limit: 5.637376656633329
           metrics:
           - unit: unit
             color: lime
@@ -2284,9 +2419,7 @@ components:
             color: lime
             label: label
             value: 0.23021358869347652
-          title: title
           number_of_steps: 1
-          type: segmented_progress
           value: 5.962133916683182
           current_step: 1
         alert:
@@ -2354,12 +2487,19 @@ components:
         \ for compatibility. If both are provided, they must match."
       example:
         content_state:
-          color: blue
+          color: lime
           step_color: lime
+          icon:
+            symbol: symbol
+            color: lime
           auto_dismiss_minutes: 0
           upper_limit: 5.637376656633329
           title: title
           type: segmented_progress
+          message: message
+          badge:
+            color: null
+            title: title
           step_colors:
           - lime
           - lime
@@ -2482,12 +2622,19 @@ components:
         \ ends the stream using the latest known state when possible."
       example:
         content_state:
-          color: blue
+          color: lime
           step_color: lime
+          icon:
+            symbol: symbol
+            color: lime
           auto_dismiss_minutes: 0
           upper_limit: 5.637376656633329
           title: title
           type: segmented_progress
+          message: message
+          badge:
+            color: null
+            title: title
           step_colors:
           - lime
           - lime
@@ -2701,14 +2848,23 @@ components:
       description: Update an existing Live Activity by activity_id.
       example:
         content_state:
-          color: blue
+          color: lime
           step_color: lime
+          icon:
+            symbol: symbol
+            color: lime
+          upper_limit: 5.637376656633329
+          title: title
+          message: message
+          type: segmented_progress
+          badge:
+            color: null
+            title: title
           step_colors:
           - lime
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
-          upper_limit: 5.637376656633329
           metrics:
           - unit: unit
             color: lime
@@ -2730,9 +2886,7 @@ components:
             color: lime
             label: label
             value: 0.23021358869347652
-          title: title
           number_of_steps: 1
-          type: segmented_progress
           value: 5.962133916683182
           current_step: 1
         activity_id: activity_id
@@ -2783,12 +2937,19 @@ components:
       description: End an existing Live Activity by activity_id.
       example:
         content_state:
-          color: blue
+          color: lime
           step_color: lime
+          icon:
+            symbol: symbol
+            color: lime
           auto_dismiss_minutes: 0
           upper_limit: 5.637376656633329
           title: title
+          message: message
           type: segmented_progress
+          badge:
+            color: null
+            title: title
           step_colors:
           - lime
           - lime
