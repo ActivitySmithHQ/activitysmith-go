@@ -12,8 +12,11 @@ Name | Type | Description | Notes
 **Value** | Pointer to **float32** | Current progress value. Use with upper_limit for type&#x3D;progress. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for type&#x3D;progress. | [optional] 
 **Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for type&#x3D;metrics or type&#x3D;stats. | [optional] 
+**Message** | Pointer to **string** | Alert message. Use for type&#x3D;alert. | [optional] 
+**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon for type&#x3D;alert. | [optional] 
+**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge for type&#x3D;alert. | [optional] 
 **Type** | Pointer to **string** | Optional. When omitted, the API uses the existing Live Activity type. | [optional] 
-**Color** | Pointer to **string** | Optional. Accent color for the Live Activity. Defaults to blue. | [optional] [default to "blue"]
+**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included. | [optional] 
 **StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to type&#x3D;segmented_progress. | [optional] 
 **StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
 **AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max. | [optional] [default to 3]
@@ -231,6 +234,81 @@ SetMetrics sets Metrics field to given value.
 `func (o *ContentStateEnd) HasMetrics() bool`
 
 HasMetrics returns a boolean if a field has been set.
+
+### GetMessage
+
+`func (o *ContentStateEnd) GetMessage() string`
+
+GetMessage returns the Message field if non-nil, zero value otherwise.
+
+### GetMessageOk
+
+`func (o *ContentStateEnd) GetMessageOk() (*string, bool)`
+
+GetMessageOk returns a tuple with the Message field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessage
+
+`func (o *ContentStateEnd) SetMessage(v string)`
+
+SetMessage sets Message field to given value.
+
+### HasMessage
+
+`func (o *ContentStateEnd) HasMessage() bool`
+
+HasMessage returns a boolean if a field has been set.
+
+### GetIcon
+
+`func (o *ContentStateEnd) GetIcon() LiveActivityAlertIcon`
+
+GetIcon returns the Icon field if non-nil, zero value otherwise.
+
+### GetIconOk
+
+`func (o *ContentStateEnd) GetIconOk() (*LiveActivityAlertIcon, bool)`
+
+GetIconOk returns a tuple with the Icon field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIcon
+
+`func (o *ContentStateEnd) SetIcon(v LiveActivityAlertIcon)`
+
+SetIcon sets Icon field to given value.
+
+### HasIcon
+
+`func (o *ContentStateEnd) HasIcon() bool`
+
+HasIcon returns a boolean if a field has been set.
+
+### GetBadge
+
+`func (o *ContentStateEnd) GetBadge() LiveActivityAlertBadge`
+
+GetBadge returns the Badge field if non-nil, zero value otherwise.
+
+### GetBadgeOk
+
+`func (o *ContentStateEnd) GetBadgeOk() (*LiveActivityAlertBadge, bool)`
+
+GetBadgeOk returns a tuple with the Badge field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetBadge
+
+`func (o *ContentStateEnd) SetBadge(v LiveActivityAlertBadge)`
+
+SetBadge sets Badge field to given value.
+
+### HasBadge
+
+`func (o *ContentStateEnd) HasBadge() bool`
+
+HasBadge returns a boolean if a field has been set.
 
 ### GetType
 
