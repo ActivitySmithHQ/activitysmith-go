@@ -497,6 +497,70 @@ func TestEndInputCanExplicitlySendZeroAutoDismissMinutes(t *testing.T) {
 	}
 }
 
+func TestSegmentedProgressInputsCanExplicitlySendZeroCurrentStep(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	startInput := LiveActivityStartInput{
+		Title:         "Deploy",
+		Type:          "segmented_progress",
+		NumberOfSteps: 4,
+	}.WithCurrentStep(0)
+	updateInput := LiveActivityUpdateInput{
+		ActivityID:    "act-1",
+		Title:         "Deploy",
+		Type:          "segmented_progress",
+		NumberOfSteps: 4,
+	}.WithCurrentStep(0)
+	endInput := LiveActivityEndInput{
+		ActivityID:    "act-1",
+		Title:         "Deploy",
+		Type:          "segmented_progress",
+		NumberOfSteps: 4,
+	}.WithCurrentStep(0)
+	streamInput := LiveActivityStreamInput{
+		Title:         "Deploy",
+		Type:          "segmented_progress",
+		NumberOfSteps: 4,
+	}.WithCurrentStep(0)
+	streamEndInput := LiveActivityStreamEndInput{
+		Title:         "Deploy",
+		Type:          "segmented_progress",
+		NumberOfSteps: 4,
+	}.WithCurrentStep(0)
+
+	if _, err := client.LiveActivities.Start(startInput); err != nil {
+		t.Fatalf("Start returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.Update(updateInput); err != nil {
+		t.Fatalf("Update returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.End(endInput); err != nil {
+		t.Fatalf("End returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.Stream("prod-web-1", streamInput); err != nil {
+		t.Fatalf("Stream returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.EndStream("prod-web-1", streamEndInput); err != nil {
+		t.Fatalf("EndStream returned error: %v", err)
+	}
+
+	if len(*requests) != 5 {
+		t.Fatalf("expected 5 requests, got %d", len(*requests))
+	}
+	for i, req := range *requests {
+		if !strings.Contains(req.Body, `"current_step":0`) {
+			t.Fatalf("request %d body missing explicit zero current_step: %s", i, req.Body)
+		}
+	}
+}
+
 func TestProgressInputsSerializeProgressFieldsWithoutSegmentedFields(t *testing.T) {
 	server, requests := newAPITestServer(t)
 	defer server.Close()

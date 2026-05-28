@@ -254,6 +254,7 @@ type LiveActivityContentStateInput struct {
 	Metrics            []ActivityMetric
 
 	numberOfStepsSet      bool
+	currentStepSet        bool
 	percentageSet         bool
 	valueSet              bool
 	upperLimitSet         bool
@@ -277,6 +278,7 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.AutoDismissMinutes != 0 ||
 		len(in.Metrics) > 0 ||
 		in.numberOfStepsSet ||
+		in.currentStepSet ||
 		in.percentageSet ||
 		in.valueSet ||
 		in.upperLimitSet ||
@@ -295,7 +297,7 @@ func (in LiveActivityContentStateInput) applyStart(state *generated.ContentState
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		state.SetNumberOfSteps(in.NumberOfSteps)
 	}
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		state.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -323,7 +325,7 @@ func (in LiveActivityContentStateInput) applyStart(state *generated.ContentState
 }
 
 func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStateUpdate) {
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		state.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -364,7 +366,7 @@ func (in LiveActivityContentStateInput) applyEnd(state *generated.ContentStateEn
 }
 
 func (in LiveActivityContentStateInput) applyEndBase(state *generated.ContentStateEnd) {
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		state.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -401,7 +403,7 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		state.SetNumberOfSteps(in.NumberOfSteps)
 	}
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		state.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -437,6 +439,12 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 func (in LiveActivityContentStateInput) WithNumberOfSteps(v int32) LiveActivityContentStateInput {
 	in.NumberOfSteps = v
 	in.numberOfStepsSet = true
+	return in
+}
+
+func (in LiveActivityContentStateInput) WithCurrentStep(v int32) LiveActivityContentStateInput {
+	in.CurrentStep = v
+	in.currentStepSet = true
 	return in
 }
 
@@ -485,6 +493,7 @@ type LiveActivityStartInput struct {
 	Channels      []string
 
 	numberOfStepsSet bool
+	currentStepSet   bool
 	percentageSet    bool
 	valueSet         bool
 	upperLimitSet    bool
@@ -508,7 +517,7 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
 	}
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -550,6 +559,12 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 func (in LiveActivityStartInput) WithNumberOfSteps(v int32) LiveActivityStartInput {
 	in.NumberOfSteps = v
 	in.numberOfStepsSet = true
+	return in
+}
+
+func (in LiveActivityStartInput) WithCurrentStep(v int32) LiveActivityStartInput {
+	in.CurrentStep = v
+	in.currentStepSet = true
 	return in
 }
 
@@ -600,6 +615,7 @@ type LiveActivityUpdateInput struct {
 	Action        *LiveActivityActionInput
 
 	numberOfStepsSet bool
+	currentStepSet   bool
 	percentageSet    bool
 	valueSet         bool
 	upperLimitSet    bool
@@ -621,7 +637,7 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 		ContentState: *generated.NewContentStateUpdate(contentState.Title),
 	}
 	contentState.applyUpdate(&req.ContentState)
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -666,6 +682,12 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 func (in LiveActivityUpdateInput) WithNumberOfSteps(v int32) LiveActivityUpdateInput {
 	in.NumberOfSteps = v
 	in.numberOfStepsSet = true
+	return in
+}
+
+func (in LiveActivityUpdateInput) WithCurrentStep(v int32) LiveActivityUpdateInput {
+	in.CurrentStep = v
+	in.currentStepSet = true
 	return in
 }
 
@@ -717,6 +739,7 @@ type LiveActivityEndInput struct {
 	Action             *LiveActivityActionInput
 
 	numberOfStepsSet      bool
+	currentStepSet        bool
 	percentageSet         bool
 	valueSet              bool
 	upperLimitSet         bool
@@ -739,7 +762,7 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 		ContentState: *generated.NewContentStateEnd(contentState.Title),
 	}
 	contentState.applyEnd(&req.ContentState)
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -787,6 +810,12 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 func (in LiveActivityEndInput) WithNumberOfSteps(v int32) LiveActivityEndInput {
 	in.NumberOfSteps = v
 	in.numberOfStepsSet = true
+	return in
+}
+
+func (in LiveActivityEndInput) WithCurrentStep(v int32) LiveActivityEndInput {
+	in.CurrentStep = v
+	in.currentStepSet = true
 	return in
 }
 
@@ -845,6 +874,7 @@ type LiveActivityStreamInput struct {
 	Channels      []string
 
 	numberOfStepsSet bool
+	currentStepSet   bool
 	percentageSet    bool
 	valueSet         bool
 	upperLimitSet    bool
@@ -868,7 +898,7 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 		req.ContentState.SetNumberOfSteps(in.NumberOfSteps)
 	}
-	if in.CurrentStep != 0 {
+	if in.CurrentStep != 0 || in.currentStepSet {
 		req.ContentState.SetCurrentStep(in.CurrentStep)
 	}
 	if in.Percentage != 0 || in.percentageSet {
@@ -918,6 +948,12 @@ func (in LiveActivityStreamInput) WithNumberOfSteps(v int32) LiveActivityStreamI
 	return in
 }
 
+func (in LiveActivityStreamInput) WithCurrentStep(v int32) LiveActivityStreamInput {
+	in.CurrentStep = v
+	in.currentStepSet = true
+	return in
+}
+
 func (in LiveActivityStreamInput) WithPercentage(v float32) LiveActivityStreamInput {
 	in.Percentage = v
 	in.percentageSet = true
@@ -962,6 +998,7 @@ type LiveActivityStreamEndInput struct {
 	Alert         *generated.AlertPayload
 
 	numberOfStepsSet bool
+	currentStepSet   bool
 	percentageSet    bool
 	valueSet         bool
 	upperLimitSet    bool
@@ -985,7 +1022,7 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 		if in.NumberOfSteps != 0 || in.numberOfStepsSet {
 			contentState.SetNumberOfSteps(in.NumberOfSteps)
 		}
-		if in.CurrentStep != 0 {
+		if in.CurrentStep != 0 || in.currentStepSet {
 			contentState.SetCurrentStep(in.CurrentStep)
 		}
 		if in.Percentage != 0 || in.percentageSet {
@@ -1031,6 +1068,12 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 func (in LiveActivityStreamEndInput) WithNumberOfSteps(v int32) LiveActivityStreamEndInput {
 	in.NumberOfSteps = v
 	in.numberOfStepsSet = true
+	return in
+}
+
+func (in LiveActivityStreamEndInput) WithCurrentStep(v int32) LiveActivityStreamEndInput {
+	in.CurrentStep = v
+	in.currentStepSet = true
 	return in
 }
 
