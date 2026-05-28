@@ -18,7 +18,7 @@ import (
 // checks if the LiveActivityAlertBadge type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityAlertBadge{}
 
-// LiveActivityAlertBadge Optional badge for alert Live Activities.
+// LiveActivityAlertBadge Optional badge for Alert Live Activities.
 type LiveActivityAlertBadge struct {
 	Title string `json:"title"`
 	// Optional badge color.

@@ -34,7 +34,7 @@ type StreamContentState struct {
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
 	// Required on the first PUT or whenever the stream cannot infer the current activity type.
 	Type *string `json:"type,omitempty"`
-	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included.
+	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`

@@ -41,7 +41,7 @@ type ContentStateStart struct {
 	// Optional badge for type=alert.
 	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
 	Type string `json:"type"`
-	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For alert Live Activities, this tints the action button when action is included.
+	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to type=segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`

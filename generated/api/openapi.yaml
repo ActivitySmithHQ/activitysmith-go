@@ -1579,7 +1579,7 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, and\
-            \ metrics Live Activities. For alert Live Activities, this tints the action\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
             \ button when action is included."
           enum:
           - lime
@@ -1731,7 +1731,7 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, and\
-            \ metrics Live Activities. For alert Live Activities, this tints the action\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
             \ button when action is included."
           enum:
           - lime
@@ -1884,7 +1884,7 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, and\
-            \ metrics Live Activities. For alert Live Activities, this tints the action\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
             \ button when action is included."
           enum:
           - lime
@@ -2025,7 +2025,7 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, and\
-            \ metrics Live Activities. For alert Live Activities, this tints the action\
+            \ metrics Live Activities. For Alert Live Activities, this tints the action\
             \ button when action is included."
           enum:
           - lime
@@ -2143,7 +2143,7 @@ components:
       type: string
     LiveActivityAlertIcon:
       additionalProperties: true
-      description: Optional SF Symbol icon for alert Live Activities.
+      description: Optional SF Symbol icon for Alert Live Activities.
       example:
         symbol: symbol
         color: lime
@@ -2158,7 +2158,7 @@ components:
       - symbol
     LiveActivityAlertBadge:
       additionalProperties: true
-      description: Optional badge for alert Live Activities.
+      description: Optional badge for Alert Live Activities.
       example:
         color: null
         title: title

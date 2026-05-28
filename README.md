@@ -307,7 +307,7 @@ activitysmith.LiveActivities.EndStream(
 ### Live Activity Action
 
 Live Activities can include one optional action button. Use it to open a URL from the Live Activity or trigger a backend webhook.
-For alert Live Activities, set `Color` to tint the action button. The icon and badge colors only affect the icon and badge.
+For Alert Live Activities, set `Color` to tint the action button. The icon and badge colors only affect the icon and badge.
 
 <p align="center">
   <img
