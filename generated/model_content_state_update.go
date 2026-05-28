@@ -24,7 +24,7 @@ type ContentStateUpdate struct {
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Total number of steps. Use for type=segmented_progress. Optional on update, and safe to change if the workflow gains or loses steps.
 	NumberOfSteps *int32 `json:"number_of_steps,omitempty"`
-	// Current step. Use for type=segmented_progress.
+	// Current completed step count. Use for type=segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided.
 	CurrentStep *int32 `json:"current_step,omitempty"`
 	// Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
 	Percentage *float32 `json:"percentage,omitempty"`

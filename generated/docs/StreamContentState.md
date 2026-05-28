@@ -4,23 +4,23 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Title** | **string** |  |
-**Subtitle** | Pointer to **string** |  | [optional]
-**NumberOfSteps** | Pointer to **int32** | Use for segmented_progress. | [optional]
-**CurrentStep** | Pointer to **int32** | Use for segmented_progress. | [optional]
-**Percentage** | Pointer to **float32** | Use for progress. Takes precedence over value/upper_limit if both are provided. | [optional]
-**Value** | Pointer to **float32** | Current progress value. Use with upper_limit for progress. | [optional]
-**UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for progress. | [optional]
-**Type** | Pointer to **string** | Required on the first PUT or whenever the stream cannot infer the current activity type. | [optional]
-**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included. | [optional]
-**StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to segmented_progress. | [optional]
-**StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional]
-**Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for metrics and stats activities. | [optional]
-**Message** | Pointer to **string** | Required for type&#x3D;alert. | [optional]
-**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon for type&#x3D;alert. | [optional]
-**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge for type&#x3D;alert. | [optional]
-**AutoDismissSeconds** | Pointer to **int32** | Optional. Seconds before the ended Live Activity is dismissed. | [optional]
-**AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. | [optional]
+**Title** | **string** |  | 
+**Subtitle** | Pointer to **string** |  | [optional] 
+**NumberOfSteps** | Pointer to **int32** | Use for segmented_progress. | [optional] 
+**CurrentStep** | Pointer to **int32** | Use for segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided. | [optional] 
+**Percentage** | Pointer to **float32** | Use for progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
+**Value** | Pointer to **float32** | Current progress value. Use with upper_limit for progress. | [optional] 
+**UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for progress. | [optional] 
+**Type** | Pointer to **string** | Required on the first PUT or whenever the stream cannot infer the current activity type. | [optional] 
+**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included. | [optional] 
+**StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to segmented_progress. | [optional] 
+**StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
+**Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for metrics and stats activities. | [optional] 
+**Message** | Pointer to **string** | Required for type&#x3D;alert. | [optional] 
+**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon for type&#x3D;alert. | [optional] 
+**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge for type&#x3D;alert. | [optional] 
+**AutoDismissSeconds** | Pointer to **int32** | Optional. Seconds before the ended Live Activity is dismissed. | [optional] 
+**AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. | [optional] 
 
 ## Methods
 

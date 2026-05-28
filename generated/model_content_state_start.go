@@ -24,7 +24,7 @@ type ContentStateStart struct {
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Total number of steps. Use for type=segmented_progress. This value can be increased or decreased later when updating or ending the same activity.
 	NumberOfSteps *int32 `json:"number_of_steps,omitempty"`
-	// Current step. Use for type=segmented_progress.
+	// Current completed step count. Use for type=segmented_progress. Set 0 when the activity has started but no segment is complete yet. Must be less than or equal to number_of_steps.
 	CurrentStep *int32 `json:"current_step,omitempty"`
 	// Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
 	Percentage *float32 `json:"percentage,omitempty"`
