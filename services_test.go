@@ -55,6 +55,12 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 			} else {
 				http.NotFound(w, r)
 			}
+		case "/live-activity/stream/nightly-database-backup":
+			if r.Method == http.MethodPut {
+				_, _ = w.Write([]byte(`{"success":true,"operation":"started","stream_key":"nightly-database-backup","activity_id":"act-2","timestamp":"2026-02-07T00:00:00Z"}`))
+			} else {
+				http.NotFound(w, r)
+			}
 		case "/metrics/deploy.success_rate/value":
 			_, _ = w.Write([]byte(`{"success":true}`))
 		case "/metrics/prod.status/value":
@@ -467,6 +473,71 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	}
 }
 
+func TestActionOpenURLsAllowShortcutsScheme(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	pushAction := PushAction("Chat", "open_url", "shortcuts://run-shortcut?name=JARVIS")
+	if _, err := client.Notifications.Send(PushNotificationInput{
+		Title:   "Build Failed",
+		Actions: []PushNotificationAction{pushAction},
+	}); err != nil {
+		t.Fatalf("Send returned error: %v", err)
+	}
+
+	if _, err := client.LiveActivities.Start(LiveActivityStartInput{
+		Title: "Deploy",
+		Type:  "progress",
+		Action: &LiveActivityActionInput{
+			Title: "Chat",
+			Type:  "open_url",
+			URL:   "shortcuts://run-shortcut?name=JARVIS",
+		},
+	}); err != nil {
+		t.Fatalf("Start returned error: %v", err)
+	}
+
+	if len(*requests) != 2 {
+		t.Fatalf("expected 2 requests, got %d", len(*requests))
+	}
+	for i, req := range *requests {
+		if !strings.Contains(req.Body, `"url":"shortcuts://run-shortcut?name=JARVIS"`) {
+			t.Fatalf("request %d body missing shortcuts action url: %s", i, req.Body)
+		}
+	}
+}
+
+func TestPushRedirectionAllowsShortcutsScheme(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	if _, err := client.Notifications.Send(PushNotificationInput{
+		Title:       "Task finished",
+		Redirection: "shortcuts://run-shortcut?name=Jarvis",
+	}); err != nil {
+		t.Fatalf("Send returned error: %v", err)
+	}
+
+	if len(*requests) != 1 {
+		t.Fatalf("expected 1 request, got %d", len(*requests))
+	}
+	if !strings.Contains((*requests)[0].Body, `"redirection":"shortcuts://run-shortcut?name=Jarvis"`) {
+		t.Fatalf("push body missing shortcuts redirection: %s", (*requests)[0].Body)
+	}
+}
+
 func TestEndInputCanExplicitlySendZeroAutoDismissMinutes(t *testing.T) {
 	server, requests := newAPITestServer(t)
 	defer server.Close()
@@ -748,6 +819,58 @@ func TestAlertInputsSerializeMessageIconAndBadge(t *testing.T) {
 	}
 	if !strings.Contains(body, `"color":"red"`) {
 		t.Fatalf("alert body missing action color: %s", body)
+	}
+}
+
+func TestIconAndBadgeSerializeForNonAlertTypes(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	if _, err := client.LiveActivities.Stream("prod-web-1", LiveActivityStreamInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     LiveActivityTypeMetrics,
+		Icon:     AlertIcon("server.rack", "blue"),
+		Metrics: []generated.ActivityMetric{
+			{Label: "CPU", Value: activityMetricNumber(18), Unit: generated.PtrString("%")},
+		},
+	}); err != nil {
+		t.Fatalf("Stream returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.Stream("nightly-database-backup", LiveActivityStreamInput{
+		Title:      "Nightly Database Backup",
+		Subtitle:   "verify restore",
+		Type:       LiveActivityTypeProgress,
+		Badge:      AlertBadge("S3", "cyan"),
+		Percentage: 62,
+	}); err != nil {
+		t.Fatalf("Stream returned error: %v", err)
+	}
+
+	if len(*requests) != 2 {
+		t.Fatalf("expected 2 requests, got %d", len(*requests))
+	}
+
+	metricsBody := (*requests)[0].Body
+	if !strings.Contains(metricsBody, `"type":"metrics"`) {
+		t.Fatalf("metrics body missing type: %s", metricsBody)
+	}
+	if !strings.Contains(metricsBody, `"icon":{"color":"blue","symbol":"server.rack"}`) {
+		t.Fatalf("metrics body missing icon: %s", metricsBody)
+	}
+
+	progressBody := (*requests)[1].Body
+	if !strings.Contains(progressBody, `"type":"progress"`) {
+		t.Fatalf("progress body missing type: %s", progressBody)
+	}
+	if !strings.Contains(progressBody, `"badge":{"color":"cyan","title":"S3"}`) {
+		t.Fatalf("progress body missing badge: %s", progressBody)
 	}
 }
 
