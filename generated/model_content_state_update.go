@@ -18,7 +18,7 @@ import (
 // checks if the ContentStateUpdate type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateUpdate{}
 
-// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message, with optional icon and badge. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
+// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
 type ContentStateUpdate struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -36,9 +36,9 @@ type ContentStateUpdate struct {
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Alert message. Use for type=alert.
 	Message *string `json:"message,omitempty"`
-	// Optional SF Symbol icon for type=alert.
+	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
 	Icon *LiveActivityAlertIcon `json:"icon,omitempty"`
-	// Optional badge for type=alert.
+	// Optional badge. Supported by alert, progress, and segmented_progress.
 	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
 	// Optional. When omitted, the API uses the existing Live Activity type.
 	Type *string `json:"type,omitempty"`

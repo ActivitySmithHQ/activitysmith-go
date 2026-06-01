@@ -1482,9 +1482,10 @@ components:
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
-        \ array. For alert include message, with optional icon and badge. For segmented_progress,\
-        \ number_of_steps is not locked and can be changed in later update or end\
-        \ calls."
+        \ array. For alert include message. Optional icon is supported by all Live\
+        \ Activity types. Optional badge is supported by alert, progress, and segmented_progress.\
+        \ For segmented_progress, number_of_steps is not locked and can be changed\
+        \ in later update or end calls."
       example:
         color: lime
         step_color: lime
@@ -1635,9 +1636,10 @@ components:
       description: "Update payload requires title. For segmented_progress include\
         \ current_step and optionally number_of_steps. For progress include percentage\
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
-        \ array. For alert include message, with optional icon and badge. Type is\
-        \ optional when updating an existing activity. You can increase or decrease\
-        \ number_of_steps during updates."
+        \ array. For alert include message. Optional icon is supported by all Live\
+        \ Activity types. Optional badge is supported by alert, progress, and segmented_progress.\
+        \ Type is optional when updating an existing activity. You can increase or\
+        \ decrease number_of_steps during updates."
       example:
         color: lime
         step_color: lime
@@ -1788,9 +1790,10 @@ components:
       description: "End payload requires title. For segmented_progress include current_step\
         \ and optionally number_of_steps. For progress include percentage or value\
         \ with upper_limit. For metrics and stats include a non-empty metrics array.\
-        \ For alert include message, with optional icon and badge. Type is optional\
-        \ when ending an existing activity. You can send an updated number_of_steps\
-        \ here if the workflow changed after start."
+        \ For alert include message. Optional icon is supported by all Live Activity\
+        \ types. Optional badge is supported by alert, progress, and segmented_progress.\
+        \ Type is optional when ending an existing activity. You can send an updated\
+        \ number_of_steps here if the workflow changed after start."
       example:
         color: lime
         step_color: lime
@@ -2151,7 +2154,7 @@ components:
       type: string
     LiveActivityAlertIcon:
       additionalProperties: true
-      description: Optional SF Symbol icon for Alert Live Activities.
+      description: Optional SF Symbol icon for Live Activities.
       example:
         symbol: symbol
         color: lime
@@ -2166,7 +2169,7 @@ components:
       - symbol
     LiveActivityAlertBadge:
       additionalProperties: true
-      description: Optional badge for Alert Live Activities.
+      description: Optional badge for Live Activities.
       example:
         color: null
         title: title
@@ -2216,6 +2219,9 @@ components:
       type: string
     PushNotificationAction:
       additionalProperties: {}
+      allOf:
+      - {}
+      - {}
       example:
         method: POST
         title: title
@@ -2229,10 +2235,9 @@ components:
         type:
           $ref: '#/components/schemas/PushNotificationActionType'
         url:
-          description: HTTPS URL. For open_url it is opened in browser. For webhook
-            it is called by ActivitySmith backend.
+          description: "Action URL. For open_url, use an HTTPS or shortcuts:// URL.\
+            \ For webhook, use an HTTPS URL called by the ActivitySmith backend."
           format: uri
-          pattern: ^https://
         method:
           $ref: '#/components/schemas/PushNotificationWebhookMethod'
         body:
@@ -2255,6 +2260,9 @@ components:
       type: string
     LiveActivityAction:
       additionalProperties: true
+      allOf:
+      - {}
+      - {}
       description: Optional single action button shown in the Live Activity UI.
       example:
         method: POST
@@ -2266,21 +2274,17 @@ components:
       properties:
         title:
           description: Button title displayed in the Live Activity UI.
-          type: string
         type:
           $ref: '#/components/schemas/LiveActivityActionType'
         url:
-          description: HTTPS URL. For open_url it is opened in browser. For webhook
-            it is called by ActivitySmith backend.
+          description: "Action URL. For open_url, use an HTTPS or shortcuts:// URL.\
+            \ For webhook, use an HTTPS URL called by the ActivitySmith backend."
           format: uri
-          pattern: ^https://
-          type: string
         method:
           $ref: '#/components/schemas/LiveActivityWebhookMethod'
         body:
           additionalProperties: true
           description: Optional webhook payload body. Used only when type=webhook.
-          type: object
       required:
       - title
       - type
@@ -2338,10 +2342,11 @@ components:
           format: uri
           pattern: ^https://
         redirection:
-          description: Optional HTTPS URL opened when user taps the notification body.
-            Overrides the default tap target from `media` when both are provided.
+          description: Optional HTTPS or shortcuts:// URL opened when user taps the
+            notification body. Overrides the default tap target from `media` when
+            both are provided.
           format: uri
-          pattern: ^https://
+          pattern: ^(https|shortcuts)://
         actions:
           description: Optional interactive actions shown when users expand the notification.
             Cannot be combined with `media`.

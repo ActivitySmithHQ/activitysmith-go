@@ -23,8 +23,8 @@ type PushNotificationAction struct {
 	// Button title displayed in iOS expanded notification UI.
 	Title string `json:"title"`
 	Type PushNotificationActionType `json:"type"`
-	// HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend.
-	Url string `json:"url" validate:"regexp=^https:\\/\\/"`
+	// Action URL. For open_url, use an HTTPS or shortcuts:// URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
+	Url string `json:"url"`
 	// Webhook HTTP method. Used only when type=webhook.
 	Method *PushNotificationWebhookMethod `json:"method,omitempty"`
 	// Optional webhook payload body. Used only when type=webhook.
@@ -40,11 +40,6 @@ type _PushNotificationAction PushNotificationAction
 // will change when the set of required properties is changed
 func NewPushNotificationAction(title string, type_ PushNotificationActionType, url string) *PushNotificationAction {
 	this := PushNotificationAction{}
-	this.Title = title
-	this.Type = type_
-	this.Url = url
-	var method PushNotificationWebhookMethod = PUSHNOTIFICATIONWEBHOOKMETHOD_POST
-	this.Method = &method
 	return &this
 }
 
