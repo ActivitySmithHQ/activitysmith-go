@@ -23,8 +23,8 @@ type LiveActivityAction struct {
 	// Button title displayed in the Live Activity UI.
 	Title string `json:"title"`
 	Type LiveActivityActionType `json:"type"`
-	// HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend.
-	Url string `json:"url" validate:"regexp=^https:\\/\\/"`
+	// Action URL. For open_url, use an HTTPS or shortcuts:// URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
+	Url string `json:"url"`
 	// Webhook HTTP method. Used only when type=webhook.
 	Method *LiveActivityWebhookMethod `json:"method,omitempty"`
 	// Optional webhook payload body. Used only when type=webhook.
@@ -40,11 +40,6 @@ type _LiveActivityAction LiveActivityAction
 // will change when the set of required properties is changed
 func NewLiveActivityAction(title string, type_ LiveActivityActionType, url string) *LiveActivityAction {
 	this := LiveActivityAction{}
-	this.Title = title
-	this.Type = type_
-	this.Url = url
-	var method LiveActivityWebhookMethod = LIVEACTIVITYWEBHOOKMETHOD_POST
-	this.Method = &method
 	return &this
 }
 

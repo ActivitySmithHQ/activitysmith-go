@@ -18,7 +18,7 @@ import (
 // checks if the LiveActivityAlertIcon type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityAlertIcon{}
 
-// LiveActivityAlertIcon Optional SF Symbol icon for Alert Live Activities.
+// LiveActivityAlertIcon Optional SF Symbol icon for Live Activities.
 type LiveActivityAlertIcon struct {
 	// Apple SF Symbol name.
 	Symbol string `json:"symbol"`

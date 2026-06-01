@@ -44,9 +44,9 @@ type StreamContentState struct {
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Required for type=alert.
 	Message *string `json:"message,omitempty"`
-	// Optional SF Symbol icon for type=alert.
+	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
 	Icon *LiveActivityAlertIcon `json:"icon,omitempty"`
-	// Optional badge for type=alert.
+	// Optional badge. Supported by alert, progress, and segmented_progress.
 	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
 	// Optional. Seconds before the ended Live Activity is dismissed.
 	AutoDismissSeconds *int32 `json:"auto_dismiss_seconds,omitempty"`

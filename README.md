@@ -18,6 +18,8 @@ See [API reference](https://activitysmith.com/docs/api-reference/introduction).
   - [Start & Update Live Activity](#start--update-live-activity)
   - [End Live Activity](#end-live-activity)
   - [Live Activity Action](#live-activity-action)
+  - [Icons and Badges](#icons-and-badges)
+  - [Live Activity Colors](#live-activity-colors)
 - [Channels](#channels)
 - [Widgets](#widgets)
 
@@ -276,14 +278,6 @@ activitysmith.LiveActivities.Stream(
 )
 ```
 
-The `Icon` symbol value is an Apple SF Symbol name. Browse the catalog with one of these tools:
-
-- [ActivitySmith app](https://apps.apple.com/us/app/activitysmith/id6752254835) - Open Settings -> SF Symbols to browse 45 hand-picked icons ready to use
-- [SF Symbols](https://developer.apple.com/sf-symbols/) - Apple's official macOS app
-- [Interactful](https://apps.apple.com/app/interactful/id1528095640) - free third-party iOS app listing all SF Symbols under Foundations -> Iconography
-
-`Icon` and `Badge` are optional. If you omit either one, that element is not shown in the Live Activity.
-
 ### End Live Activity
 
 Call `EndStream(...)` with the same `streamKey` to dismiss the Live Activity. You can include final values before it is removed. By default, iOS removes the Live Activity after two minutes. Set `AutoDismissMinutes` to choose a different dismissal time, including `0` for immediate dismissal.
@@ -363,6 +357,75 @@ activitysmith.LiveActivities.Stream(
 	},
 )
 ```
+
+### Icons and Badges
+
+Add more context to Live Activities with icons and badges.
+
+#### Icon
+
+Supported Live Activity types: `stats`, `metrics`, `progress`, `segmented_progress`, and `alert`.
+
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/metrics-live-activity-with-icon.png"
+    alt="Metrics Live Activity with an SF Symbol icon on the iPhone Lock Screen"
+    width="680"
+  />
+</p>
+
+```go
+activitysmith.LiveActivities.Stream(
+	"prod-web-1",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Icon:     activitysmithsdk.AlertIcon("server.rack", "blue"),
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 18, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 42, activitysmithsdk.MetricUnit("%")),
+		},
+	},
+)
+```
+
+The `Icon` symbol value is an Apple SF Symbol name. Browse the catalog with one of these tools:
+
+- [ActivitySmith app](https://apps.apple.com/us/app/activitysmith/id6752254835) - Open Settings -> SF Symbols to browse 45 hand-picked icons ready to use
+- [SF Symbols](https://developer.apple.com/sf-symbols/) - Apple's official macOS app
+- [Interactful](https://apps.apple.com/app/interactful/id1528095640) - free third-party iOS app listing all SF Symbols under Foundations -> Iconography
+
+#### Badge
+
+Badges are supported by `alert`, `progress`, and `segmented_progress` Live Activities.
+
+<p align="center">
+  <img
+    src="https://cdn.activitysmith.com/features/progress-live-activity-with-badge.png"
+    alt="Progress Live Activity with a badge on the iPhone Lock Screen"
+    width="680"
+  />
+</p>
+
+```go
+activitysmith.LiveActivities.Stream(
+	"nightly-database-backup",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:      "Nightly Database Backup",
+		Subtitle:   "verify restore",
+		Type:       "progress",
+		Badge:      activitysmithsdk.AlertBadge("S3", "cyan"),
+		Percentage: 62,
+	},
+)
+```
+
+### Live Activity Colors
+
+Choose from these colors for the Live Activity accent, including progress bars and action buttons, or apply them to an individual icon or badge:
+
+`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`, `gray`
 
 ## Channels
 

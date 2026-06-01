@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Title** | **string** | Button title displayed in the Live Activity UI. | 
 **Type** | [**LiveActivityActionType**](LiveActivityActionType.md) |  | 
-**Url** | **string** | HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend. | 
+**Url** | **string** | Action URL. For open_url, use an HTTPS or shortcuts:// URL. For webhook, use an HTTPS URL called by the ActivitySmith backend. | 
 **Method** | Pointer to [**LiveActivityWebhookMethod**](LiveActivityWebhookMethod.md) | Webhook HTTP method. Used only when type&#x3D;webhook. | [optional] [default to LIVEACTIVITYWEBHOOKMETHOD_POST]
 **Body** | Pointer to **map[string]interface{}** | Optional webhook payload body. Used only when type&#x3D;webhook. | [optional] 
 
