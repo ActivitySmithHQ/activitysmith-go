@@ -2235,7 +2235,7 @@ components:
         type:
           $ref: '#/components/schemas/PushNotificationActionType'
         url:
-          description: "Action URL. For open_url, use an HTTPS or shortcuts:// URL.\
+          description: "Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL.\
             \ For webhook, use an HTTPS URL called by the ActivitySmith backend."
           format: uri
         method:
@@ -2277,7 +2277,7 @@ components:
         type:
           $ref: '#/components/schemas/LiveActivityActionType'
         url:
-          description: "Action URL. For open_url, use an HTTPS or shortcuts:// URL.\
+          description: "Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL.\
             \ For webhook, use an HTTPS URL called by the ActivitySmith backend."
           format: uri
         method:
@@ -2342,9 +2342,9 @@ components:
           format: uri
           pattern: ^https://
         redirection:
-          description: Optional HTTPS or shortcuts:// URL opened when user taps the
-            notification body. Overrides the default tap target from `media` when
-            both are provided.
+          description: Optional HTTPS URL or shortcuts://run-shortcut?name=... URL
+            opened when user taps the notification body. Overrides the default tap
+            target from `media` when both are provided.
           format: uri
           pattern: ^(https|shortcuts)://
         actions:

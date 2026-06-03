@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **Message** | Pointer to **string** |  | [optional] 
 **Subtitle** | Pointer to **string** |  | [optional] 
 **Media** | Pointer to **string** | Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If &#x60;redirection&#x60; is omitted, tapping the notification opens this URL. Cannot be combined with &#x60;actions&#x60;. | [optional] 
-**Redirection** | Pointer to **string** | Optional HTTPS or shortcuts:// URL opened when user taps the notification body. Overrides the default tap target from &#x60;media&#x60; when both are provided. | [optional] 
+**Redirection** | Pointer to **string** | Optional HTTPS URL or shortcuts://run-shortcut?name=... URL opened when user taps the notification body. Overrides the default tap target from &#x60;media&#x60; when both are provided. | [optional]
 **Actions** | Pointer to [**[]PushNotificationAction**](PushNotificationAction.md) | Optional interactive actions shown when users expand the notification. Cannot be combined with &#x60;media&#x60;. | [optional] 
 **Payload** | Pointer to **map[string]interface{}** |  | [optional] 
 **Badge** | Pointer to **int32** |  | [optional] 
