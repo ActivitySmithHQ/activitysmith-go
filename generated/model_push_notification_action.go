@@ -23,7 +23,7 @@ type PushNotificationAction struct {
 	// Button title displayed in iOS expanded notification UI.
 	Title string `json:"title"`
 	Type PushNotificationActionType `json:"type"`
-	// Action URL. For open_url, use an HTTPS or shortcuts:// URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
+	// Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS URL called by the ActivitySmith backend.
 	Url string `json:"url"`
 	// Webhook HTTP method. Used only when type=webhook.
 	Method *PushNotificationWebhookMethod `json:"method,omitempty"`

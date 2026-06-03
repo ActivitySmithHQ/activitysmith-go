@@ -1368,13 +1368,8 @@ paths:
       requestBody:
         content:
           application/json:
-            examples:
-              number:
-                value:
-                  value: 42
-              string:
-                value:
-                  value: healthy
+            example:
+              value: 42
             schema:
               $ref: '#/components/schemas/MetricValueUpdateRequest'
         required: true
@@ -2235,8 +2230,9 @@ components:
         type:
           $ref: '#/components/schemas/PushNotificationActionType'
         url:
-          description: "Action URL. For open_url, use an HTTPS or shortcuts:// URL.\
-            \ For webhook, use an HTTPS URL called by the ActivitySmith backend."
+          description: "Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=...\
+            \ URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS\
+            \ URL called by the ActivitySmith backend."
           format: uri
         method:
           $ref: '#/components/schemas/PushNotificationWebhookMethod'
@@ -2277,8 +2273,9 @@ components:
         type:
           $ref: '#/components/schemas/LiveActivityActionType'
         url:
-          description: "Action URL. For open_url, use an HTTPS or shortcuts:// URL.\
-            \ For webhook, use an HTTPS URL called by the ActivitySmith backend."
+          description: "Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=...\
+            \ URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS\
+            \ URL called by the ActivitySmith backend."
           format: uri
         method:
           $ref: '#/components/schemas/LiveActivityWebhookMethod'
@@ -2342,9 +2339,10 @@ components:
           format: uri
           pattern: ^https://
         redirection:
-          description: Optional HTTPS or shortcuts:// URL opened when user taps the
-            notification body. Overrides the default tap target from `media` when
-            both are provided.
+          description: Optional HTTPS URL or shortcuts://run-shortcut?name=... URL
+            opened when the user taps the notification body. Use shortcuts://run-shortcut?name=...
+            to run a specific iPhone Shortcut that already exists on the user's device.
+            Overrides the default tap target from `media` when both are provided.
           format: uri
           pattern: ^(https|shortcuts)://
         actions:

@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Title** | **string** | Button title displayed in the Live Activity UI. | 
 **Type** | [**LiveActivityActionType**](LiveActivityActionType.md) |  | 
-**Url** | **string** | Action URL. For open_url, use an HTTPS or shortcuts:// URL. For webhook, use an HTTPS URL called by the ActivitySmith backend. | 
+**Url** | **string** | Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name&#x3D;... URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS URL called by the ActivitySmith backend. | 
 **Method** | Pointer to [**LiveActivityWebhookMethod**](LiveActivityWebhookMethod.md) | Webhook HTTP method. Used only when type&#x3D;webhook. | [optional] [default to LIVEACTIVITYWEBHOOKMETHOD_POST]
 **Body** | Pointer to **map[string]interface{}** | Optional webhook payload body. Used only when type&#x3D;webhook. | [optional] 
 
