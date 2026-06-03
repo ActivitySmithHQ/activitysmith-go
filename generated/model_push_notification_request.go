@@ -25,7 +25,7 @@ type PushNotificationRequest struct {
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
 	Media *string `json:"media,omitempty" validate:"regexp=^https:\\/\\/"`
-	// Optional HTTPS or shortcuts:// URL opened when user taps the notification body. Overrides the default tap target from `media` when both are provided.
+	// Optional HTTPS URL or shortcuts:// URL opened when the user taps the notification body. Use shortcuts:// to run an Apple Shortcut. Overrides the default tap target from `media` when both are provided.
 	Redirection *string `json:"redirection,omitempty" validate:"regexp=^(https|shortcuts):\\/\\/"`
 	// Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
 	Actions []PushNotificationAction `json:"actions,omitempty"`
