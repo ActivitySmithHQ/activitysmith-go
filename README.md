@@ -111,7 +111,7 @@ What will work:
   <img src="https://cdn.activitysmith.com/features/actionable-push-notifications-2.png" alt="Actionable push notification example" width="680" />
 </p>
 
-Actionable push notifications can open a URL on tap or trigger actions when someone long-presses the notification.
+Push notification `Redirection` and `Actions` are optional. Use them to open HTTPS URLs, run Apple Shortcuts with `shortcuts://` URLs, or trigger backend webhook workflows.
 Webhooks are executed by the ActivitySmith backend.
 
 ```go
@@ -124,6 +124,11 @@ _, err := activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInpu
 			"Open CRM Profile",
 			"open_url",
 			"https://crm.example.com/customers/cus_9f3a1d",
+		),
+		activitysmithsdk.PushAction(
+			"Chat with Jarvis",
+			"open_url",
+			"shortcuts://run-shortcut?name=Jarvis",
 		),
 		activitysmithsdk.PushAction(
 			"Start Onboarding Workflow",
@@ -300,8 +305,11 @@ activitysmith.LiveActivities.EndStream(
 
 ### Live Activity Action
 
-Live Activities can include one optional action button. Use it to open a URL from the Live Activity or trigger a backend webhook.
-For Alert Live Activities, set `Color` to tint the action button. The icon and badge colors only affect the icon and badge.
+Live Activities can include one optional action button.
+
+- `open_url`: open an HTTPS URL.
+- `open_url` with a `shortcuts://` URL: run an Apple Shortcut, for example to open an app.
+- `webhook`: trigger a backend GET/POST workflow.
 
 <p align="center">
   <img
@@ -325,9 +333,29 @@ activitysmith.LiveActivities.Stream(
 			activitysmithsdk.Metric("MEM", 52, activitysmithsdk.MetricUnit("%")),
 		},
 		Action: &activitysmithsdk.LiveActivityActionInput{
-			Title: "Open Dashboard",
+			Title: "Dashboard",
 			Type:  "open_url",
 			URL:   "https://ops.example.com/servers/prod-web-1",
+		},
+	},
+)
+```
+
+#### Apple Shortcut action
+
+```go
+activitysmith.LiveActivities.Stream(
+	"deploy-payments-api",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:         "Deploying payments-api",
+		Subtitle:      "Running database migrations",
+		Type:          "segmented_progress",
+		NumberOfSteps: 5,
+		CurrentStep:   3,
+		Action: &activitysmithsdk.LiveActivityActionInput{
+			Title: "Chat with Jarvis",
+			Type:  "open_url",
+			URL:   "shortcuts://run-shortcut?name=Jarvis",
 		},
 	},
 )
