@@ -13,6 +13,7 @@ const (
 	LiveActivityTypeMetrics           = "metrics"
 	LiveActivityTypeStats             = "stats"
 	LiveActivityTypeAlert             = "alert"
+	LiveActivityTypeTimer             = "timer"
 )
 
 type ActivityMetricOption func(*generated.ActivityMetric)
@@ -243,6 +244,8 @@ type LiveActivityContentStateInput struct {
 	Percentage         float32
 	Value              float32
 	UpperLimit         float32
+	DurationSeconds    float32
+	CountsDown         bool
 	Type               string
 	Subtitle           string
 	Message            string
@@ -258,6 +261,8 @@ type LiveActivityContentStateInput struct {
 	percentageSet         bool
 	valueSet              bool
 	upperLimitSet         bool
+	durationSecondsSet    bool
+	countsDownSet         bool
 	autoDismissMinutesSet bool
 }
 
@@ -275,6 +280,7 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.Percentage != 0 ||
 		in.Value != 0 ||
 		in.UpperLimit != 0 ||
+		in.DurationSeconds != 0 ||
 		in.AutoDismissMinutes != 0 ||
 		len(in.Metrics) > 0 ||
 		in.numberOfStepsSet ||
@@ -282,7 +288,18 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.percentageSet ||
 		in.valueSet ||
 		in.upperLimitSet ||
+		in.durationSecondsSet ||
+		in.countsDownSet ||
 		in.autoDismissMinutesSet
+}
+
+func (in LiveActivityContentStateInput) applyTimerFields(properties *map[string]interface{}) {
+	if in.DurationSeconds != 0 || in.durationSecondsSet {
+		setAdditionalProperty(properties, "duration_seconds", in.DurationSeconds)
+	}
+	if in.countsDownSet {
+		setAdditionalProperty(properties, "counts_down", in.CountsDown)
+	}
 }
 
 func (in LiveActivityContentStateInput) applyAlertFields(properties *map[string]interface{}) {
@@ -321,6 +338,7 @@ func (in LiveActivityContentStateInput) applyStart(state *generated.ContentState
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
+	in.applyTimerFields(&state.AdditionalProperties)
 	in.applyAlertFields(&state.AdditionalProperties)
 }
 
@@ -355,6 +373,7 @@ func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStat
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
+	in.applyTimerFields(&state.AdditionalProperties)
 	in.applyAlertFields(&state.AdditionalProperties)
 }
 
@@ -396,6 +415,7 @@ func (in LiveActivityContentStateInput) applyEndBase(state *generated.ContentSta
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
+	in.applyTimerFields(&state.AdditionalProperties)
 	in.applyAlertFields(&state.AdditionalProperties)
 }
 
@@ -433,6 +453,7 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
 		state.SetAutoDismissMinutes(in.AutoDismissMinutes)
 	}
+	in.applyTimerFields(&state.AdditionalProperties)
 	in.applyAlertFields(&state.AdditionalProperties)
 }
 
@@ -466,6 +487,18 @@ func (in LiveActivityContentStateInput) WithUpperLimit(v float32) LiveActivityCo
 	return in
 }
 
+func (in LiveActivityContentStateInput) WithDurationSeconds(v float32) LiveActivityContentStateInput {
+	in.DurationSeconds = v
+	in.durationSecondsSet = true
+	return in
+}
+
+func (in LiveActivityContentStateInput) WithCountsDown(v bool) LiveActivityContentStateInput {
+	in.CountsDown = v
+	in.countsDownSet = true
+	return in
+}
+
 func (in LiveActivityContentStateInput) WithAutoDismissMinutes(v int32) LiveActivityContentStateInput {
 	in.AutoDismissMinutes = v
 	in.autoDismissMinutesSet = true
@@ -474,29 +507,33 @@ func (in LiveActivityContentStateInput) WithAutoDismissMinutes(v int32) LiveActi
 
 // LiveActivityStartInput is a handwritten DX input with plain optional values.
 type LiveActivityStartInput struct {
-	ContentState  LiveActivityContentStateInput
-	Title         string
-	NumberOfSteps int32
-	CurrentStep   int32
-	Percentage    float32
-	Value         float32
-	UpperLimit    float32
-	Type          string
-	Subtitle      string
-	Message       string
-	Icon          LiveActivityAlertIconInput
-	Badge         LiveActivityAlertBadgeInput
-	Color         string
-	StepColor     string
-	Metrics       []generated.ActivityMetric
-	Action        *LiveActivityActionInput
-	Channels      []string
+	ContentState    LiveActivityContentStateInput
+	Title           string
+	NumberOfSteps   int32
+	CurrentStep     int32
+	Percentage      float32
+	Value           float32
+	UpperLimit      float32
+	DurationSeconds float32
+	CountsDown      bool
+	Type            string
+	Subtitle        string
+	Message         string
+	Icon            LiveActivityAlertIconInput
+	Badge           LiveActivityAlertBadgeInput
+	Color           string
+	StepColor       string
+	Metrics         []generated.ActivityMetric
+	Action          *LiveActivityActionInput
+	Channels        []string
 
-	numberOfStepsSet bool
-	currentStepSet   bool
-	percentageSet    bool
-	valueSet         bool
-	upperLimitSet    bool
+	numberOfStepsSet   bool
+	currentStepSet     bool
+	percentageSet      bool
+	valueSet           bool
+	upperLimitSet      bool
+	durationSecondsSet bool
+	countsDownSet      bool
 }
 
 func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartRequest {
@@ -528,6 +565,12 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
+	}
+	if in.DurationSeconds != 0 || in.durationSecondsSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
+	}
+	if in.countsDownSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
@@ -589,6 +632,18 @@ func (in LiveActivityStartInput) WithUpperLimit(v float32) LiveActivityStartInpu
 	return in
 }
 
+func (in LiveActivityStartInput) WithDurationSeconds(v float32) LiveActivityStartInput {
+	in.DurationSeconds = v
+	in.durationSecondsSet = true
+	return in
+}
+
+func (in LiveActivityStartInput) WithCountsDown(v bool) LiveActivityStartInput {
+	in.CountsDown = v
+	in.countsDownSet = true
+	return in
+}
+
 func (in LiveActivityStartInput) WithAction(v LiveActivityActionInput) LiveActivityStartInput {
 	in.Action = &v
 	return in
@@ -596,29 +651,33 @@ func (in LiveActivityStartInput) WithAction(v LiveActivityActionInput) LiveActiv
 
 // LiveActivityUpdateInput is a handwritten DX input with plain optional values.
 type LiveActivityUpdateInput struct {
-	ActivityID    string
-	ContentState  LiveActivityContentStateInput
-	Title         string
-	CurrentStep   int32
-	Percentage    float32
-	Value         float32
-	UpperLimit    float32
-	Type          string
-	Subtitle      string
-	Message       string
-	Icon          LiveActivityAlertIconInput
-	Badge         LiveActivityAlertBadgeInput
-	Color         string
-	StepColor     string
-	NumberOfSteps int32
-	Metrics       []generated.ActivityMetric
-	Action        *LiveActivityActionInput
+	ActivityID      string
+	ContentState    LiveActivityContentStateInput
+	Title           string
+	CurrentStep     int32
+	Percentage      float32
+	Value           float32
+	UpperLimit      float32
+	DurationSeconds float32
+	CountsDown      bool
+	Type            string
+	Subtitle        string
+	Message         string
+	Icon            LiveActivityAlertIconInput
+	Badge           LiveActivityAlertBadgeInput
+	Color           string
+	StepColor       string
+	NumberOfSteps   int32
+	Metrics         []generated.ActivityMetric
+	Action          *LiveActivityActionInput
 
-	numberOfStepsSet bool
-	currentStepSet   bool
-	percentageSet    bool
-	valueSet         bool
-	upperLimitSet    bool
+	numberOfStepsSet   bool
+	currentStepSet     bool
+	percentageSet      bool
+	valueSet           bool
+	upperLimitSet      bool
+	durationSecondsSet bool
+	countsDownSet      bool
 }
 
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
@@ -648,6 +707,12 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
+	}
+	if in.DurationSeconds != 0 || in.durationSecondsSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
+	}
+	if in.countsDownSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
 	}
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
@@ -712,6 +777,18 @@ func (in LiveActivityUpdateInput) WithUpperLimit(v float32) LiveActivityUpdateIn
 	return in
 }
 
+func (in LiveActivityUpdateInput) WithDurationSeconds(v float32) LiveActivityUpdateInput {
+	in.DurationSeconds = v
+	in.durationSecondsSet = true
+	return in
+}
+
+func (in LiveActivityUpdateInput) WithCountsDown(v bool) LiveActivityUpdateInput {
+	in.CountsDown = v
+	in.countsDownSet = true
+	return in
+}
+
 func (in LiveActivityUpdateInput) WithAction(v LiveActivityActionInput) LiveActivityUpdateInput {
 	in.Action = &v
 	return in
@@ -726,6 +803,8 @@ type LiveActivityEndInput struct {
 	Percentage         float32
 	Value              float32
 	UpperLimit         float32
+	DurationSeconds    float32
+	CountsDown         bool
 	Type               string
 	Subtitle           string
 	Message            string
@@ -743,6 +822,8 @@ type LiveActivityEndInput struct {
 	percentageSet         bool
 	valueSet              bool
 	upperLimitSet         bool
+	durationSecondsSet    bool
+	countsDownSet         bool
 	autoDismissMinutesSet bool
 }
 
@@ -773,6 +854,12 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
+	}
+	if in.DurationSeconds != 0 || in.durationSecondsSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
+	}
+	if in.countsDownSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
 	}
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
@@ -840,6 +927,18 @@ func (in LiveActivityEndInput) WithUpperLimit(v float32) LiveActivityEndInput {
 	return in
 }
 
+func (in LiveActivityEndInput) WithDurationSeconds(v float32) LiveActivityEndInput {
+	in.DurationSeconds = v
+	in.durationSecondsSet = true
+	return in
+}
+
+func (in LiveActivityEndInput) WithCountsDown(v bool) LiveActivityEndInput {
+	in.CountsDown = v
+	in.countsDownSet = true
+	return in
+}
+
 // WithAutoDismissMinutes forces inclusion of auto_dismiss_minutes, including explicit zero.
 func (in LiveActivityEndInput) WithAutoDismissMinutes(v int32) LiveActivityEndInput {
 	in.AutoDismissMinutes = v
@@ -854,30 +953,34 @@ func (in LiveActivityEndInput) WithAction(v LiveActivityActionInput) LiveActivit
 
 // LiveActivityStreamInput is a handwritten DX input with plain optional values.
 type LiveActivityStreamInput struct {
-	ContentState  LiveActivityContentStateInput
-	Title         string
-	NumberOfSteps int32
-	CurrentStep   int32
-	Percentage    float32
-	Value         float32
-	UpperLimit    float32
-	Type          string
-	Subtitle      string
-	Message       string
-	Icon          LiveActivityAlertIconInput
-	Badge         LiveActivityAlertBadgeInput
-	Color         string
-	StepColor     string
-	Metrics       []generated.ActivityMetric
-	Action        *LiveActivityActionInput
-	Alert         *generated.AlertPayload
-	Channels      []string
+	ContentState    LiveActivityContentStateInput
+	Title           string
+	NumberOfSteps   int32
+	CurrentStep     int32
+	Percentage      float32
+	Value           float32
+	UpperLimit      float32
+	DurationSeconds float32
+	CountsDown      bool
+	Type            string
+	Subtitle        string
+	Message         string
+	Icon            LiveActivityAlertIconInput
+	Badge           LiveActivityAlertBadgeInput
+	Color           string
+	StepColor       string
+	Metrics         []generated.ActivityMetric
+	Action          *LiveActivityActionInput
+	Alert           *generated.AlertPayload
+	Channels        []string
 
-	numberOfStepsSet bool
-	currentStepSet   bool
-	percentageSet    bool
-	valueSet         bool
-	upperLimitSet    bool
+	numberOfStepsSet   bool
+	currentStepSet     bool
+	percentageSet      bool
+	valueSet           bool
+	upperLimitSet      bool
+	durationSecondsSet bool
+	countsDownSet      bool
 }
 
 func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequest {
@@ -909,6 +1012,12 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
+	}
+	if in.DurationSeconds != 0 || in.durationSecondsSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
+	}
+	if in.countsDownSet {
+		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
 	}
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
@@ -972,6 +1081,18 @@ func (in LiveActivityStreamInput) WithUpperLimit(v float32) LiveActivityStreamIn
 	return in
 }
 
+func (in LiveActivityStreamInput) WithDurationSeconds(v float32) LiveActivityStreamInput {
+	in.DurationSeconds = v
+	in.durationSecondsSet = true
+	return in
+}
+
+func (in LiveActivityStreamInput) WithCountsDown(v bool) LiveActivityStreamInput {
+	in.CountsDown = v
+	in.countsDownSet = true
+	return in
+}
+
 func (in LiveActivityStreamInput) WithAction(v LiveActivityActionInput) LiveActivityStreamInput {
 	in.Action = &v
 	return in
@@ -979,29 +1100,33 @@ func (in LiveActivityStreamInput) WithAction(v LiveActivityActionInput) LiveActi
 
 // LiveActivityStreamEndInput is an optional payload for ending a managed stream.
 type LiveActivityStreamEndInput struct {
-	ContentState  LiveActivityContentStateInput
-	Title         string
-	NumberOfSteps int32
-	CurrentStep   int32
-	Percentage    float32
-	Value         float32
-	UpperLimit    float32
-	Type          string
-	Subtitle      string
-	Message       string
-	Icon          LiveActivityAlertIconInput
-	Badge         LiveActivityAlertBadgeInput
-	Color         string
-	StepColor     string
-	Metrics       []generated.ActivityMetric
-	Action        *LiveActivityActionInput
-	Alert         *generated.AlertPayload
+	ContentState    LiveActivityContentStateInput
+	Title           string
+	NumberOfSteps   int32
+	CurrentStep     int32
+	Percentage      float32
+	Value           float32
+	UpperLimit      float32
+	DurationSeconds float32
+	CountsDown      bool
+	Type            string
+	Subtitle        string
+	Message         string
+	Icon            LiveActivityAlertIconInput
+	Badge           LiveActivityAlertBadgeInput
+	Color           string
+	StepColor       string
+	Metrics         []generated.ActivityMetric
+	Action          *LiveActivityActionInput
+	Alert           *generated.AlertPayload
 
-	numberOfStepsSet bool
-	currentStepSet   bool
-	percentageSet    bool
-	valueSet         bool
-	upperLimitSet    bool
+	numberOfStepsSet   bool
+	currentStepSet     bool
+	percentageSet      bool
+	valueSet           bool
+	upperLimitSet      bool
+	durationSecondsSet bool
+	countsDownSet      bool
 }
 
 func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamDeleteRequest {
@@ -1033,6 +1158,12 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 		}
 		if in.UpperLimit != 0 || in.upperLimitSet {
 			contentState.SetUpperLimit(in.UpperLimit)
+		}
+		if in.DurationSeconds != 0 || in.durationSecondsSet {
+			setAdditionalProperty(&contentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
+		}
+		if in.countsDownSet {
+			setAdditionalProperty(&contentState.AdditionalProperties, "counts_down", in.CountsDown)
 		}
 		if in.Type != "" {
 			contentState.SetType(in.Type)
@@ -1092,6 +1223,18 @@ func (in LiveActivityStreamEndInput) WithValue(v float32) LiveActivityStreamEndI
 func (in LiveActivityStreamEndInput) WithUpperLimit(v float32) LiveActivityStreamEndInput {
 	in.UpperLimit = v
 	in.upperLimitSet = true
+	return in
+}
+
+func (in LiveActivityStreamEndInput) WithDurationSeconds(v float32) LiveActivityStreamEndInput {
+	in.DurationSeconds = v
+	in.durationSecondsSet = true
+	return in
+}
+
+func (in LiveActivityStreamEndInput) WithCountsDown(v bool) LiveActivityStreamEndInput {
+	in.CountsDown = v
+	in.countsDownSet = true
 	return in
 }
 
