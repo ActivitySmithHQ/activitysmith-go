@@ -11,12 +11,15 @@ Name | Type | Description | Notes
 **Percentage** | Pointer to **float32** | Progress percentage (0–100). Use for type&#x3D;progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
 **Value** | Pointer to **float32** | Current progress value. Use with upper_limit for type&#x3D;progress. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for type&#x3D;progress. | [optional] 
+**DurationSeconds** | Pointer to **float32** | Timer duration in seconds. For type&#x3D;timer, omit duration_seconds on end to preserve and freeze the latest timer state. | [optional] 
+**CountsDown** | Pointer to **bool** | Use with type&#x3D;timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer. | [optional] [default to true]
+**IsRunning** | Pointer to **bool** | Use with type&#x3D;timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume. | [optional] [default to true]
 **Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for type&#x3D;metrics or type&#x3D;stats. | [optional] 
 **Message** | Pointer to **string** | Alert message. Use for type&#x3D;alert. | [optional] 
-**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats. | [optional] 
+**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer. | [optional] 
 **Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge. Supported by alert, progress, and segmented_progress. | [optional] 
 **Type** | Pointer to **string** | Optional. When omitted, the API uses the existing Live Activity type. | [optional] 
-**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included. | [optional] 
+**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included. | [optional] 
 **StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to type&#x3D;segmented_progress. | [optional] 
 **StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
 **AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max. | [optional] [default to 3]
@@ -209,6 +212,81 @@ SetUpperLimit sets UpperLimit field to given value.
 `func (o *ContentStateEnd) HasUpperLimit() bool`
 
 HasUpperLimit returns a boolean if a field has been set.
+
+### GetDurationSeconds
+
+`func (o *ContentStateEnd) GetDurationSeconds() float32`
+
+GetDurationSeconds returns the DurationSeconds field if non-nil, zero value otherwise.
+
+### GetDurationSecondsOk
+
+`func (o *ContentStateEnd) GetDurationSecondsOk() (*float32, bool)`
+
+GetDurationSecondsOk returns a tuple with the DurationSeconds field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDurationSeconds
+
+`func (o *ContentStateEnd) SetDurationSeconds(v float32)`
+
+SetDurationSeconds sets DurationSeconds field to given value.
+
+### HasDurationSeconds
+
+`func (o *ContentStateEnd) HasDurationSeconds() bool`
+
+HasDurationSeconds returns a boolean if a field has been set.
+
+### GetCountsDown
+
+`func (o *ContentStateEnd) GetCountsDown() bool`
+
+GetCountsDown returns the CountsDown field if non-nil, zero value otherwise.
+
+### GetCountsDownOk
+
+`func (o *ContentStateEnd) GetCountsDownOk() (*bool, bool)`
+
+GetCountsDownOk returns a tuple with the CountsDown field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCountsDown
+
+`func (o *ContentStateEnd) SetCountsDown(v bool)`
+
+SetCountsDown sets CountsDown field to given value.
+
+### HasCountsDown
+
+`func (o *ContentStateEnd) HasCountsDown() bool`
+
+HasCountsDown returns a boolean if a field has been set.
+
+### GetIsRunning
+
+`func (o *ContentStateEnd) GetIsRunning() bool`
+
+GetIsRunning returns the IsRunning field if non-nil, zero value otherwise.
+
+### GetIsRunningOk
+
+`func (o *ContentStateEnd) GetIsRunningOk() (*bool, bool)`
+
+GetIsRunningOk returns a tuple with the IsRunning field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIsRunning
+
+`func (o *ContentStateEnd) SetIsRunning(v bool)`
+
+SetIsRunning sets IsRunning field to given value.
+
+### HasIsRunning
+
+`func (o *ContentStateEnd) HasIsRunning() bool`
+
+HasIsRunning returns a boolean if a field has been set.
 
 ### GetMetrics
 

@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Title** | **string** | Button title displayed in iOS expanded notification UI. | 
 **Type** | [**PushNotificationActionType**](PushNotificationActionType.md) |  | 
-**Url** | **string** | Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL. For webhook, use an HTTPS URL called by the ActivitySmith backend. |
+**Url** | **string** | Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name&#x3D;... URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS URL called by the ActivitySmith backend. | 
 **Method** | Pointer to [**PushNotificationWebhookMethod**](PushNotificationWebhookMethod.md) | Webhook HTTP method. Used only when type&#x3D;webhook. | [optional] [default to PUSHNOTIFICATIONWEBHOOKMETHOD_POST]
 **Body** | Pointer to **map[string]interface{}** | Optional webhook payload body. Used only when type&#x3D;webhook. | [optional] 
 

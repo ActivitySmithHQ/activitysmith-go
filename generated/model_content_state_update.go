@@ -18,7 +18,7 @@ import (
 // checks if the ContentStateUpdate type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateUpdate{}
 
-// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
+// ContentStateUpdate Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. For timer, omit duration_seconds to preserve the current timer window or send duration_seconds to reset the timer from the update request time. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
 type ContentStateUpdate struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -32,17 +32,23 @@ type ContentStateUpdate struct {
 	Value *float32 `json:"value,omitempty"`
 	// Maximum progress value. Use with value for type=progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
+	// Timer duration in seconds. For type=timer, sending duration_seconds resets the timer window from the update request time; omit it to preserve the existing timer window.
+	DurationSeconds *float32 `json:"duration_seconds,omitempty"`
+	// Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
+	CountsDown *bool `json:"counts_down,omitempty"`
+	// Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume.
+	IsRunning *bool `json:"is_running,omitempty"`
 	// Use for type=metrics or type=stats.
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Alert message. Use for type=alert.
 	Message *string `json:"message,omitempty"`
-	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
+	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer.
 	Icon *LiveActivityAlertIcon `json:"icon,omitempty"`
 	// Optional badge. Supported by alert, progress, and segmented_progress.
 	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
 	// Optional. When omitted, the API uses the existing Live Activity type.
 	Type *string `json:"type,omitempty"`
-	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
+	// Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to type=segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
@@ -60,6 +66,10 @@ type _ContentStateUpdate ContentStateUpdate
 func NewContentStateUpdate(title string) *ContentStateUpdate {
 	this := ContentStateUpdate{}
 	this.Title = title
+	var countsDown bool = true
+	this.CountsDown = &countsDown
+	var isRunning bool = true
+	this.IsRunning = &isRunning
 	return &this
 }
 
@@ -68,6 +78,10 @@ func NewContentStateUpdate(title string) *ContentStateUpdate {
 // but it doesn't guarantee that properties required by API are set
 func NewContentStateUpdateWithDefaults() *ContentStateUpdate {
 	this := ContentStateUpdate{}
+	var countsDown bool = true
+	this.CountsDown = &countsDown
+	var isRunning bool = true
+	this.IsRunning = &isRunning
 	return &this
 }
 
@@ -285,6 +299,102 @@ func (o *ContentStateUpdate) HasUpperLimit() bool {
 // SetUpperLimit gets a reference to the given float32 and assigns it to the UpperLimit field.
 func (o *ContentStateUpdate) SetUpperLimit(v float32) {
 	o.UpperLimit = &v
+}
+
+// GetDurationSeconds returns the DurationSeconds field value if set, zero value otherwise.
+func (o *ContentStateUpdate) GetDurationSeconds() float32 {
+	if o == nil || IsNil(o.DurationSeconds) {
+		var ret float32
+		return ret
+	}
+	return *o.DurationSeconds
+}
+
+// GetDurationSecondsOk returns a tuple with the DurationSeconds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateUpdate) GetDurationSecondsOk() (*float32, bool) {
+	if o == nil || IsNil(o.DurationSeconds) {
+		return nil, false
+	}
+	return o.DurationSeconds, true
+}
+
+// HasDurationSeconds returns a boolean if a field has been set.
+func (o *ContentStateUpdate) HasDurationSeconds() bool {
+	if o != nil && !IsNil(o.DurationSeconds) {
+		return true
+	}
+
+	return false
+}
+
+// SetDurationSeconds gets a reference to the given float32 and assigns it to the DurationSeconds field.
+func (o *ContentStateUpdate) SetDurationSeconds(v float32) {
+	o.DurationSeconds = &v
+}
+
+// GetCountsDown returns the CountsDown field value if set, zero value otherwise.
+func (o *ContentStateUpdate) GetCountsDown() bool {
+	if o == nil || IsNil(o.CountsDown) {
+		var ret bool
+		return ret
+	}
+	return *o.CountsDown
+}
+
+// GetCountsDownOk returns a tuple with the CountsDown field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateUpdate) GetCountsDownOk() (*bool, bool) {
+	if o == nil || IsNil(o.CountsDown) {
+		return nil, false
+	}
+	return o.CountsDown, true
+}
+
+// HasCountsDown returns a boolean if a field has been set.
+func (o *ContentStateUpdate) HasCountsDown() bool {
+	if o != nil && !IsNil(o.CountsDown) {
+		return true
+	}
+
+	return false
+}
+
+// SetCountsDown gets a reference to the given bool and assigns it to the CountsDown field.
+func (o *ContentStateUpdate) SetCountsDown(v bool) {
+	o.CountsDown = &v
+}
+
+// GetIsRunning returns the IsRunning field value if set, zero value otherwise.
+func (o *ContentStateUpdate) GetIsRunning() bool {
+	if o == nil || IsNil(o.IsRunning) {
+		var ret bool
+		return ret
+	}
+	return *o.IsRunning
+}
+
+// GetIsRunningOk returns a tuple with the IsRunning field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateUpdate) GetIsRunningOk() (*bool, bool) {
+	if o == nil || IsNil(o.IsRunning) {
+		return nil, false
+	}
+	return o.IsRunning, true
+}
+
+// HasIsRunning returns a boolean if a field has been set.
+func (o *ContentStateUpdate) HasIsRunning() bool {
+	if o != nil && !IsNil(o.IsRunning) {
+		return true
+	}
+
+	return false
+}
+
+// SetIsRunning gets a reference to the given bool and assigns it to the IsRunning field.
+func (o *ContentStateUpdate) SetIsRunning(v bool) {
+	o.IsRunning = &v
 }
 
 // GetMetrics returns the Metrics field value if set, zero value otherwise.
@@ -572,6 +682,15 @@ func (o ContentStateUpdate) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UpperLimit) {
 		toSerialize["upper_limit"] = o.UpperLimit
 	}
+	if !IsNil(o.DurationSeconds) {
+		toSerialize["duration_seconds"] = o.DurationSeconds
+	}
+	if !IsNil(o.CountsDown) {
+		toSerialize["counts_down"] = o.CountsDown
+	}
+	if !IsNil(o.IsRunning) {
+		toSerialize["is_running"] = o.IsRunning
+	}
 	if !IsNil(o.Metrics) {
 		toSerialize["metrics"] = o.Metrics
 	}
@@ -646,6 +765,9 @@ func (o *ContentStateUpdate) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "percentage")
 		delete(additionalProperties, "value")
 		delete(additionalProperties, "upper_limit")
+		delete(additionalProperties, "duration_seconds")
+		delete(additionalProperties, "counts_down")
+		delete(additionalProperties, "is_running")
 		delete(additionalProperties, "metrics")
 		delete(additionalProperties, "message")
 		delete(additionalProperties, "icon")

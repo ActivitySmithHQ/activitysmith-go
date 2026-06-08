@@ -706,6 +706,68 @@ func TestProgressInputsSerializeProgressFieldsWithoutSegmentedFields(t *testing.
 	}
 }
 
+func TestTimerInputsSerializeTimerFields(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	startInput := LiveActivityStartInput{
+		Title:    "Benchmark Run",
+		Subtitle: "sampling performance",
+		Type:     LiveActivityTypeTimer,
+		Color:    "cyan",
+	}.WithDurationSeconds(300).WithCountsDown(true)
+
+	updateInput := LiveActivityUpdateInput{
+		ActivityID: "act-1",
+		Title:      "Benchmark Run",
+		Type:       LiveActivityTypeTimer,
+		Subtitle:   "complete",
+		Color:      "cyan",
+	}
+
+	if _, err := client.LiveActivities.Start(startInput); err != nil {
+		t.Fatalf("Start returned error: %v", err)
+	}
+	if _, err := client.LiveActivities.Update(updateInput); err != nil {
+		t.Fatalf("Update returned error: %v", err)
+	}
+
+	if len(*requests) != 2 {
+		t.Fatalf("expected 2 requests, got %d", len(*requests))
+	}
+
+	startBody := (*requests)[0].Body
+	if !strings.Contains(startBody, `"type":"timer"`) {
+		t.Fatalf("start body missing timer type: %s", startBody)
+	}
+	if !strings.Contains(startBody, `"duration_seconds":300`) {
+		t.Fatalf("start body missing duration_seconds: %s", startBody)
+	}
+	if !strings.Contains(startBody, `"counts_down":true`) {
+		t.Fatalf("start body missing counts_down: %s", startBody)
+	}
+
+	updateBody := (*requests)[1].Body
+	if !strings.Contains(updateBody, `"type":"timer"`) {
+		t.Fatalf("update body missing timer type: %s", updateBody)
+	}
+	if !strings.Contains(updateBody, `"subtitle":"complete"`) {
+		t.Fatalf("update body missing subtitle: %s", updateBody)
+	}
+	if !strings.Contains(updateBody, `"color":"cyan"`) {
+		t.Fatalf("update body missing color: %s", updateBody)
+	}
+	if strings.Contains(updateBody, `"duration_seconds"`) {
+		t.Fatalf("update body should preserve timer window when duration_seconds is omitted: %s", updateBody)
+	}
+}
+
 func TestStatsInputsSerializeMetricValuesAndColors(t *testing.T) {
 	server, requests := newAPITestServer(t)
 	defer server.Close()

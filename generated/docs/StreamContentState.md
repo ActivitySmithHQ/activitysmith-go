@@ -11,13 +11,16 @@ Name | Type | Description | Notes
 **Percentage** | Pointer to **float32** | Use for progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
 **Value** | Pointer to **float32** | Current progress value. Use with upper_limit for progress. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for progress. | [optional] 
+**DurationSeconds** | Pointer to **float32** | Timer duration in seconds. For type&#x3D;timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window. | [optional] 
+**CountsDown** | Pointer to **bool** | Use with type&#x3D;timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer. | [optional] [default to true]
+**IsRunning** | Pointer to **bool** | Use with type&#x3D;timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume. | [optional] [default to true]
 **Type** | Pointer to **string** | Required on the first PUT or whenever the stream cannot infer the current activity type. | [optional] 
-**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included. | [optional] 
+**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included. | [optional] 
 **StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to segmented_progress. | [optional] 
 **StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
 **Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for metrics and stats activities. | [optional] 
 **Message** | Pointer to **string** | Required for type&#x3D;alert. | [optional] 
-**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats. | [optional] 
+**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer. | [optional] 
 **Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge. Supported by alert, progress, and segmented_progress. | [optional] 
 **AutoDismissSeconds** | Pointer to **int32** | Optional. Seconds before the ended Live Activity is dismissed. | [optional] 
 **AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. | [optional] 
@@ -210,6 +213,81 @@ SetUpperLimit sets UpperLimit field to given value.
 `func (o *StreamContentState) HasUpperLimit() bool`
 
 HasUpperLimit returns a boolean if a field has been set.
+
+### GetDurationSeconds
+
+`func (o *StreamContentState) GetDurationSeconds() float32`
+
+GetDurationSeconds returns the DurationSeconds field if non-nil, zero value otherwise.
+
+### GetDurationSecondsOk
+
+`func (o *StreamContentState) GetDurationSecondsOk() (*float32, bool)`
+
+GetDurationSecondsOk returns a tuple with the DurationSeconds field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDurationSeconds
+
+`func (o *StreamContentState) SetDurationSeconds(v float32)`
+
+SetDurationSeconds sets DurationSeconds field to given value.
+
+### HasDurationSeconds
+
+`func (o *StreamContentState) HasDurationSeconds() bool`
+
+HasDurationSeconds returns a boolean if a field has been set.
+
+### GetCountsDown
+
+`func (o *StreamContentState) GetCountsDown() bool`
+
+GetCountsDown returns the CountsDown field if non-nil, zero value otherwise.
+
+### GetCountsDownOk
+
+`func (o *StreamContentState) GetCountsDownOk() (*bool, bool)`
+
+GetCountsDownOk returns a tuple with the CountsDown field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCountsDown
+
+`func (o *StreamContentState) SetCountsDown(v bool)`
+
+SetCountsDown sets CountsDown field to given value.
+
+### HasCountsDown
+
+`func (o *StreamContentState) HasCountsDown() bool`
+
+HasCountsDown returns a boolean if a field has been set.
+
+### GetIsRunning
+
+`func (o *StreamContentState) GetIsRunning() bool`
+
+GetIsRunning returns the IsRunning field if non-nil, zero value otherwise.
+
+### GetIsRunningOk
+
+`func (o *StreamContentState) GetIsRunningOk() (*bool, bool)`
+
+GetIsRunningOk returns a tuple with the IsRunning field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIsRunning
+
+`func (o *StreamContentState) SetIsRunning(v bool)`
+
+SetIsRunning sets IsRunning field to given value.
+
+### HasIsRunning
+
+`func (o *StreamContentState) HasIsRunning() bool`
+
+HasIsRunning returns a boolean if a field has been set.
 
 ### GetType
 
