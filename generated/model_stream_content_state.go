@@ -18,7 +18,7 @@ import (
 // checks if the StreamContentState type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &StreamContentState{}
 
-// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, and alert types.
+// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, alert, and timer types. For timer, send duration_seconds to start or reset a bounded timer; omit duration_seconds on later updates to preserve the existing timer window.
 type StreamContentState struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -32,9 +32,15 @@ type StreamContentState struct {
 	Value *float32 `json:"value,omitempty"`
 	// Maximum progress value. Use with value for progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
+	// Timer duration in seconds. For type=timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window.
+	DurationSeconds *float32 `json:"duration_seconds,omitempty"`
+	// Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
+	CountsDown *bool `json:"counts_down,omitempty"`
+	// Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume.
+	IsRunning *bool `json:"is_running,omitempty"`
 	// Required on the first PUT or whenever the stream cannot infer the current activity type.
 	Type *string `json:"type,omitempty"`
-	// Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
+	// Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
@@ -44,7 +50,7 @@ type StreamContentState struct {
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Required for type=alert.
 	Message *string `json:"message,omitempty"`
-	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
+	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer.
 	Icon *LiveActivityAlertIcon `json:"icon,omitempty"`
 	// Optional badge. Supported by alert, progress, and segmented_progress.
 	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
@@ -64,6 +70,10 @@ type _StreamContentState StreamContentState
 func NewStreamContentState(title string) *StreamContentState {
 	this := StreamContentState{}
 	this.Title = title
+	var countsDown bool = true
+	this.CountsDown = &countsDown
+	var isRunning bool = true
+	this.IsRunning = &isRunning
 	return &this
 }
 
@@ -72,6 +82,10 @@ func NewStreamContentState(title string) *StreamContentState {
 // but it doesn't guarantee that properties required by API are set
 func NewStreamContentStateWithDefaults() *StreamContentState {
 	this := StreamContentState{}
+	var countsDown bool = true
+	this.CountsDown = &countsDown
+	var isRunning bool = true
+	this.IsRunning = &isRunning
 	return &this
 }
 
@@ -289,6 +303,102 @@ func (o *StreamContentState) HasUpperLimit() bool {
 // SetUpperLimit gets a reference to the given float32 and assigns it to the UpperLimit field.
 func (o *StreamContentState) SetUpperLimit(v float32) {
 	o.UpperLimit = &v
+}
+
+// GetDurationSeconds returns the DurationSeconds field value if set, zero value otherwise.
+func (o *StreamContentState) GetDurationSeconds() float32 {
+	if o == nil || IsNil(o.DurationSeconds) {
+		var ret float32
+		return ret
+	}
+	return *o.DurationSeconds
+}
+
+// GetDurationSecondsOk returns a tuple with the DurationSeconds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetDurationSecondsOk() (*float32, bool) {
+	if o == nil || IsNil(o.DurationSeconds) {
+		return nil, false
+	}
+	return o.DurationSeconds, true
+}
+
+// HasDurationSeconds returns a boolean if a field has been set.
+func (o *StreamContentState) HasDurationSeconds() bool {
+	if o != nil && !IsNil(o.DurationSeconds) {
+		return true
+	}
+
+	return false
+}
+
+// SetDurationSeconds gets a reference to the given float32 and assigns it to the DurationSeconds field.
+func (o *StreamContentState) SetDurationSeconds(v float32) {
+	o.DurationSeconds = &v
+}
+
+// GetCountsDown returns the CountsDown field value if set, zero value otherwise.
+func (o *StreamContentState) GetCountsDown() bool {
+	if o == nil || IsNil(o.CountsDown) {
+		var ret bool
+		return ret
+	}
+	return *o.CountsDown
+}
+
+// GetCountsDownOk returns a tuple with the CountsDown field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetCountsDownOk() (*bool, bool) {
+	if o == nil || IsNil(o.CountsDown) {
+		return nil, false
+	}
+	return o.CountsDown, true
+}
+
+// HasCountsDown returns a boolean if a field has been set.
+func (o *StreamContentState) HasCountsDown() bool {
+	if o != nil && !IsNil(o.CountsDown) {
+		return true
+	}
+
+	return false
+}
+
+// SetCountsDown gets a reference to the given bool and assigns it to the CountsDown field.
+func (o *StreamContentState) SetCountsDown(v bool) {
+	o.CountsDown = &v
+}
+
+// GetIsRunning returns the IsRunning field value if set, zero value otherwise.
+func (o *StreamContentState) GetIsRunning() bool {
+	if o == nil || IsNil(o.IsRunning) {
+		var ret bool
+		return ret
+	}
+	return *o.IsRunning
+}
+
+// GetIsRunningOk returns a tuple with the IsRunning field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetIsRunningOk() (*bool, bool) {
+	if o == nil || IsNil(o.IsRunning) {
+		return nil, false
+	}
+	return o.IsRunning, true
+}
+
+// HasIsRunning returns a boolean if a field has been set.
+func (o *StreamContentState) HasIsRunning() bool {
+	if o != nil && !IsNil(o.IsRunning) {
+		return true
+	}
+
+	return false
+}
+
+// SetIsRunning gets a reference to the given bool and assigns it to the IsRunning field.
+func (o *StreamContentState) SetIsRunning(v bool) {
+	o.IsRunning = &v
 }
 
 // GetType returns the Type field value if set, zero value otherwise.
@@ -640,6 +750,15 @@ func (o StreamContentState) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UpperLimit) {
 		toSerialize["upper_limit"] = o.UpperLimit
 	}
+	if !IsNil(o.DurationSeconds) {
+		toSerialize["duration_seconds"] = o.DurationSeconds
+	}
+	if !IsNil(o.CountsDown) {
+		toSerialize["counts_down"] = o.CountsDown
+	}
+	if !IsNil(o.IsRunning) {
+		toSerialize["is_running"] = o.IsRunning
+	}
 	if !IsNil(o.Type) {
 		toSerialize["type"] = o.Type
 	}
@@ -720,6 +839,9 @@ func (o *StreamContentState) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "percentage")
 		delete(additionalProperties, "value")
 		delete(additionalProperties, "upper_limit")
+		delete(additionalProperties, "duration_seconds")
+		delete(additionalProperties, "counts_down")
+		delete(additionalProperties, "is_running")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "color")
 		delete(additionalProperties, "step_color")

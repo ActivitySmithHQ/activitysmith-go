@@ -23,7 +23,7 @@ type LiveActivityAction struct {
 	// Button title displayed in the Live Activity UI.
 	Title string `json:"title"`
 	Type LiveActivityActionType `json:"type"`
-	// Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
+	// Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS URL called by the ActivitySmith backend.
 	Url string `json:"url"`
 	// Webhook HTTP method. Used only when type=webhook.
 	Method *LiveActivityWebhookMethod `json:"method,omitempty"`
