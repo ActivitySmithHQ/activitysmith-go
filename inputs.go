@@ -525,6 +525,7 @@ type LiveActivityStartInput struct {
 	StepColor       string
 	Metrics         []generated.ActivityMetric
 	Action          *LiveActivityActionInput
+	SecondaryAction *LiveActivityActionInput
 	Channels        []string
 
 	numberOfStepsSet   bool
@@ -592,6 +593,9 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
 	}
+	if in.SecondaryAction != nil {
+		req.SetSecondaryAction(in.SecondaryAction.toGenerated())
+	}
 	if len(in.Channels) > 0 {
 		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
 	}
@@ -649,6 +653,11 @@ func (in LiveActivityStartInput) WithAction(v LiveActivityActionInput) LiveActiv
 	return in
 }
 
+func (in LiveActivityStartInput) WithSecondaryAction(v LiveActivityActionInput) LiveActivityStartInput {
+	in.SecondaryAction = &v
+	return in
+}
+
 // LiveActivityUpdateInput is a handwritten DX input with plain optional values.
 type LiveActivityUpdateInput struct {
 	ActivityID      string
@@ -670,6 +679,7 @@ type LiveActivityUpdateInput struct {
 	NumberOfSteps   int32
 	Metrics         []generated.ActivityMetric
 	Action          *LiveActivityActionInput
+	SecondaryAction *LiveActivityActionInput
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -740,6 +750,9 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
 	}
+	if in.SecondaryAction != nil {
+		req.SetSecondaryAction(in.SecondaryAction.toGenerated())
+	}
 	return req
 }
 
@@ -794,6 +807,11 @@ func (in LiveActivityUpdateInput) WithAction(v LiveActivityActionInput) LiveActi
 	return in
 }
 
+func (in LiveActivityUpdateInput) WithSecondaryAction(v LiveActivityActionInput) LiveActivityUpdateInput {
+	in.SecondaryAction = &v
+	return in
+}
+
 // LiveActivityEndInput is a handwritten DX input with plain optional values.
 type LiveActivityEndInput struct {
 	ActivityID         string
@@ -816,6 +834,7 @@ type LiveActivityEndInput struct {
 	AutoDismissMinutes int32
 	Metrics            []generated.ActivityMetric
 	Action             *LiveActivityActionInput
+	SecondaryAction    *LiveActivityActionInput
 
 	numberOfStepsSet      bool
 	currentStepSet        bool
@@ -890,6 +909,9 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
 	}
+	if in.SecondaryAction != nil {
+		req.SetSecondaryAction(in.SecondaryAction.toGenerated())
+	}
 	return req
 }
 
@@ -951,6 +973,11 @@ func (in LiveActivityEndInput) WithAction(v LiveActivityActionInput) LiveActivit
 	return in
 }
 
+func (in LiveActivityEndInput) WithSecondaryAction(v LiveActivityActionInput) LiveActivityEndInput {
+	in.SecondaryAction = &v
+	return in
+}
+
 // LiveActivityStreamInput is a handwritten DX input with plain optional values.
 type LiveActivityStreamInput struct {
 	ContentState    LiveActivityContentStateInput
@@ -971,6 +998,7 @@ type LiveActivityStreamInput struct {
 	StepColor       string
 	Metrics         []generated.ActivityMetric
 	Action          *LiveActivityActionInput
+	SecondaryAction *LiveActivityActionInput
 	Alert           *generated.AlertPayload
 	Channels        []string
 
@@ -1042,6 +1070,9 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
 	}
+	if in.SecondaryAction != nil {
+		req.SetSecondaryAction(in.SecondaryAction.toGenerated())
+	}
 	if in.Alert != nil {
 		req.SetAlert(*in.Alert)
 	}
@@ -1098,6 +1129,11 @@ func (in LiveActivityStreamInput) WithAction(v LiveActivityActionInput) LiveActi
 	return in
 }
 
+func (in LiveActivityStreamInput) WithSecondaryAction(v LiveActivityActionInput) LiveActivityStreamInput {
+	in.SecondaryAction = &v
+	return in
+}
+
 // LiveActivityStreamEndInput is an optional payload for ending a managed stream.
 type LiveActivityStreamEndInput struct {
 	ContentState    LiveActivityContentStateInput
@@ -1118,6 +1154,7 @@ type LiveActivityStreamEndInput struct {
 	StepColor       string
 	Metrics         []generated.ActivityMetric
 	Action          *LiveActivityActionInput
+	SecondaryAction *LiveActivityActionInput
 	Alert           *generated.AlertPayload
 
 	numberOfStepsSet   bool
@@ -1190,6 +1227,9 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 	if in.Action != nil {
 		req.SetAction(in.Action.toGenerated())
 	}
+	if in.SecondaryAction != nil {
+		req.SetSecondaryAction(in.SecondaryAction.toGenerated())
+	}
 	if in.Alert != nil {
 		req.SetAlert(*in.Alert)
 	}
@@ -1240,5 +1280,10 @@ func (in LiveActivityStreamEndInput) WithCountsDown(v bool) LiveActivityStreamEn
 
 func (in LiveActivityStreamEndInput) WithAction(v LiveActivityActionInput) LiveActivityStreamEndInput {
 	in.Action = &v
+	return in
+}
+
+func (in LiveActivityStreamEndInput) WithSecondaryAction(v LiveActivityActionInput) LiveActivityStreamEndInput {
+	in.SecondaryAction = &v
 	return in
 }
