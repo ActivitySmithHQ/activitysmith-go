@@ -18,7 +18,7 @@ import (
 // checks if the LiveActivityAction type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityAction{}
 
-// LiveActivityAction Optional single action button shown in the Live Activity UI.
+// LiveActivityAction Optional action button shown in the Live Activity UI. Use action for the primary button, or secondary_action for a secondary button on alert, progress, and segmented_progress Live Activities.
 type LiveActivityAction struct {
 	// Button title displayed in the Live Activity UI.
 	Title string `json:"title"`

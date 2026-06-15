@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ContentState** | [**StreamContentState**](StreamContentState.md) |  | 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
+**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 **Alert** | Pointer to [**AlertPayload**](AlertPayload.md) |  | [optional] 
 **Channels** | Pointer to **[]string** | Channel slugs. When omitted, API key scope determines recipients. | [optional] 
 **Target** | Pointer to [**ChannelTarget**](ChannelTarget.md) |  | [optional] 
@@ -73,6 +74,31 @@ SetAction sets Action field to given value.
 `func (o *LiveActivityStreamRequest) HasAction() bool`
 
 HasAction returns a boolean if a field has been set.
+
+### GetSecondaryAction
+
+`func (o *LiveActivityStreamRequest) GetSecondaryAction() LiveActivityAction`
+
+GetSecondaryAction returns the SecondaryAction field if non-nil, zero value otherwise.
+
+### GetSecondaryActionOk
+
+`func (o *LiveActivityStreamRequest) GetSecondaryActionOk() (*LiveActivityAction, bool)`
+
+GetSecondaryActionOk returns a tuple with the SecondaryAction field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSecondaryAction
+
+`func (o *LiveActivityStreamRequest) SetSecondaryAction(v LiveActivityAction)`
+
+SetSecondaryAction sets SecondaryAction field to given value.
+
+### HasSecondaryAction
+
+`func (o *LiveActivityStreamRequest) HasSecondaryAction() bool`
+
+HasSecondaryAction returns a boolean if a field has been set.
 
 ### GetAlert
 

@@ -228,7 +228,8 @@ paths:
         \ and you no longer want the Live Activity on your devices. ActivitySmith\
         \ ends the current Live Activity for this stream and dismisses it from devices.\
         \ If you need direct lifecycle control, use /live-activity/start, /live-activity/update,\
-        \ and /live-activity/end instead."
+        \ and /live-activity/end instead. Use secondary_action for a second button\
+        \ on alert, progress, and segmented_progress Live Activities only."
       operationId: endLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -274,7 +275,7 @@ paths:
                   value:
                     success: true
                     operation: ended
-                    stream_key: linode-vps
+                    stream_key: prod-web-1
                     activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
                     devices_queued: 1
                     timestamp: 2025-08-12T12:10:00.000Z
@@ -282,7 +283,7 @@ paths:
                   value:
                     success: true
                     operation: ended
-                    stream_key: linode-vps
+                    stream_key: prod-web-1
                     activity_id: null
                     timestamp: 2025-08-12T12:10:00.000Z
               schema:
@@ -307,7 +308,7 @@ paths:
                 not_found:
                   value:
                     error: Live Activity stream not found
-                    message: "No Live Activity stream found for stream_key: linode-vps"
+                    message: "No Live Activity stream found for stream_key: prod-web-1"
               schema:
                 $ref: '#/components/schemas/NotFoundError'
           description: Managed stream not found
@@ -443,7 +444,9 @@ paths:
         \ as a Live Activity. Send the latest content_state whenever it changes, and\
         \ ActivitySmith will keep the Live Activity in sync. For timer streams, send\
         \ duration_seconds to start or reset the timer; omit duration_seconds on later\
-        \ updates to preserve the existing timer window."
+        \ updates to preserve the existing timer window. Use secondary_action for\
+        \ a second button on alert, progress, and segmented_progress Live Activities\
+        \ only."
       operationId: reconcileLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -493,10 +496,31 @@ paths:
                 value:
                   content_state:
                     title: Benchmark Run
-                    subtitle: sampling performance
+                    subtitle: sampling
                     type: timer
                     duration_seconds: 300
                     color: cyan
+              approval_secondary_actions:
+                value:
+                  content_state:
+                    title: Approval Needed
+                    message: Should I send the follow-up email to Brightlane?
+                    type: alert
+                    color: cyan
+                  action:
+                    title: Send
+                    type: webhook
+                    url: https://example.com/hooks/approvals/send
+                    method: POST
+                    body:
+                      approval_id: appr_123
+                  secondary_action:
+                    title: Deny
+                    type: webhook
+                    url: https://example.com/hooks/approvals/deny
+                    method: POST
+                    body:
+                      approval_id: appr_123
             schema:
               $ref: '#/components/schemas/LiveActivityStreamRequest'
         required: true
@@ -509,7 +533,7 @@ paths:
                   value:
                     success: true
                     operation: started
-                    stream_key: linode-vps
+                    stream_key: prod-web-1
                     activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
                     devices_notified: 2
                     timestamp: 2025-08-12T12:00:00.000Z
@@ -517,14 +541,14 @@ paths:
                   value:
                     success: true
                     operation: noop
-                    stream_key: linode-vps
+                    stream_key: prod-web-1
                     activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
                     timestamp: 2025-08-12T12:05:00.000Z
                 paused:
                   value:
                     success: true
                     operation: paused
-                    stream_key: linode-vps
+                    stream_key: prod-web-1
                     activity_id: null
                     timestamp: 2025-08-12T12:10:00.000Z
               schema:
@@ -696,7 +720,8 @@ paths:
         \ matched by API key scope and optional target channels. Supports segmented_progress,\
         \ progress, metrics, stats, alert, and timer activity types. For segmented_progress\
         \ activities, number_of_steps can be changed later during update or end calls\
-        \ if the workflow changes."
+        \ if the workflow changes. Use secondary_action for a second button on alert,\
+        \ progress, and segmented_progress Live Activities only."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -761,10 +786,31 @@ paths:
                 value:
                   content_state:
                     title: Benchmark Run
-                    subtitle: sampling performance
+                    subtitle: sampling
                     type: timer
                     duration_seconds: 300
                     color: cyan
+              approval_secondary_actions:
+                value:
+                  content_state:
+                    title: Approval Needed
+                    message: Should I send the follow-up email to Brightlane?
+                    type: alert
+                    color: cyan
+                  action:
+                    title: Send
+                    type: webhook
+                    url: https://example.com/hooks/approvals/send
+                    method: POST
+                    body:
+                      approval_id: appr_123
+                  secondary_action:
+                    title: Deny
+                    type: webhook
+                    url: https://example.com/hooks/approvals/deny
+                    method: POST
+                    body:
+                      approval_id: appr_123
             schema:
               $ref: '#/components/schemas/LiveActivityStartRequest'
         required: true
@@ -971,7 +1017,8 @@ paths:
         \ types. For segmented_progress activities, you can increase or decrease number_of_steps\
         \ here as the workflow changes. For timer activities, send duration_seconds\
         \ only when you want to reset the timer window; omit it to keep the current\
-        \ timer running."
+        \ timer running. Use secondary_action for a second button on alert, progress,\
+        \ and segmented_progress Live Activities only."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -1185,7 +1232,8 @@ paths:
         \ control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
         \ progress, metrics, stats, alert, and timer activity types. For segmented_progress\
         \ activities, you can send the latest number_of_steps here if the workflow\
-        \ changed after start."
+        \ changed after start. Use secondary_action for a second button on alert,\
+        \ progress, and segmented_progress Live Activities only."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -1641,8 +1689,8 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints the\
-            \ action button when action is included."
+            \ and timer Live Activities. For Alert Live Activities, this tints action\
+            \ and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -1818,8 +1866,8 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints the\
-            \ action button when action is included."
+            \ and timer Live Activities. For Alert Live Activities, this tints action\
+            \ and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -1994,8 +2042,8 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints the\
-            \ action button when action is included."
+            \ and timer Live Activities. For Alert Live Activities, this tints action\
+            \ and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -2159,8 +2207,8 @@ components:
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints the\
-            \ action button when action is included."
+            \ and timer Live Activities. For Alert Live Activities, this tints action\
+            \ and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -2387,7 +2435,9 @@ components:
       allOf:
       - {}
       - {}
-      description: Optional single action button shown in the Live Activity UI.
+      description: "Optional action button shown in the Live Activity UI. Use action\
+        \ for the primary button, or secondary_action for a secondary button on alert,\
+        \ progress, and segmented_progress Live Activities."
       example:
         method: POST
         title: title
@@ -2564,6 +2614,13 @@ components:
           number_of_steps: 1
           value: 5.962133916683182
           current_step: 0
+        secondary_action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
         alert:
           title: title
           body: body
@@ -2582,6 +2639,8 @@ components:
         content_state:
           $ref: '#/components/schemas/ContentStateStart'
         action:
+          $ref: '#/components/schemas/LiveActivityAction'
+        secondary_action:
           $ref: '#/components/schemas/LiveActivityAction'
         alert:
           $ref: '#/components/schemas/AlertPayload'
@@ -2675,6 +2734,13 @@ components:
           auto_dismiss_seconds: 0
           value: 5.962133916683182
           current_step: 0
+        secondary_action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
         channels:
         - channels
         - channels
@@ -2696,6 +2762,8 @@ components:
         content_state:
           $ref: '#/components/schemas/StreamContentState'
         action:
+          $ref: '#/components/schemas/LiveActivityAction'
+        secondary_action:
           $ref: '#/components/schemas/LiveActivityAction'
         alert:
           $ref: '#/components/schemas/AlertPayload'
@@ -2813,6 +2881,13 @@ components:
           auto_dismiss_seconds: 0
           value: 5.962133916683182
           current_step: 0
+        secondary_action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
         alert:
           title: title
           body: body
@@ -2827,6 +2902,8 @@ components:
         content_state:
           $ref: '#/components/schemas/StreamContentState'
         action:
+          $ref: '#/components/schemas/LiveActivityAction'
+        secondary_action:
           $ref: '#/components/schemas/LiveActivityAction'
         alert:
           $ref: '#/components/schemas/AlertPayload'
@@ -3040,6 +3117,13 @@ components:
           number_of_steps: 1
           value: 5.962133916683182
           current_step: 0
+        secondary_action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
         activity_id: activity_id
         action:
           method: POST
@@ -3054,6 +3138,8 @@ components:
         content_state:
           $ref: '#/components/schemas/ContentStateUpdate'
         action:
+          $ref: '#/components/schemas/LiveActivityAction'
+        secondary_action:
           $ref: '#/components/schemas/LiveActivityAction'
       required:
       - activity_id
@@ -3133,6 +3219,13 @@ components:
           number_of_steps: 1
           value: 5.962133916683182
           current_step: 0
+        secondary_action:
+          method: POST
+          title: title
+          type: open_url
+          body:
+            key: ""
+          url: https://openapi-generator.tech
         activity_id: activity_id
         action:
           method: POST
@@ -3147,6 +3240,8 @@ components:
         content_state:
           $ref: '#/components/schemas/ContentStateEnd'
         action:
+          $ref: '#/components/schemas/LiveActivityAction'
+        secondary_action:
           $ref: '#/components/schemas/LiveActivityAction'
       required:
       - activity_id

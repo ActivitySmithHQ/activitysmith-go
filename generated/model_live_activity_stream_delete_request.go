@@ -21,6 +21,8 @@ var _ MappedNullable = &LiveActivityStreamDeleteRequest{}
 type LiveActivityStreamDeleteRequest struct {
 	ContentState *StreamContentState `json:"content_state,omitempty"`
 	Action *LiveActivityAction `json:"action,omitempty"`
+	// Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
 	Alert *AlertPayload `json:"alert,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
@@ -108,6 +110,38 @@ func (o *LiveActivityStreamDeleteRequest) SetAction(v LiveActivityAction) {
 	o.Action = &v
 }
 
+// GetSecondaryAction returns the SecondaryAction field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteRequest) GetSecondaryAction() LiveActivityAction {
+	if o == nil || IsNil(o.SecondaryAction) {
+		var ret LiveActivityAction
+		return ret
+	}
+	return *o.SecondaryAction
+}
+
+// GetSecondaryActionOk returns a tuple with the SecondaryAction field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteRequest) GetSecondaryActionOk() (*LiveActivityAction, bool) {
+	if o == nil || IsNil(o.SecondaryAction) {
+		return nil, false
+	}
+	return o.SecondaryAction, true
+}
+
+// HasSecondaryAction returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteRequest) HasSecondaryAction() bool {
+	if o != nil && !IsNil(o.SecondaryAction) {
+		return true
+	}
+
+	return false
+}
+
+// SetSecondaryAction gets a reference to the given LiveActivityAction and assigns it to the SecondaryAction field.
+func (o *LiveActivityStreamDeleteRequest) SetSecondaryAction(v LiveActivityAction) {
+	o.SecondaryAction = &v
+}
+
 // GetAlert returns the Alert field value if set, zero value otherwise.
 func (o *LiveActivityStreamDeleteRequest) GetAlert() AlertPayload {
 	if o == nil || IsNil(o.Alert) {
@@ -156,6 +190,9 @@ func (o LiveActivityStreamDeleteRequest) ToMap() (map[string]interface{}, error)
 	if !IsNil(o.Action) {
 		toSerialize["action"] = o.Action
 	}
+	if !IsNil(o.SecondaryAction) {
+		toSerialize["secondary_action"] = o.SecondaryAction
+	}
 	if !IsNil(o.Alert) {
 		toSerialize["alert"] = o.Alert
 	}
@@ -183,6 +220,7 @@ func (o *LiveActivityStreamDeleteRequest) UnmarshalJSON(data []byte) (err error)
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "content_state")
 		delete(additionalProperties, "action")
+		delete(additionalProperties, "secondary_action")
 		delete(additionalProperties, "alert")
 		o.AdditionalProperties = additionalProperties
 	}
