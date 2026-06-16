@@ -23,6 +23,8 @@ type LiveActivityEndRequest struct {
 	ActivityId string `json:"activity_id"`
 	ContentState ContentStateEnd `json:"content_state"`
 	Action *LiveActivityAction `json:"action,omitempty"`
+	// Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -127,6 +129,38 @@ func (o *LiveActivityEndRequest) SetAction(v LiveActivityAction) {
 	o.Action = &v
 }
 
+// GetSecondaryAction returns the SecondaryAction field value if set, zero value otherwise.
+func (o *LiveActivityEndRequest) GetSecondaryAction() LiveActivityAction {
+	if o == nil || IsNil(o.SecondaryAction) {
+		var ret LiveActivityAction
+		return ret
+	}
+	return *o.SecondaryAction
+}
+
+// GetSecondaryActionOk returns a tuple with the SecondaryAction field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityEndRequest) GetSecondaryActionOk() (*LiveActivityAction, bool) {
+	if o == nil || IsNil(o.SecondaryAction) {
+		return nil, false
+	}
+	return o.SecondaryAction, true
+}
+
+// HasSecondaryAction returns a boolean if a field has been set.
+func (o *LiveActivityEndRequest) HasSecondaryAction() bool {
+	if o != nil && !IsNil(o.SecondaryAction) {
+		return true
+	}
+
+	return false
+}
+
+// SetSecondaryAction gets a reference to the given LiveActivityAction and assigns it to the SecondaryAction field.
+func (o *LiveActivityEndRequest) SetSecondaryAction(v LiveActivityAction) {
+	o.SecondaryAction = &v
+}
+
 func (o LiveActivityEndRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -141,6 +175,9 @@ func (o LiveActivityEndRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize["content_state"] = o.ContentState
 	if !IsNil(o.Action) {
 		toSerialize["action"] = o.Action
+	}
+	if !IsNil(o.SecondaryAction) {
+		toSerialize["secondary_action"] = o.SecondaryAction
 	}
 
 	for key, value := range o.AdditionalProperties {
@@ -189,6 +226,7 @@ func (o *LiveActivityEndRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "activity_id")
 		delete(additionalProperties, "content_state")
 		delete(additionalProperties, "action")
+		delete(additionalProperties, "secondary_action")
 		o.AdditionalProperties = additionalProperties
 	}
 

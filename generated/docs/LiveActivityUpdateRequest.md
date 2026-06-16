@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **ActivityId** | **string** |  | 
 **ContentState** | [**ContentStateUpdate**](ContentStateUpdate.md) |  | 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
+**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 
 ## Methods
 
@@ -91,6 +92,31 @@ SetAction sets Action field to given value.
 `func (o *LiveActivityUpdateRequest) HasAction() bool`
 
 HasAction returns a boolean if a field has been set.
+
+### GetSecondaryAction
+
+`func (o *LiveActivityUpdateRequest) GetSecondaryAction() LiveActivityAction`
+
+GetSecondaryAction returns the SecondaryAction field if non-nil, zero value otherwise.
+
+### GetSecondaryActionOk
+
+`func (o *LiveActivityUpdateRequest) GetSecondaryActionOk() (*LiveActivityAction, bool)`
+
+GetSecondaryActionOk returns a tuple with the SecondaryAction field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSecondaryAction
+
+`func (o *LiveActivityUpdateRequest) SetSecondaryAction(v LiveActivityAction)`
+
+SetSecondaryAction sets SecondaryAction field to given value.
+
+### HasSecondaryAction
+
+`func (o *LiveActivityUpdateRequest) HasSecondaryAction() bool`
+
+HasSecondaryAction returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

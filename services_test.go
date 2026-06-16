@@ -368,6 +368,11 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 			Type:  "open_url",
 			URL:   "https://github.com/acme/payments-api/actions/runs/1234567890",
 		},
+		SecondaryAction: &LiveActivityActionInput{
+			Title: "Deny",
+			Type:  "webhook",
+			URL:   "https://ops.example.com/hooks/deploy/deny",
+		},
 		Channels: []string{"devs", "ops"},
 	}
 	if _, err := client.LiveActivities.Start(startInput); err != nil {
@@ -389,6 +394,11 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 				"job_id": "reindex-2026-03-19",
 			},
 		},
+		SecondaryAction: &LiveActivityActionInput{
+			Title: "Open Runbook",
+			Type:  "open_url",
+			URL:   "https://ops.example.com/runbooks/search-reindex",
+		},
 	}
 	if _, err := client.LiveActivities.Update(updateInput); err != nil {
 		t.Fatalf("Update returned error: %v", err)
@@ -404,6 +414,11 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 			Title: "Open Workflow",
 			Type:  "open_url",
 			URL:   "https://github.com/acme/payments-api/actions/runs/1234567890",
+		},
+		SecondaryAction: &LiveActivityActionInput{
+			Title: "Archive",
+			Type:  "webhook",
+			URL:   "https://ops.example.com/hooks/deploy/archive",
 		},
 	}
 	if _, err := client.LiveActivities.End(endInput); err != nil {
@@ -444,6 +459,9 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	if !strings.Contains(bodies[1], `"action":{"title":"Open Workflow","type":"open_url","url":"https://github.com/acme/payments-api/actions/runs/1234567890"}`) {
 		t.Fatalf("start body missing action: %s", bodies[1])
 	}
+	if !strings.Contains(bodies[1], `"secondary_action":{"title":"Deny","type":"webhook","url":"https://ops.example.com/hooks/deploy/deny"}`) {
+		t.Fatalf("start body missing secondary action: %s", bodies[1])
+	}
 	if !strings.Contains(bodies[1], `"channels":["devs","ops"]`) {
 		t.Fatalf("start body missing target channels: %s", bodies[1])
 	}
@@ -461,6 +479,9 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 		!strings.Contains(bodies[2], `"job_id":"reindex-2026-03-19"`) {
 		t.Fatalf("update body missing action: %s", bodies[2])
 	}
+	if !strings.Contains(bodies[2], `"secondary_action":{"title":"Open Runbook","type":"open_url","url":"https://ops.example.com/runbooks/search-reindex"}`) {
+		t.Fatalf("update body missing secondary action: %s", bodies[2])
+	}
 
 	if !strings.Contains(bodies[3], `"subtitle":"done"`) {
 		t.Fatalf("end body missing subtitle: %s", bodies[3])
@@ -470,6 +491,9 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	}
 	if !strings.Contains(bodies[3], `"action":{"title":"Open Workflow","type":"open_url","url":"https://github.com/acme/payments-api/actions/runs/1234567890"}`) {
 		t.Fatalf("end body missing action: %s", bodies[3])
+	}
+	if !strings.Contains(bodies[3], `"secondary_action":{"title":"Archive","type":"webhook","url":"https://ops.example.com/hooks/deploy/archive"}`) {
+		t.Fatalf("end body missing secondary action: %s", bodies[3])
 	}
 }
 
@@ -595,16 +619,22 @@ func TestSegmentedProgressInputsCanExplicitlySendZeroCurrentStep(t *testing.T) {
 		Type:          "segmented_progress",
 		NumberOfSteps: 4,
 	}.WithCurrentStep(0)
+	secondaryAction := LiveActivityActionInput{
+		Title: "Open Runbook",
+		Type:  "open_url",
+		URL:   "https://ops.example.com/runbooks/deploy",
+	}
 	streamInput := LiveActivityStreamInput{
-		Title:         "Deploy",
-		Type:          "segmented_progress",
-		NumberOfSteps: 4,
+		Title:           "Deploy",
+		Type:            "segmented_progress",
+		NumberOfSteps:   4,
+		SecondaryAction: &secondaryAction,
 	}.WithCurrentStep(0)
 	streamEndInput := LiveActivityStreamEndInput{
 		Title:         "Deploy",
 		Type:          "segmented_progress",
 		NumberOfSteps: 4,
-	}.WithCurrentStep(0)
+	}.WithCurrentStep(0).WithSecondaryAction(secondaryAction)
 
 	if _, err := client.LiveActivities.Start(startInput); err != nil {
 		t.Fatalf("Start returned error: %v", err)
@@ -629,6 +659,12 @@ func TestSegmentedProgressInputsCanExplicitlySendZeroCurrentStep(t *testing.T) {
 		if !strings.Contains(req.Body, `"current_step":0`) {
 			t.Fatalf("request %d body missing explicit zero current_step: %s", i, req.Body)
 		}
+	}
+	if !strings.Contains((*requests)[3].Body, `"secondary_action":{"title":"Open Runbook","type":"open_url","url":"https://ops.example.com/runbooks/deploy"}`) {
+		t.Fatalf("stream body missing secondary action: %s", (*requests)[3].Body)
+	}
+	if !strings.Contains((*requests)[4].Body, `"secondary_action":{"title":"Open Runbook","type":"open_url","url":"https://ops.example.com/runbooks/deploy"}`) {
+		t.Fatalf("stream end body missing secondary action: %s", (*requests)[4].Body)
 	}
 }
 
