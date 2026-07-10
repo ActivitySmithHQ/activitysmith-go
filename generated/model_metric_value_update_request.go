@@ -13,6 +13,7 @@ package generated
 import (
 	"encoding/json"
 	"time"
+	"bytes"
 	"fmt"
 )
 
@@ -24,7 +25,6 @@ type MetricValueUpdateRequest struct {
 	Value MetricValueUpdateRequestValue `json:"value"`
 	// Optional ISO timestamp for when the metric value was measured. Defaults to the server receive time.
 	Timestamp *time.Time `json:"timestamp,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _MetricValueUpdateRequest MetricValueUpdateRequest
@@ -117,11 +117,6 @@ func (o MetricValueUpdateRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Timestamp) {
 		toSerialize["timestamp"] = o.Timestamp
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -149,21 +144,15 @@ func (o *MetricValueUpdateRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varMetricValueUpdateRequest := _MetricValueUpdateRequest{}
 
-	err = json.Unmarshal(data, &varMetricValueUpdateRequest)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varMetricValueUpdateRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = MetricValueUpdateRequest(varMetricValueUpdateRequest)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "value")
-		delete(additionalProperties, "timestamp")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

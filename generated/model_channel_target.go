@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -22,7 +23,6 @@ var _ MappedNullable = &ChannelTarget{}
 type ChannelTarget struct {
 	// Channel slugs. When omitted, API key scope determines recipients.
 	Channels []string `json:"channels"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _ChannelTarget ChannelTarget
@@ -80,11 +80,6 @@ func (o ChannelTarget) MarshalJSON() ([]byte, error) {
 func (o ChannelTarget) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["channels"] = o.Channels
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -112,20 +107,15 @@ func (o *ChannelTarget) UnmarshalJSON(data []byte) (err error) {
 
 	varChannelTarget := _ChannelTarget{}
 
-	err = json.Unmarshal(data, &varChannelTarget)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varChannelTarget)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ChannelTarget(varChannelTarget)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "channels")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

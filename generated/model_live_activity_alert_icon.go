@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -24,7 +25,6 @@ type LiveActivityAlertIcon struct {
 	Symbol string `json:"symbol"`
 	// Optional icon color.
 	Color *LiveActivityColor `json:"color,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityAlertIcon LiveActivityAlertIcon
@@ -117,11 +117,6 @@ func (o LiveActivityAlertIcon) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Color) {
 		toSerialize["color"] = o.Color
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -149,21 +144,15 @@ func (o *LiveActivityAlertIcon) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityAlertIcon := _LiveActivityAlertIcon{}
 
-	err = json.Unmarshal(data, &varLiveActivityAlertIcon)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varLiveActivityAlertIcon)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityAlertIcon(varLiveActivityAlertIcon)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "symbol")
-		delete(additionalProperties, "color")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

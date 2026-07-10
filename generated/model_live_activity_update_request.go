@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -25,7 +26,6 @@ type LiveActivityUpdateRequest struct {
 	Action *LiveActivityAction `json:"action,omitempty"`
 	// Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
 	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityUpdateRequest LiveActivityUpdateRequest
@@ -179,11 +179,6 @@ func (o LiveActivityUpdateRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.SecondaryAction) {
 		toSerialize["secondary_action"] = o.SecondaryAction
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -212,23 +207,15 @@ func (o *LiveActivityUpdateRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityUpdateRequest := _LiveActivityUpdateRequest{}
 
-	err = json.Unmarshal(data, &varLiveActivityUpdateRequest)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varLiveActivityUpdateRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityUpdateRequest(varLiveActivityUpdateRequest)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "activity_id")
-		delete(additionalProperties, "content_state")
-		delete(additionalProperties, "action")
-		delete(additionalProperties, "secondary_action")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -26,7 +27,6 @@ type LiveActivityStartRequest struct {
 	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
 	Alert *AlertPayload `json:"alert,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityStartRequest LiveActivityStartRequest
@@ -224,11 +224,6 @@ func (o LiveActivityStartRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Target) {
 		toSerialize["target"] = o.Target
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -256,24 +251,15 @@ func (o *LiveActivityStartRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityStartRequest := _LiveActivityStartRequest{}
 
-	err = json.Unmarshal(data, &varLiveActivityStartRequest)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varLiveActivityStartRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityStartRequest(varLiveActivityStartRequest)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "content_state")
-		delete(additionalProperties, "action")
-		delete(additionalProperties, "secondary_action")
-		delete(additionalProperties, "alert")
-		delete(additionalProperties, "target")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

@@ -13,6 +13,7 @@ package generated
 import (
 	"encoding/json"
 	"time"
+	"bytes"
 	"fmt"
 )
 
@@ -28,7 +29,6 @@ type LiveActivityStreamDeleteResponse struct {
 	DevicesQueued *int32 `json:"devices_queued,omitempty"`
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityStreamDeleteResponse LiveActivityStreamDeleteResponse
@@ -279,11 +279,6 @@ func (o LiveActivityStreamDeleteResponse) ToMap() (map[string]interface{}, error
 		toSerialize["devices_notified"] = o.DevicesNotified
 	}
 	toSerialize["timestamp"] = o.Timestamp
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -314,26 +309,15 @@ func (o *LiveActivityStreamDeleteResponse) UnmarshalJSON(data []byte) (err error
 
 	varLiveActivityStreamDeleteResponse := _LiveActivityStreamDeleteResponse{}
 
-	err = json.Unmarshal(data, &varLiveActivityStreamDeleteResponse)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varLiveActivityStreamDeleteResponse)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityStreamDeleteResponse(varLiveActivityStreamDeleteResponse)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "success")
-		delete(additionalProperties, "operation")
-		delete(additionalProperties, "stream_key")
-		delete(additionalProperties, "activity_id")
-		delete(additionalProperties, "devices_queued")
-		delete(additionalProperties, "devices_notified")
-		delete(additionalProperties, "timestamp")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

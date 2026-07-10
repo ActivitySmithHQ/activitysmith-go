@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -23,7 +24,6 @@ type NoRecipientsError struct {
 	Error string `json:"error"`
 	Message string `json:"message"`
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _NoRecipientsError NoRecipientsError
@@ -142,11 +142,6 @@ func (o NoRecipientsError) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.EffectiveChannelSlugs) {
 		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -175,22 +170,15 @@ func (o *NoRecipientsError) UnmarshalJSON(data []byte) (err error) {
 
 	varNoRecipientsError := _NoRecipientsError{}
 
-	err = json.Unmarshal(data, &varNoRecipientsError)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varNoRecipientsError)
 
 	if err != nil {
 		return err
 	}
 
 	*o = NoRecipientsError(varNoRecipientsError)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "error")
-		delete(additionalProperties, "message")
-		delete(additionalProperties, "effective_channel_slugs")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }
