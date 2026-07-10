@@ -47,36 +47,39 @@ func AlertBadge(title string, color ...string) LiveActivityAlertBadgeInput {
 	return badge
 }
 
-func alertIconMap(icon LiveActivityAlertIconInput) map[string]interface{} {
+func alertIconValue(icon LiveActivityAlertIconInput) *generated.LiveActivityAlertIcon {
 	if icon.Symbol == "" {
 		return nil
 	}
-	value := map[string]interface{}{"symbol": icon.Symbol}
+	value := generated.LiveActivityAlertIcon{Symbol: icon.Symbol}
 	if icon.Color != "" {
-		value["color"] = icon.Color
+		color := generated.LiveActivityColor(icon.Color)
+		value.Color = &color
 	}
-	return value
+	return &value
 }
 
-func alertBadgeMap(badge LiveActivityAlertBadgeInput) map[string]interface{} {
+func alertBadgeValue(badge LiveActivityAlertBadgeInput) *generated.LiveActivityAlertBadge {
 	if badge.Title == "" {
 		return nil
 	}
-	value := map[string]interface{}{"title": badge.Title}
+	value := generated.LiveActivityAlertBadge{Title: badge.Title}
 	if badge.Color != "" {
-		value["color"] = badge.Color
+		color := generated.LiveActivityColor(badge.Color)
+		value.Color = &color
 	}
-	return value
+	return &value
 }
 
-func setAdditionalProperty(properties *map[string]interface{}, key string, value interface{}) {
-	if value == nil {
-		return
-	}
-	if *properties == nil {
-		*properties = map[string]interface{}{}
-	}
-	(*properties)[key] = value
+type timerContentState interface {
+	SetDurationSeconds(float32)
+	SetCountsDown(bool)
+}
+
+type alertContentState interface {
+	SetMessage(string)
+	SetIcon(generated.LiveActivityAlertIcon)
+	SetBadge(generated.LiveActivityAlertBadge)
 }
 
 func Metric(label string, value any, options ...ActivityMetricOption) ActivityMetric {
@@ -293,21 +296,50 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.autoDismissMinutesSet
 }
 
-func (in LiveActivityContentStateInput) applyTimerFields(properties *map[string]interface{}) {
-	if in.DurationSeconds != 0 || in.durationSecondsSet {
-		setAdditionalProperty(properties, "duration_seconds", in.DurationSeconds)
+func (in LiveActivityContentStateInput) applyTimerFields(state timerContentState) {
+	applyTimerContentStateFields(
+		state,
+		in.DurationSeconds,
+		in.durationSecondsSet,
+		in.CountsDown,
+		in.countsDownSet,
+	)
+}
+
+func (in LiveActivityContentStateInput) applyAlertFields(state alertContentState) {
+	applyAlertContentStateFields(state, in.Message, in.Icon, in.Badge)
+}
+
+func applyTimerContentStateFields(
+	state timerContentState,
+	durationSeconds float32,
+	durationSecondsSet bool,
+	countsDown bool,
+	countsDownSet bool,
+) {
+	if durationSeconds != 0 || durationSecondsSet {
+		state.SetDurationSeconds(durationSeconds)
 	}
-	if in.countsDownSet {
-		setAdditionalProperty(properties, "counts_down", in.CountsDown)
+	if countsDownSet {
+		state.SetCountsDown(countsDown)
 	}
 }
 
-func (in LiveActivityContentStateInput) applyAlertFields(properties *map[string]interface{}) {
-	if in.Message != "" {
-		setAdditionalProperty(properties, "message", in.Message)
+func applyAlertContentStateFields(
+	state alertContentState,
+	message string,
+	icon LiveActivityAlertIconInput,
+	badge LiveActivityAlertBadgeInput,
+) {
+	if message != "" {
+		state.SetMessage(message)
 	}
-	setAdditionalProperty(properties, "icon", alertIconMap(in.Icon))
-	setAdditionalProperty(properties, "badge", alertBadgeMap(in.Badge))
+	if generatedIcon := alertIconValue(icon); generatedIcon != nil {
+		state.SetIcon(*generatedIcon)
+	}
+	if generatedBadge := alertBadgeValue(badge); generatedBadge != nil {
+		state.SetBadge(*generatedBadge)
+	}
 }
 
 func (in LiveActivityContentStateInput) applyStart(state *generated.ContentStateStart) {
@@ -338,8 +370,8 @@ func (in LiveActivityContentStateInput) applyStart(state *generated.ContentState
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
-	in.applyTimerFields(&state.AdditionalProperties)
-	in.applyAlertFields(&state.AdditionalProperties)
+	in.applyTimerFields(state)
+	in.applyAlertFields(state)
 }
 
 func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStateUpdate) {
@@ -373,8 +405,8 @@ func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStat
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
-	in.applyTimerFields(&state.AdditionalProperties)
-	in.applyAlertFields(&state.AdditionalProperties)
+	in.applyTimerFields(state)
+	in.applyAlertFields(state)
 }
 
 func (in LiveActivityContentStateInput) applyEnd(state *generated.ContentStateEnd) {
@@ -415,8 +447,8 @@ func (in LiveActivityContentStateInput) applyEndBase(state *generated.ContentSta
 	if len(in.Metrics) > 0 {
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
-	in.applyTimerFields(&state.AdditionalProperties)
-	in.applyAlertFields(&state.AdditionalProperties)
+	in.applyTimerFields(state)
+	in.applyAlertFields(state)
 }
 
 func (in LiveActivityContentStateInput) applyStream(state *generated.StreamContentState) {
@@ -453,8 +485,8 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
 		state.SetAutoDismissMinutes(in.AutoDismissMinutes)
 	}
-	in.applyTimerFields(&state.AdditionalProperties)
-	in.applyAlertFields(&state.AdditionalProperties)
+	in.applyTimerFields(state)
+	in.applyAlertFields(state)
 }
 
 func (in LiveActivityContentStateInput) WithNumberOfSteps(v int32) LiveActivityContentStateInput {
@@ -567,20 +599,17 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
 	}
-	if in.DurationSeconds != 0 || in.durationSecondsSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
-	}
-	if in.countsDownSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
-	}
+	applyTimerContentStateFields(
+		&req.ContentState,
+		in.DurationSeconds,
+		in.durationSecondsSet,
+		in.CountsDown,
+		in.countsDownSet,
+	)
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
-	if in.Message != "" {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
-	}
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
+	applyAlertContentStateFields(&req.ContentState, in.Message, in.Icon, in.Badge)
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -718,23 +747,20 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
 	}
-	if in.DurationSeconds != 0 || in.durationSecondsSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
-	}
-	if in.countsDownSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
-	}
+	applyTimerContentStateFields(
+		&req.ContentState,
+		in.DurationSeconds,
+		in.durationSecondsSet,
+		in.CountsDown,
+		in.countsDownSet,
+	)
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
-	if in.Message != "" {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
-	}
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
+	applyAlertContentStateFields(&req.ContentState, in.Message, in.Icon, in.Badge)
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -874,23 +900,20 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
 	}
-	if in.DurationSeconds != 0 || in.durationSecondsSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
-	}
-	if in.countsDownSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
-	}
+	applyTimerContentStateFields(
+		&req.ContentState,
+		in.DurationSeconds,
+		in.durationSecondsSet,
+		in.CountsDown,
+		in.countsDownSet,
+	)
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
-	if in.Message != "" {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
-	}
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
+	applyAlertContentStateFields(&req.ContentState, in.Message, in.Icon, in.Badge)
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -1041,23 +1064,20 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
 	}
-	if in.DurationSeconds != 0 || in.durationSecondsSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
-	}
-	if in.countsDownSet {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "counts_down", in.CountsDown)
-	}
+	applyTimerContentStateFields(
+		&req.ContentState,
+		in.DurationSeconds,
+		in.durationSecondsSet,
+		in.CountsDown,
+		in.countsDownSet,
+	)
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
 	}
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
-	if in.Message != "" {
-		setAdditionalProperty(&req.ContentState.AdditionalProperties, "message", in.Message)
-	}
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
-	setAdditionalProperty(&req.ContentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
+	applyAlertContentStateFields(&req.ContentState, in.Message, in.Icon, in.Badge)
 	if in.Color != "" {
 		req.ContentState.SetColor(in.Color)
 	}
@@ -1196,23 +1216,20 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 		if in.UpperLimit != 0 || in.upperLimitSet {
 			contentState.SetUpperLimit(in.UpperLimit)
 		}
-		if in.DurationSeconds != 0 || in.durationSecondsSet {
-			setAdditionalProperty(&contentState.AdditionalProperties, "duration_seconds", in.DurationSeconds)
-		}
-		if in.countsDownSet {
-			setAdditionalProperty(&contentState.AdditionalProperties, "counts_down", in.CountsDown)
-		}
+		applyTimerContentStateFields(
+			&contentState,
+			in.DurationSeconds,
+			in.durationSecondsSet,
+			in.CountsDown,
+			in.countsDownSet,
+		)
 		if in.Type != "" {
 			contentState.SetType(in.Type)
 		}
 		if in.Subtitle != "" {
 			contentState.SetSubtitle(in.Subtitle)
 		}
-		if in.Message != "" {
-			setAdditionalProperty(&contentState.AdditionalProperties, "message", in.Message)
-		}
-		setAdditionalProperty(&contentState.AdditionalProperties, "icon", alertIconMap(in.Icon))
-		setAdditionalProperty(&contentState.AdditionalProperties, "badge", alertBadgeMap(in.Badge))
+		applyAlertContentStateFields(&contentState, in.Message, in.Icon, in.Badge)
 		if in.Color != "" {
 			contentState.SetColor(in.Color)
 		}
