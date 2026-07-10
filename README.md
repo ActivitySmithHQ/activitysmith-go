@@ -584,28 +584,19 @@ if err != nil {
 Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
 
 ```go
-_, err := activitysmith.BadgeCount(8333)
-if err != nil {
-	log.Fatal(err)
-}
+activitysmith.BadgeCount(8333)
 ```
 
 Pass `0` to clear the badge.
 
 ```go
-_, err := activitysmith.BadgeCount(0)
-if err != nil {
-	log.Fatal(err)
-}
+activitysmith.BadgeCount(0)
 ```
 
 Use `channels` to target specific team members or devices
 
 ```go
-_, err := activitysmith.BadgeCount(3, "sales", "customer-success")
-if err != nil {
-	log.Fatal(err)
-}
+activitysmith.BadgeCount(3, "sales", "customer-success")
 ```
 
 ## Error Handling
