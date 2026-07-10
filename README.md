@@ -22,6 +22,7 @@ See [API reference](https://activitysmith.com/docs/api-reference/introduction).
   - [Live Activity Colors](#live-activity-colors)
 - [Channels](#channels)
 - [Widgets](#widgets)
+- [App Icon Badge Count](#app-icon-badge-count)
 
 ## Installation
 
@@ -533,7 +534,7 @@ Choose from these colors for the Live Activity accent, including progress bars a
 
 ## Channels
 
-Channels are used to target specific team members or devices. Can be used for both push notifications and live activities.
+Use `channels` to target specific team members or devices
 
 ```go
 request := generated.NewPushNotificationRequest("New subscription 💸")
@@ -569,6 +570,39 @@ String metric values work too.
 
 ```go
 _, err = activitysmith.Metrics.Update("prod.status", "healthy")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+## App Icon Badge Count
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/badge-count.png" alt="ActivitySmith app icon with an App Icon Badge Count" width="680" />
+</p>
+
+Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
+
+```go
+_, err := activitysmith.BadgeCount(8333)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+Pass `0` to clear the badge.
+
+```go
+_, err := activitysmith.BadgeCount(0)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+Use `channels` to target specific team members or devices
+
+```go
+_, err := activitysmith.BadgeCount(3, "sales", "customer-success")
 if err != nil {
 	log.Fatal(err)
 }
