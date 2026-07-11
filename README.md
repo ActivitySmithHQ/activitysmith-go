@@ -20,9 +20,9 @@ See [API reference](https://activitysmith.com/docs/api-reference/introduction).
   - [Live Activity Action](#live-activity-action)
   - [Icons and Badges](#icons-and-badges)
   - [Live Activity Colors](#live-activity-colors)
-- [Channels](#channels)
 - [Widgets](#widgets)
 - [App Icon Badge Count](#app-icon-badge-count)
+- [Channels](#channels)
 
 ## Installation
 
@@ -532,21 +532,6 @@ Choose from these colors for the Live Activity accent, including progress bars a
 
 `lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`, `gray`
 
-## Channels
-
-Use `channels` to target specific team members or devices
-
-```go
-request := generated.NewPushNotificationRequest("New subscription 💸")
-request.SetMessage("Customer upgraded to Pro plan")
-request.SetTarget(generated.ChannelTarget{Channels: []string{"sales", "customer-success"}}) // Optional
-
-_, err := activitysmith.Notifications.Send(request)
-if err != nil {
-	log.Fatal(err)
-}
-```
-
 ## Widgets
 
 <p align="center">
@@ -583,17 +568,45 @@ if err != nil {
 
 Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
 
+Set or update the badge value.
+
 ```go
 activitysmith.BadgeCount(8333)
 ```
 
-Pass `0` to clear the badge.
+To clear the badge, set its value to 0.
 
 ```go
 activitysmith.BadgeCount(0)
 ```
 
+## Channels
+
 Use `channels` to target specific team members or devices
+
+### Push Notifications
+
+```go
+activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+	Title:    "New subscription 💸",
+	Message:  "Customer upgraded to Pro plan",
+	Channels: []string{"sales", "customer-success"},
+})
+```
+
+### Live Activities
+
+```go
+activitysmith.LiveActivities.Start(activitysmithsdk.LiveActivityStartInput{
+	Title:      "Nightly Database Backup",
+	Subtitle:   "verify restore",
+	Type:       "progress",
+	Percentage: 62,
+	Channels:   []string{"sales", "customer-success"},
+})
+```
+
+### App Icon Badge Count
 
 ```go
 activitysmith.BadgeCount(3, "sales", "customer-success")
