@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -21,7 +22,6 @@ var _ MappedNullable = &MetricValueUpdateResponse{}
 // MetricValueUpdateResponse struct for MetricValueUpdateResponse
 type MetricValueUpdateResponse struct {
 	Success bool `json:"success"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _MetricValueUpdateResponse MetricValueUpdateResponse
@@ -79,11 +79,6 @@ func (o MetricValueUpdateResponse) MarshalJSON() ([]byte, error) {
 func (o MetricValueUpdateResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["success"] = o.Success
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -111,20 +106,15 @@ func (o *MetricValueUpdateResponse) UnmarshalJSON(data []byte) (err error) {
 
 	varMetricValueUpdateResponse := _MetricValueUpdateResponse{}
 
-	err = json.Unmarshal(data, &varMetricValueUpdateResponse)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varMetricValueUpdateResponse)
 
 	if err != nil {
 		return err
 	}
 
 	*o = MetricValueUpdateResponse(varMetricValueUpdateResponse)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "success")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

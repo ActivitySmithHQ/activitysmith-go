@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -22,7 +23,6 @@ var _ MappedNullable = &ForbiddenError{}
 type ForbiddenError struct {
 	Error string `json:"error"`
 	Message string `json:"message"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _ForbiddenError ForbiddenError
@@ -106,11 +106,6 @@ func (o ForbiddenError) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["error"] = o.Error
 	toSerialize["message"] = o.Message
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -139,21 +134,15 @@ func (o *ForbiddenError) UnmarshalJSON(data []byte) (err error) {
 
 	varForbiddenError := _ForbiddenError{}
 
-	err = json.Unmarshal(data, &varForbiddenError)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varForbiddenError)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ForbiddenError(varForbiddenError)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "error")
-		delete(additionalProperties, "message")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -22,7 +23,6 @@ var _ MappedNullable = &NotFoundError{}
 type NotFoundError struct {
 	Error string `json:"error"`
 	Message string `json:"message"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _NotFoundError NotFoundError
@@ -106,11 +106,6 @@ func (o NotFoundError) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["error"] = o.Error
 	toSerialize["message"] = o.Message
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -139,21 +134,15 @@ func (o *NotFoundError) UnmarshalJSON(data []byte) (err error) {
 
 	varNotFoundError := _NotFoundError{}
 
-	err = json.Unmarshal(data, &varNotFoundError)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varNotFoundError)
 
 	if err != nil {
 		return err
 	}
 
 	*o = NotFoundError(varNotFoundError)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "error")
-		delete(additionalProperties, "message")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

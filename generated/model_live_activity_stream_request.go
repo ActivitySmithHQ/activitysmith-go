@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -28,7 +29,6 @@ type LiveActivityStreamRequest struct {
 	// Channel slugs. When omitted, API key scope determines recipients.
 	Channels []string `json:"channels,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityStreamRequest LiveActivityStreamRequest
@@ -261,11 +261,6 @@ func (o LiveActivityStreamRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Target) {
 		toSerialize["target"] = o.Target
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -293,25 +288,15 @@ func (o *LiveActivityStreamRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityStreamRequest := _LiveActivityStreamRequest{}
 
-	err = json.Unmarshal(data, &varLiveActivityStreamRequest)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varLiveActivityStreamRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityStreamRequest(varLiveActivityStreamRequest)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "content_state")
-		delete(additionalProperties, "action")
-		delete(additionalProperties, "secondary_action")
-		delete(additionalProperties, "alert")
-		delete(additionalProperties, "channels")
-		delete(additionalProperties, "target")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -22,7 +23,6 @@ var _ MappedNullable = &MetricError{}
 type MetricError struct {
 	Error string `json:"error"`
 	Message *string `json:"message,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _MetricError MetricError
@@ -115,11 +115,6 @@ func (o MetricError) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Message) {
 		toSerialize["message"] = o.Message
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -147,21 +142,15 @@ func (o *MetricError) UnmarshalJSON(data []byte) (err error) {
 
 	varMetricError := _MetricError{}
 
-	err = json.Unmarshal(data, &varMetricError)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varMetricError)
 
 	if err != nil {
 		return err
 	}
 
 	*o = MetricError(varMetricError)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "error")
-		delete(additionalProperties, "message")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

@@ -11,11 +11,117 @@ security:
 tags:
 - description: Send push notifications to paired devices.
   name: PushNotifications
+- description: Update App Icon Badge Counts on paired devices.
+  name: AppIconBadges
 - description: "Start, update, stream, and end Live Activities."
   name: LiveActivities
 - description: Update metric values shown in ActivitySmith widgets.
   name: Metrics
 paths:
+  /badge:
+    post:
+      description: "Updates the App Icon Badge Count on devices matched by API key\
+        \ scope and optional target channels. Send `badge: 0` to clear the count.\
+        \ Badge updates are independent of push notifications and do not create a\
+        \ push notification history item."
+      operationId: updateAppIconBadgeCount
+      requestBody:
+        content:
+          application/json:
+            examples:
+              set_count:
+                value:
+                  badge: 12
+              clear_count:
+                value:
+                  badge: 0
+              channel_targeted:
+                value:
+                  badge: 3
+                  target:
+                    channels:
+                    - sales
+                    - customer-success
+            schema:
+              $ref: '#/components/schemas/AppIconBadgeCountUpdateRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    success: true
+                    badge: 12
+                    devices_notified: 2
+                    users_notified: 1
+                    effective_channel_slugs: null
+                    timestamp: 2026-07-10T12:00:00.000Z
+                channel_targeted:
+                  value:
+                    success: true
+                    badge: 3
+                    devices_notified: 2
+                    users_notified: 1
+                    effective_channel_slugs:
+                    - sales
+                    - customer-success
+                    timestamp: 2026-07-10T12:00:00.000Z
+              schema:
+                $ref: '#/components/schemas/AppIconBadgeCountUpdateResponse'
+          description: App Icon Badge Count updated
+        "400":
+          content:
+            application/json:
+              examples:
+                invalid_badge:
+                  value:
+                    error: Invalid badge
+                    message: badge must be a non-negative integer between 0 and 2147483647.
+                      Use 0 to clear the badge.
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad request (invalid badge value or channel targeting input)
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: Forbidden (API key scope or channel assignment violation)
+        "404":
+          content:
+            application/json:
+              examples:
+                no_devices:
+                  value:
+                    error: No recipients found
+                    message: No devices matched the effective channel target
+                    badge: 12
+                    effective_channel_slugs:
+                    - sales
+              schema:
+                $ref: '#/components/schemas/NoRecipientsError'
+          description: No recipients found for effective channel target
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: Update App Icon Badge Count
+      tags:
+      - AppIconBadges
+      x-codeSamples:
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X POST "https://activitysmith.com/api/badge" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "badge": 12
+            }'
   /push-notification:
     post:
       description: "Sends a push notification to devices matched by API key scope\
@@ -1564,7 +1670,7 @@ paths:
 components:
   schemas:
     ContentStateStart:
-      additionalProperties: true
+      additionalProperties: false
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
@@ -1739,7 +1845,7 @@ components:
       - title
       - type
     ContentStateUpdate:
-      additionalProperties: true
+      additionalProperties: false
       description: "Update payload requires title. For segmented_progress include\
         \ current_step and optionally number_of_steps. For progress include percentage\
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
@@ -1915,7 +2021,7 @@ components:
       required:
       - title
     ContentStateEnd:
-      additionalProperties: true
+      additionalProperties: false
       description: "End payload requires title. For segmented_progress include current_step\
         \ and optionally number_of_steps. For progress include percentage or value\
         \ with upper_limit. For metrics and stats include a non-empty metrics array.\
@@ -2098,7 +2204,7 @@ components:
       required:
       - title
     StreamContentState:
-      additionalProperties: true
+      additionalProperties: false
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
         \ Supports segmented_progress, progress, metrics, stats, alert, and timer\
@@ -2279,7 +2385,7 @@ components:
       required:
       - title
     ActivityMetric:
-      additionalProperties: true
+      additionalProperties: false
       example:
         unit: unit
         color: lime
@@ -2324,7 +2430,7 @@ components:
       - gray
       type: string
     LiveActivityAlertIcon:
-      additionalProperties: true
+      additionalProperties: false
       description: Optional SF Symbol icon for Live Activities.
       example:
         symbol: symbol
@@ -2339,7 +2445,7 @@ components:
       required:
       - symbol
     LiveActivityAlertBadge:
-      additionalProperties: true
+      additionalProperties: false
       description: Optional badge for Live Activities.
       example:
         color: null
@@ -2353,7 +2459,7 @@ components:
       required:
       - title
     AlertPayload:
-      additionalProperties: true
+      additionalProperties: false
       example:
         title: title
         body: body
@@ -2363,7 +2469,7 @@ components:
         body:
           type: string
     ChannelTarget:
-      additionalProperties: true
+      additionalProperties: false
       example:
         channels:
         - channels
@@ -2397,8 +2503,7 @@ components:
         method: POST
         title: title
         type: open_url
-        body:
-          key: ""
+        body: "{}"
         url: https://openapi-generator.tech
       properties:
         title:
@@ -2413,7 +2518,7 @@ components:
         method:
           $ref: '#/components/schemas/PushNotificationWebhookMethod'
         body:
-          additionalProperties: true
+          additionalProperties: false
           description: Optional webhook payload body. Used only when type=webhook.
       required:
       - title
@@ -2431,7 +2536,7 @@ components:
       - POST
       type: string
     LiveActivityAction:
-      additionalProperties: true
+      additionalProperties: {}
       allOf:
       - {}
       - {}
@@ -2442,8 +2547,7 @@ components:
         method: POST
         title: title
         type: open_url
-        body:
-          key: ""
+        body: "{}"
         url: https://openapi-generator.tech
       properties:
         title:
@@ -2458,7 +2562,7 @@ components:
         method:
           $ref: '#/components/schemas/LiveActivityWebhookMethod'
         body:
-          additionalProperties: true
+          additionalProperties: false
           description: Optional webhook payload body. Used only when type=webhook.
       required:
       - title
@@ -2468,8 +2572,7 @@ components:
       additionalProperties: {}
       example:
         badge: 0
-        payload:
-          key: ""
+        payload: "{}"
         subtitle: subtitle
         sound: sound
         media: https://openapi-generator.tech
@@ -2480,26 +2583,22 @@ components:
         - method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         - method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         - method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         - method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         target:
           channels:
@@ -2530,7 +2629,7 @@ components:
             $ref: '#/components/schemas/PushNotificationAction'
           maxItems: 4
         payload:
-          additionalProperties: true
+          additionalProperties: false
         badge: {}
         sound: {}
         target:
@@ -2538,7 +2637,7 @@ components:
       required:
       - title
     PushNotificationResponse:
-      additionalProperties: true
+      additionalProperties: false
       example:
         success: true
         users_notified: 6
@@ -2564,8 +2663,64 @@ components:
       required:
       - success
       - timestamp
+    AppIconBadgeCountUpdateRequest:
+      additionalProperties: false
+      description: App Icon Badge Count update. Send badge 0 to clear the count.
+      example:
+        badge: 171976544
+        target:
+          channels:
+          - channels
+          - channels
+      properties:
+        badge:
+          description: The count to show on the ActivitySmith app icon. Send 0 to
+            clear it.
+          maximum: 2147483647
+          minimum: 0
+          type: integer
+        target:
+          $ref: '#/components/schemas/ChannelTarget'
+      required:
+      - badge
+    AppIconBadgeCountUpdateResponse:
+      additionalProperties: false
+      example:
+        badge: 171976544
+        success: true
+        users_notified: 1
+        devices_notified: 6
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        badge:
+          maximum: 2147483647
+          minimum: 0
+          type: integer
+        devices_notified:
+          type: integer
+        users_notified:
+          type: integer
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - badge
+      - devices_notified
+      - effective_channel_slugs
+      - success
+      - timestamp
+      - users_notified
     LiveActivityStartRequest:
-      additionalProperties: true
+      additionalProperties: false
       description: Start a new Live Activity. The response includes activity_id for
         later update and end calls.
       example:
@@ -2618,8 +2773,7 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         alert:
           title: title
@@ -2628,8 +2782,7 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         target:
           channels:
@@ -2649,7 +2802,7 @@ components:
       required:
       - content_state
     LiveActivityStartResponse:
-      additionalProperties: true
+      additionalProperties: false
       description: Returned after a Live Activity starts. Save activity_id and use
         it for all later updates and for the final end call.
       example:
@@ -2682,7 +2835,7 @@ components:
       - success
       - timestamp
     LiveActivityStreamRequest:
-      additionalProperties: true
+      additionalProperties: false
       description: "Send the latest state for a managed Live Activity stream. channels\
         \ is the streamlined form for stream targeting. target.channels is also accepted\
         \ for compatibility. If both are provided, they must match."
@@ -2738,8 +2891,7 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         channels:
         - channels
@@ -2751,8 +2903,7 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         target:
           channels:
@@ -2778,7 +2929,7 @@ components:
       required:
       - content_state
     LiveActivityStreamPutResponse:
-      additionalProperties: true
+      additionalProperties: false
       description: Returned after a managed stream request is reconciled.
       example:
         devices_queued: 6
@@ -2830,7 +2981,7 @@ components:
       - success
       - timestamp
     LiveActivityStreamDeleteRequest:
-      additionalProperties: true
+      additionalProperties: false
       description: "Optional payload for ending a managed stream. When omitted, ActivitySmith\
         \ ends the stream using the latest known state when possible."
       example:
@@ -2885,8 +3036,7 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         alert:
           title: title
@@ -2895,8 +3045,7 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
       properties:
         content_state:
@@ -2908,7 +3057,7 @@ components:
         alert:
           $ref: '#/components/schemas/AlertPayload'
     LiveActivityStreamDeleteResponse:
-      additionalProperties: true
+      additionalProperties: false
       description: Returned after a managed stream is ended and removed.
       example:
         devices_queued: 0
@@ -2943,7 +3092,7 @@ components:
       - success
       - timestamp
     MetricValueUpdateRequest:
-      additionalProperties: true
+      additionalProperties: false
       description: Latest metric value to display in widgets.
       example:
         value: 0.8008281904610115
@@ -2959,7 +3108,7 @@ components:
       required:
       - value
     MetricValueUpdateResponse:
-      additionalProperties: true
+      additionalProperties: false
       example:
         success: true
       properties:
@@ -2968,7 +3117,7 @@ components:
       required:
       - success
     MetricError:
-      additionalProperties: true
+      additionalProperties: false
       example:
         error: error
         message: message
@@ -2980,7 +3129,7 @@ components:
       required:
       - error
     BadRequestError:
-      additionalProperties: true
+      additionalProperties: false
       example:
         error: error
         message: message
@@ -2993,7 +3142,7 @@ components:
       - error
       - message
     ForbiddenError:
-      additionalProperties: true
+      additionalProperties: false
       example:
         error: error
         message: message
@@ -3006,7 +3155,7 @@ components:
       - error
       - message
     NoRecipientsError:
-      additionalProperties: true
+      additionalProperties: false
       example:
         error: error
         message: message
@@ -3026,7 +3175,7 @@ components:
       - error
       - message
     NotFoundError:
-      additionalProperties: true
+      additionalProperties: false
       example:
         error: error
         message: message
@@ -3039,7 +3188,7 @@ components:
       - error
       - message
     RateLimitError:
-      additionalProperties: true
+      additionalProperties: false
       example:
         error: error
         message: message
@@ -3052,7 +3201,7 @@ components:
       - error
       - message
     LiveActivityLimitError:
-      additionalProperties: true
+      additionalProperties: false
       properties:
         error:
           type: string
@@ -3069,7 +3218,7 @@ components:
       - limit
       - message
     LiveActivityUpdateRequest:
-      additionalProperties: true
+      additionalProperties: false
       description: Update an existing Live Activity by activity_id.
       example:
         content_state:
@@ -3121,16 +3270,14 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         activity_id: activity_id
         action:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
       properties:
         activity_id:
@@ -3145,7 +3292,7 @@ components:
       - activity_id
       - content_state
     LiveActivityUpdateResponse:
-      additionalProperties: true
+      additionalProperties: false
       description: Returned after a Live Activity update is sent or queued.
       example:
         devices_queued: 0
@@ -3170,7 +3317,7 @@ components:
       - success
       - timestamp
     LiveActivityEndRequest:
-      additionalProperties: true
+      additionalProperties: false
       description: End an existing Live Activity by activity_id.
       example:
         content_state:
@@ -3223,16 +3370,14 @@ components:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
         activity_id: activity_id
         action:
           method: POST
           title: title
           type: open_url
-          body:
-            key: ""
+          body: "{}"
           url: https://openapi-generator.tech
       properties:
         activity_id:
@@ -3247,7 +3392,7 @@ components:
       - activity_id
       - content_state
     LiveActivityEndResponse:
-      additionalProperties: true
+      additionalProperties: false
       description: Returned after a Live Activity end event is sent or queued.
       example:
         devices_queued: 0

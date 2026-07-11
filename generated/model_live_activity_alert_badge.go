@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -23,7 +24,6 @@ type LiveActivityAlertBadge struct {
 	Title string `json:"title"`
 	// Optional badge color.
 	Color *LiveActivityColor `json:"color,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityAlertBadge LiveActivityAlertBadge
@@ -116,11 +116,6 @@ func (o LiveActivityAlertBadge) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Color) {
 		toSerialize["color"] = o.Color
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -148,21 +143,15 @@ func (o *LiveActivityAlertBadge) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityAlertBadge := _LiveActivityAlertBadge{}
 
-	err = json.Unmarshal(data, &varLiveActivityAlertBadge)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varLiveActivityAlertBadge)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityAlertBadge(varLiveActivityAlertBadge)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "title")
-		delete(additionalProperties, "color")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

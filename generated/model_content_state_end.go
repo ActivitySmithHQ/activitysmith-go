@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -56,7 +57,6 @@ type ContentStateEnd struct {
 	StepColors []string `json:"step_colors,omitempty"`
 	// Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max.
 	AutoDismissMinutes *int32 `json:"auto_dismiss_minutes,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _ContentStateEnd ContentStateEnd
@@ -756,11 +756,6 @@ func (o ContentStateEnd) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AutoDismissMinutes) {
 		toSerialize["auto_dismiss_minutes"] = o.AutoDismissMinutes
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -788,38 +783,15 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 
 	varContentStateEnd := _ContentStateEnd{}
 
-	err = json.Unmarshal(data, &varContentStateEnd)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varContentStateEnd)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ContentStateEnd(varContentStateEnd)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "title")
-		delete(additionalProperties, "subtitle")
-		delete(additionalProperties, "number_of_steps")
-		delete(additionalProperties, "current_step")
-		delete(additionalProperties, "percentage")
-		delete(additionalProperties, "value")
-		delete(additionalProperties, "upper_limit")
-		delete(additionalProperties, "duration_seconds")
-		delete(additionalProperties, "counts_down")
-		delete(additionalProperties, "is_running")
-		delete(additionalProperties, "metrics")
-		delete(additionalProperties, "message")
-		delete(additionalProperties, "icon")
-		delete(additionalProperties, "badge")
-		delete(additionalProperties, "type")
-		delete(additionalProperties, "color")
-		delete(additionalProperties, "step_color")
-		delete(additionalProperties, "step_colors")
-		delete(additionalProperties, "auto_dismiss_minutes")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

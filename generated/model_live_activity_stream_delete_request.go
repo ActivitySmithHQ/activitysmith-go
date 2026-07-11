@@ -24,10 +24,7 @@ type LiveActivityStreamDeleteRequest struct {
 	// Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
 	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
 	Alert *AlertPayload `json:"alert,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
-
-type _LiveActivityStreamDeleteRequest LiveActivityStreamDeleteRequest
 
 // NewLiveActivityStreamDeleteRequest instantiates a new LiveActivityStreamDeleteRequest object
 // This constructor will assign default values to properties that have it defined,
@@ -196,36 +193,7 @@ func (o LiveActivityStreamDeleteRequest) ToMap() (map[string]interface{}, error)
 	if !IsNil(o.Alert) {
 		toSerialize["alert"] = o.Alert
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
-}
-
-func (o *LiveActivityStreamDeleteRequest) UnmarshalJSON(data []byte) (err error) {
-	varLiveActivityStreamDeleteRequest := _LiveActivityStreamDeleteRequest{}
-
-	err = json.Unmarshal(data, &varLiveActivityStreamDeleteRequest)
-
-	if err != nil {
-		return err
-	}
-
-	*o = LiveActivityStreamDeleteRequest(varLiveActivityStreamDeleteRequest)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "content_state")
-		delete(additionalProperties, "action")
-		delete(additionalProperties, "secondary_action")
-		delete(additionalProperties, "alert")
-		o.AdditionalProperties = additionalProperties
-	}
-
-	return err
 }
 
 type NullableLiveActivityStreamDeleteRequest struct {

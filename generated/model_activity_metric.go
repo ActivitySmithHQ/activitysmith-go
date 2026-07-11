@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -25,7 +26,6 @@ type ActivityMetric struct {
 	Unit *string `json:"unit,omitempty"`
 	// Optional per-metric accent color for metrics and stats activities.
 	Color *string `json:"color,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _ActivityMetric ActivityMetric
@@ -179,11 +179,6 @@ func (o ActivityMetric) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Color) {
 		toSerialize["color"] = o.Color
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -212,23 +207,15 @@ func (o *ActivityMetric) UnmarshalJSON(data []byte) (err error) {
 
 	varActivityMetric := _ActivityMetric{}
 
-	err = json.Unmarshal(data, &varActivityMetric)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varActivityMetric)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ActivityMetric(varActivityMetric)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "label")
-		delete(additionalProperties, "value")
-		delete(additionalProperties, "unit")
-		delete(additionalProperties, "color")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -58,7 +59,6 @@ type StreamContentState struct {
 	AutoDismissSeconds *int32 `json:"auto_dismiss_seconds,omitempty"`
 	// Optional. Minutes before the ended Live Activity is dismissed.
 	AutoDismissMinutes *int32 `json:"auto_dismiss_minutes,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _StreamContentState StreamContentState
@@ -789,11 +789,6 @@ func (o StreamContentState) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AutoDismissMinutes) {
 		toSerialize["auto_dismiss_minutes"] = o.AutoDismissMinutes
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -821,39 +816,15 @@ func (o *StreamContentState) UnmarshalJSON(data []byte) (err error) {
 
 	varStreamContentState := _StreamContentState{}
 
-	err = json.Unmarshal(data, &varStreamContentState)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varStreamContentState)
 
 	if err != nil {
 		return err
 	}
 
 	*o = StreamContentState(varStreamContentState)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "title")
-		delete(additionalProperties, "subtitle")
-		delete(additionalProperties, "number_of_steps")
-		delete(additionalProperties, "current_step")
-		delete(additionalProperties, "percentage")
-		delete(additionalProperties, "value")
-		delete(additionalProperties, "upper_limit")
-		delete(additionalProperties, "duration_seconds")
-		delete(additionalProperties, "counts_down")
-		delete(additionalProperties, "is_running")
-		delete(additionalProperties, "type")
-		delete(additionalProperties, "color")
-		delete(additionalProperties, "step_color")
-		delete(additionalProperties, "step_colors")
-		delete(additionalProperties, "metrics")
-		delete(additionalProperties, "message")
-		delete(additionalProperties, "icon")
-		delete(additionalProperties, "badge")
-		delete(additionalProperties, "auto_dismiss_seconds")
-		delete(additionalProperties, "auto_dismiss_minutes")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

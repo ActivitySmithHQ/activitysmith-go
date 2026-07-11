@@ -65,6 +65,8 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 			_, _ = w.Write([]byte(`{"success":true}`))
 		case "/metrics/prod.status/value":
 			_, _ = w.Write([]byte(`{"success":true}`))
+		case "/badge":
+			_, _ = w.Write([]byte(`{"success":true,"badge":3,"devices_notified":1,"users_notified":1,"effective_channel_slugs":["sales","customer-success"],"timestamp":"2026-02-07T00:00:00Z"}`))
 		default:
 			http.NotFound(w, r)
 		}
@@ -113,6 +115,43 @@ func TestNotificationsShortAndLegacyMethods(t *testing.T) {
 		if !strings.Contains(req.Body, `"title":"Build Failed"`) {
 			t.Fatalf("request %d body missing title: %s", i, req.Body)
 		}
+	}
+}
+
+func TestBadgeCountClearsAndTargetsChannels(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	response, err := client.BadgeCount(3, "sales", "customer-success")
+	if err != nil {
+		t.Fatalf("BadgeCount returned error: %v", err)
+	}
+	if response.Badge != 3 {
+		t.Fatalf("badge mismatch: got=%d want=3", response.Badge)
+	}
+
+	if _, err := client.BadgeCount(0); err != nil {
+		t.Fatalf("BadgeCount clear returned error: %v", err)
+	}
+
+	if len(*requests) != 2 {
+		t.Fatalf("expected 2 requests, got %d", len(*requests))
+	}
+	if (*requests)[0].Path != "/badge" || (*requests)[1].Path != "/badge" {
+		t.Fatalf("badge request path mismatch: %#v", *requests)
+	}
+	if !strings.Contains((*requests)[0].Body, `"badge":3`) ||
+		!strings.Contains((*requests)[0].Body, `"channels":["sales","customer-success"]`) {
+		t.Fatalf("targeted badge body mismatch: %s", (*requests)[0].Body)
+	}
+	if !strings.Contains((*requests)[1].Body, `"badge":0`) {
+		t.Fatalf("clear badge body mismatch: %s", (*requests)[1].Body)
 	}
 }
 

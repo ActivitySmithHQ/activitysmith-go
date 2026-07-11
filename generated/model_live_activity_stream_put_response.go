@@ -13,6 +13,7 @@ package generated
 import (
 	"encoding/json"
 	"time"
+	"bytes"
 	"fmt"
 )
 
@@ -31,7 +32,6 @@ type LiveActivityStreamPutResponse struct {
 	UsersNotified *int32 `json:"users_notified,omitempty"`
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _LiveActivityStreamPutResponse LiveActivityStreamPutResponse
@@ -387,11 +387,6 @@ func (o LiveActivityStreamPutResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
 	}
 	toSerialize["timestamp"] = o.Timestamp
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -422,29 +417,15 @@ func (o *LiveActivityStreamPutResponse) UnmarshalJSON(data []byte) (err error) {
 
 	varLiveActivityStreamPutResponse := _LiveActivityStreamPutResponse{}
 
-	err = json.Unmarshal(data, &varLiveActivityStreamPutResponse)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varLiveActivityStreamPutResponse)
 
 	if err != nil {
 		return err
 	}
 
 	*o = LiveActivityStreamPutResponse(varLiveActivityStreamPutResponse)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "success")
-		delete(additionalProperties, "operation")
-		delete(additionalProperties, "stream_key")
-		delete(additionalProperties, "activity_id")
-		delete(additionalProperties, "previous_activity_id")
-		delete(additionalProperties, "devices_notified")
-		delete(additionalProperties, "devices_queued")
-		delete(additionalProperties, "users_notified")
-		delete(additionalProperties, "effective_channel_slugs")
-		delete(additionalProperties, "timestamp")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

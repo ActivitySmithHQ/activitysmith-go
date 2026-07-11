@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 )
 
@@ -53,7 +54,6 @@ type ContentStateStart struct {
 	StepColor *string `json:"step_color,omitempty"`
 	// Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step.
 	StepColors []string `json:"step_colors,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
 
 type _ContentStateStart ContentStateStart
@@ -705,11 +705,6 @@ func (o ContentStateStart) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.StepColors) {
 		toSerialize["step_colors"] = o.StepColors
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -738,37 +733,15 @@ func (o *ContentStateStart) UnmarshalJSON(data []byte) (err error) {
 
 	varContentStateStart := _ContentStateStart{}
 
-	err = json.Unmarshal(data, &varContentStateStart)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varContentStateStart)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ContentStateStart(varContentStateStart)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "title")
-		delete(additionalProperties, "subtitle")
-		delete(additionalProperties, "number_of_steps")
-		delete(additionalProperties, "current_step")
-		delete(additionalProperties, "percentage")
-		delete(additionalProperties, "value")
-		delete(additionalProperties, "upper_limit")
-		delete(additionalProperties, "duration_seconds")
-		delete(additionalProperties, "counts_down")
-		delete(additionalProperties, "is_running")
-		delete(additionalProperties, "metrics")
-		delete(additionalProperties, "message")
-		delete(additionalProperties, "icon")
-		delete(additionalProperties, "badge")
-		delete(additionalProperties, "type")
-		delete(additionalProperties, "color")
-		delete(additionalProperties, "step_color")
-		delete(additionalProperties, "step_colors")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

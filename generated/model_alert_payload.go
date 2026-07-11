@@ -21,10 +21,7 @@ var _ MappedNullable = &AlertPayload{}
 type AlertPayload struct {
 	Title *string `json:"title,omitempty"`
 	Body *string `json:"body,omitempty"`
-	AdditionalProperties map[string]interface{}
 }
-
-type _AlertPayload AlertPayload
 
 // NewAlertPayload instantiates a new AlertPayload object
 // This constructor will assign default values to properties that have it defined,
@@ -123,34 +120,7 @@ func (o AlertPayload) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Body) {
 		toSerialize["body"] = o.Body
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
-}
-
-func (o *AlertPayload) UnmarshalJSON(data []byte) (err error) {
-	varAlertPayload := _AlertPayload{}
-
-	err = json.Unmarshal(data, &varAlertPayload)
-
-	if err != nil {
-		return err
-	}
-
-	*o = AlertPayload(varAlertPayload)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "title")
-		delete(additionalProperties, "body")
-		o.AdditionalProperties = additionalProperties
-	}
-
-	return err
 }
 
 type NullableAlertPayload struct {
