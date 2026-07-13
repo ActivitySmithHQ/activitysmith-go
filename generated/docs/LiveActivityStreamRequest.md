@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ContentState** | [**StreamContentState**](StreamContentState.md) |  | 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
-**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
+**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 **Alert** | Pointer to [**AlertPayload**](AlertPayload.md) |  | [optional] 
 **Channels** | Pointer to **[]string** | Channel slugs. When omitted, API key scope determines recipients. | [optional] 
 **Target** | Pointer to [**ChannelTarget**](ChannelTarget.md) |  | [optional] 
