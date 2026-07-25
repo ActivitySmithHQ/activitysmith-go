@@ -187,6 +187,7 @@ type PushNotificationInput struct {
 	Redirection string
 	Actions     []PushNotificationAction
 	Channels    []string
+	Tags        []string
 }
 
 func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest {
@@ -210,6 +211,9 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	}
 	if len(in.Channels) > 0 {
 		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
+	}
+	if in.Tags != nil {
+		req.SetTags(append([]string{}, in.Tags...))
 	}
 	return req
 }
@@ -559,6 +563,7 @@ type LiveActivityStartInput struct {
 	Action          *LiveActivityActionInput
 	SecondaryAction *LiveActivityActionInput
 	Channels        []string
+	Tags            []string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -627,6 +632,9 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	}
 	if len(in.Channels) > 0 {
 		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
+	}
+	if in.Tags != nil {
+		req.SetTags(append([]string{}, in.Tags...))
 	}
 	return req
 }
@@ -1024,6 +1032,7 @@ type LiveActivityStreamInput struct {
 	SecondaryAction *LiveActivityActionInput
 	Alert           *generated.AlertPayload
 	Channels        []string
+	Tags            []string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -1098,6 +1107,9 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	}
 	if len(in.Channels) > 0 {
 		req.SetTarget(generated.ChannelTarget{Channels: append([]string{}, in.Channels...)})
+	}
+	if in.Tags != nil {
+		req.SetTags(append([]string{}, in.Tags...))
 	}
 	return req
 }
