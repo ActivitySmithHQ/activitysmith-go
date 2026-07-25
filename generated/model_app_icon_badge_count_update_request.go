@@ -19,7 +19,7 @@ import (
 // checks if the AppIconBadgeCountUpdateRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &AppIconBadgeCountUpdateRequest{}
 
-// AppIconBadgeCountUpdateRequest App Icon Badge Count update. Send badge 0 to clear the count.
+// AppIconBadgeCountUpdateRequest struct for AppIconBadgeCountUpdateRequest
 type AppIconBadgeCountUpdateRequest struct {
 	// The count to show on the ActivitySmith app icon. Send 0 to clear it.
 	Badge int32 `json:"badge"`

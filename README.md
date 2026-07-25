@@ -23,6 +23,7 @@ See [API reference](https://activitysmith.com/docs/api-reference/introduction).
 - [Widgets](#widgets)
 - [App Icon Badge Count](#app-icon-badge-count)
 - [Channels](#channels)
+- [Tags](#tags)
 
 ## Installation
 
@@ -610,6 +611,18 @@ activitysmith.LiveActivities.Start(activitysmithsdk.LiveActivityStartInput{
 
 ```go
 activitysmith.BadgeCount(3, "sales", "customer-success")
+```
+
+## Tags
+
+Use `tags` to organize and filter your Push Notification and Live Activity history. Tags are created automatically when you first use them.
+
+```go
+activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+	Title:   "New subscription 💸",
+	Message: "Customer upgraded to Pro plan",
+	Tags:    []string{"user:382", "billing"},
+})
 ```
 
 ## Error Handling

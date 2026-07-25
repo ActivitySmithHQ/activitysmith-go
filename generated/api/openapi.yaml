@@ -20,10 +20,7 @@ tags:
 paths:
   /badge:
     post:
-      description: "Updates the App Icon Badge Count on devices matched by API key\
-        \ scope and optional target channels. Send `badge: 0` to clear the count.\
-        \ Badge updates are independent of push notifications and do not create a\
-        \ push notification history item."
+      description: Shows a number on the ActivitySmith app icon.
       operationId: updateAppIconBadgeCount
       requestBody:
         content:
@@ -31,7 +28,7 @@ paths:
             examples:
               set_count:
                 value:
-                  badge: 12
+                  badge: 8333
               clear_count:
                 value:
                   badge: 0
@@ -53,7 +50,7 @@ paths:
                 default:
                   value:
                     success: true
-                    badge: 12
+                    badge: 8333
                     devices_notified: 2
                     users_notified: 1
                     effective_channel_slugs: null
@@ -74,32 +71,18 @@ paths:
         "400":
           content:
             application/json:
-              examples:
-                invalid_badge:
-                  value:
-                    error: Invalid badge
-                    message: badge must be a non-negative integer between 0 and 2147483647.
-                      Use 0 to clear the badge.
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-          description: Bad request (invalid badge value or channel targeting input)
+          description: Bad request
         "403":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
-          description: Forbidden (API key scope or channel assignment violation)
+          description: Forbidden
         "404":
           content:
             application/json:
-              examples:
-                no_devices:
-                  value:
-                    error: No recipients found
-                    message: No devices matched the effective channel target
-                    badge: 12
-                    effective_channel_slugs:
-                    - sales
               schema:
                 $ref: '#/components/schemas/NoRecipientsError'
           description: No recipients found for effective channel target
@@ -109,10 +92,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
-      summary: Update App Icon Badge Count
+      summary: Set App Icon Badge Count
       tags:
       - AppIconBadges
       x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: await activitysmith.badgeCount(8333);
+      - lang: python
+        label: Python
+        source: activitysmith.badge_count(8333)
+      - lang: go
+        label: Go
+        source: activitysmith.BadgeCount(8333)
+      - lang: php
+        label: PHP
+        source: $activitysmith->badgeCount(8333);
+      - lang: ruby
+        label: Ruby
+        source: activitysmith.badge_count(8333)
+      - lang: bash
+        label: CLI
+        source: activitysmith badge 8333
       - lang: bash
         label: cURL
         source: |-
@@ -120,14 +121,15 @@ paths:
             -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{
-              "badge": 12
+              "badge": 8333
             }'
   /push-notification:
     post:
       description: "Sends a push notification to devices matched by API key scope\
         \ and optional target channels. Supports optional redirection URL, optional\
         \ media preview or playback when the notification is expanded, and up to 4\
-        \ interactive actions. `media` cannot be combined with `actions`."
+        \ interactive actions. `media` cannot be combined with `actions`. Optional\
+        \ tags to organize and filter notification history."
       operationId: sendPushNotification
       requestBody:
         content:
@@ -185,6 +187,14 @@ paths:
                     body:
                       build_id: "8842"
                       source: push_action
+              tagged:
+                summary: Organize notification history with tags
+                value:
+                  title: New subscription 💸
+                  message: Customer upgraded to Pro plan
+                  tags:
+                  - user:382
+                  - billing
             schema:
               $ref: '#/components/schemas/PushNotificationRequest'
         required: true
@@ -208,6 +218,16 @@ paths:
                     - devs
                     - ops
                     timestamp: 2025-08-12T12:00:00.000Z
+                tagged:
+                  value:
+                    success: true
+                    devices_notified: 2
+                    users_notified: 1
+                    effective_channel_slugs: null
+                    tags:
+                    - user:382
+                    - billing
+                    timestamp: 2025-08-12T12:00:00.000Z
               schema:
                 $ref: '#/components/schemas/PushNotificationResponse'
           description: Push notification sent
@@ -219,6 +239,12 @@ paths:
                   value:
                     error: Invalid channel targeting
                     message: target.channels must be an array of channel slugs
+                invalid_tags:
+                  value:
+                    error: Invalid tags
+                    code: invalid_tags
+                    message: "tags must use 1-64 lowercase letters, numbers, dashes,\
+                      \ underscores, periods, or colons"
               schema:
                 $ref: '#/components/schemas/BadRequestError'
           description: Bad request (invalid payload or channel targeting input)
@@ -335,7 +361,7 @@ paths:
         \ ends the current Live Activity for this stream and dismisses it from devices.\
         \ If you need direct lifecycle control, use /live-activity/start, /live-activity/update,\
         \ and /live-activity/end instead. Use secondary_action for a second button\
-        \ on alert, progress, and segmented_progress Live Activities only."
+        \ on alert, progress, and segmented_progress Live Activities."
       operationId: endLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -551,8 +577,10 @@ paths:
         \ ActivitySmith will keep the Live Activity in sync. For timer streams, send\
         \ duration_seconds to start or reset the timer; omit duration_seconds on later\
         \ updates to preserve the existing timer window. Use secondary_action for\
-        \ a second button on alert, progress, and segmented_progress Live Activities\
-        \ only."
+        \ a second button on alert, progress, and segmented_progress Live Activities.\
+        \ Optional tags to organize and filter notification history. On later stream\
+        \ updates, omit tags to keep the current tags, send tags again to replace\
+        \ them, or send an empty array to clear them."
       operationId: reconcileLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -627,6 +655,17 @@ paths:
                     method: POST
                     body:
                       approval_id: appr_123
+              tagged:
+                summary: Organize notification history with tags
+                value:
+                  content_state:
+                    title: Search Reindex
+                    subtitle: catalog-v2
+                    type: progress
+                    percentage: 42
+                  tags:
+                  - user:382
+                  - search-reindex
             schema:
               $ref: '#/components/schemas/LiveActivityStreamRequest'
         required: true
@@ -657,6 +696,17 @@ paths:
                     stream_key: prod-web-1
                     activity_id: null
                     timestamp: 2025-08-12T12:10:00.000Z
+                tagged:
+                  value:
+                    success: true
+                    operation: started
+                    stream_key: search-reindex
+                    activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
+                    devices_notified: 2
+                    tags:
+                    - user:382
+                    - search-reindex
+                    timestamp: 2025-08-12T12:00:00.000Z
               schema:
                 $ref: '#/components/schemas/LiveActivityStreamPutResponse'
           description: Stream reconciled
@@ -673,6 +723,11 @@ paths:
                   value:
                     error: Invalid channel targeting
                     message: channels must contain at least one channel
+                invalid_tags:
+                  value:
+                    error: Invalid tags
+                    code: invalid_tags
+                    message: tags must contain at most 20 unique values
               schema:
                 $ref: '#/components/schemas/BadRequestError'
           description: "Bad request (invalid stream_key, payload, action, or channel\
@@ -827,7 +882,8 @@ paths:
         \ progress, metrics, stats, alert, and timer activity types. For segmented_progress\
         \ activities, number_of_steps can be changed later during update or end calls\
         \ if the workflow changes. Use secondary_action for a second button on alert,\
-        \ progress, and segmented_progress Live Activities only."
+        \ progress, and segmented_progress Live Activities. Optional tags to organize\
+        \ and filter notification history."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -917,6 +973,19 @@ paths:
                     method: POST
                     body:
                       approval_id: appr_123
+              tagged:
+                summary: Organize notification history with tags
+                value:
+                  content_state:
+                    title: Nightly database backup
+                    subtitle: create snapshot
+                    number_of_steps: 3
+                    current_step: 1
+                    type: segmented_progress
+                    color: yellow
+                  tags:
+                  - user:382
+                  - database-backup
             schema:
               $ref: '#/components/schemas/LiveActivityStartRequest'
         required: true
@@ -942,6 +1011,16 @@ paths:
                     - devs
                     - ops
                     timestamp: 2026-01-28T09:57:22.929Z
+                tagged:
+                  value:
+                    success: true
+                    activity_id: pLAr-Hnq9ZFW4sxlk43Lhbuok4GLh7UW
+                    devices_notified: 2
+                    users_notified: 1
+                    tags:
+                    - user:382
+                    - database-backup
+                    timestamp: 2026-01-28T09:57:22.929Z
               schema:
                 $ref: '#/components/schemas/LiveActivityStartResponse'
           description: Live Activity started
@@ -953,6 +1032,12 @@ paths:
                   value:
                     error: Invalid channel targeting
                     message: target.channels must be an array of channel slugs
+                invalid_tags:
+                  value:
+                    error: Invalid tags
+                    code: invalid_tags
+                    message: "tags must use 1-64 lowercase letters, numbers, dashes,\
+                      \ underscores, periods, or colons"
               schema:
                 $ref: '#/components/schemas/BadRequestError'
           description: Bad request (invalid payload or channel targeting input)
@@ -1124,7 +1209,7 @@ paths:
         \ here as the workflow changes. For timer activities, send duration_seconds\
         \ only when you want to reset the timer window; omit it to keep the current\
         \ timer running. Use secondary_action for a second button on alert, progress,\
-        \ and segmented_progress Live Activities only."
+        \ and segmented_progress Live Activities."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -1339,7 +1424,7 @@ paths:
         \ progress, metrics, stats, alert, and timer activity types. For segmented_progress\
         \ activities, you can send the latest number_of_steps here if the workflow\
         \ changed after start. Use secondary_action for a second button on alert,\
-        \ progress, and segmented_progress Live Activities only."
+        \ progress, and segmented_progress Live Activities."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -2511,7 +2596,7 @@ components:
         type:
           $ref: '#/components/schemas/PushNotificationActionType'
         url:
-          description: "Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=...\
+          description: "Action URL. For open_url, use an HTTP or HTTPS URL or a shortcuts://run-shortcut?name=...\
             \ URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS\
             \ URL called by the ActivitySmith backend."
           format: uri
@@ -2555,7 +2640,7 @@ components:
         type:
           $ref: '#/components/schemas/LiveActivityActionType'
         url:
-          description: "Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=...\
+          description: "Action URL. For open_url, use an HTTP or HTTPS URL or a shortcuts://run-shortcut?name=...\
             \ URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS\
             \ URL called by the ActivitySmith backend."
           format: uri
@@ -2568,104 +2653,8 @@ components:
       - title
       - type
       - url
-    PushNotificationRequest:
-      additionalProperties: {}
-      example:
-        badge: 0
-        payload: "{}"
-        subtitle: subtitle
-        sound: sound
-        media: https://openapi-generator.tech
-        title: title
-        message: message
-        redirection: https://openapi-generator.tech
-        actions:
-        - method: POST
-          title: title
-          type: open_url
-          body: "{}"
-          url: https://openapi-generator.tech
-        - method: POST
-          title: title
-          type: open_url
-          body: "{}"
-          url: https://openapi-generator.tech
-        - method: POST
-          title: title
-          type: open_url
-          body: "{}"
-          url: https://openapi-generator.tech
-        - method: POST
-          title: title
-          type: open_url
-          body: "{}"
-          url: https://openapi-generator.tech
-        target:
-          channels:
-          - channels
-          - channels
-      properties:
-        title: {}
-        message: {}
-        subtitle: {}
-        media:
-          description: "Optional HTTPS URL for an image, audio file, or video that\
-            \ users can preview or play when they expand the notification. If `redirection`\
-            \ is omitted, tapping the notification opens this URL. Cannot be combined\
-            \ with `actions`."
-          format: uri
-          pattern: ^https://
-        redirection:
-          description: Optional HTTPS URL or shortcuts://run-shortcut?name=... URL
-            opened when the user taps the notification body. Use shortcuts://run-shortcut?name=...
-            to run a specific iPhone Shortcut that already exists on the user's device.
-            Overrides the default tap target from `media` when both are provided.
-          format: uri
-          pattern: ^(https|shortcuts)://
-        actions:
-          description: Optional interactive actions shown when users expand the notification.
-            Cannot be combined with `media`.
-          items:
-            $ref: '#/components/schemas/PushNotificationAction'
-          maxItems: 4
-        payload:
-          additionalProperties: false
-        badge: {}
-        sound: {}
-        target:
-          $ref: '#/components/schemas/ChannelTarget'
-      required:
-      - title
-    PushNotificationResponse:
-      additionalProperties: false
-      example:
-        success: true
-        users_notified: 6
-        devices_notified: 0
-        effective_channel_slugs:
-        - effective_channel_slugs
-        - effective_channel_slugs
-        timestamp: 2000-01-23T04:56:07.000+00:00
-      properties:
-        success:
-          type: boolean
-        devices_notified:
-          type: integer
-        users_notified:
-          type: integer
-        effective_channel_slugs:
-          items:
-            type: string
-          type: array
-        timestamp:
-          format: date-time
-          type: string
-      required:
-      - success
-      - timestamp
     AppIconBadgeCountUpdateRequest:
       additionalProperties: false
-      description: App Icon Badge Count update. Send badge 0 to clear the count.
       example:
         badge: 171976544
         target:
@@ -2719,6 +2708,132 @@ components:
       - success
       - timestamp
       - users_notified
+    TagSlugs:
+      description: Optional tags to organize and filter notification history.
+      items:
+        maxLength: 64
+        minLength: 1
+        pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+        type: string
+      type: array
+    PushNotificationRequest:
+      additionalProperties: {}
+      example:
+        badge: 0
+        payload: "{}"
+        subtitle: subtitle
+        sound: sound
+        media: https://openapi-generator.tech
+        title: title
+        message: message
+        redirection: https://openapi-generator.tech
+        actions:
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        target:
+          channels:
+          - channels
+          - channels
+        tags:
+        - tags
+        - tags
+      properties:
+        title: {}
+        message: {}
+        subtitle: {}
+        media:
+          description: "Optional HTTPS URL for an image, audio file, or video that\
+            \ users can preview or play when they expand the notification. If `redirection`\
+            \ is omitted, tapping the notification opens this URL. Cannot be combined\
+            \ with `actions`."
+          format: uri
+          pattern: ^https://
+        redirection:
+          description: "Optional HTTP URL, HTTPS URL, or shortcuts://run-shortcut?name=...\
+            \ URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name=...\
+            \ to run a specific iPhone Shortcut that already exists on the user's\
+            \ device. Overrides the default tap target from `media` when both are\
+            \ provided."
+          format: uri
+          pattern: ^(http|https|shortcuts)://
+        actions:
+          description: Optional interactive actions shown when users expand the notification.
+            Cannot be combined with `media`.
+          items:
+            $ref: '#/components/schemas/PushNotificationAction'
+          maxItems: 4
+        payload:
+          additionalProperties: false
+        badge: {}
+        sound: {}
+        target:
+          $ref: '#/components/schemas/ChannelTarget'
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            type: string
+          type: array
+      required:
+      - title
+    PushNotificationResponse:
+      additionalProperties: false
+      example:
+        success: true
+        users_notified: 6
+        devices_notified: 0
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
+        tags:
+        - tags
+        - tags
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        success:
+          type: boolean
+        devices_notified:
+          type: integer
+        users_notified:
+          type: integer
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+      required:
+      - success
+      - timestamp
     LiveActivityStartRequest:
       additionalProperties: false
       description: Start a new Live Activity. The response includes activity_id for
@@ -2788,6 +2903,9 @@ components:
           channels:
           - channels
           - channels
+        tags:
+        - tags
+        - tags
       properties:
         content_state:
           $ref: '#/components/schemas/ContentStateStart'
@@ -2799,6 +2917,14 @@ components:
           $ref: '#/components/schemas/AlertPayload'
         target:
           $ref: '#/components/schemas/ChannelTarget'
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            type: string
+          type: array
       required:
       - content_state
     LiveActivityStartResponse:
@@ -2813,6 +2939,9 @@ components:
         effective_channel_slugs:
         - effective_channel_slugs
         - effective_channel_slugs
+        tags:
+        - tags
+        - tags
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
@@ -2825,6 +2954,14 @@ components:
           type: string
         effective_channel_slugs:
           items:
+            type: string
+          type: array
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
             type: string
           type: array
         timestamp:
@@ -2909,6 +3046,9 @@ components:
           channels:
           - channels
           - channels
+        tags:
+        - tags
+        - tags
       properties:
         content_state:
           $ref: '#/components/schemas/StreamContentState'
@@ -2926,6 +3066,14 @@ components:
           type: array
         target:
           $ref: '#/components/schemas/ChannelTarget'
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            type: string
+          type: array
       required:
       - content_state
     LiveActivityStreamPutResponse:
@@ -2943,6 +3091,9 @@ components:
         effective_channel_slugs:
         - effective_channel_slugs
         - effective_channel_slugs
+        tags:
+        - tags
+        - tags
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
@@ -2970,6 +3121,14 @@ components:
           type: integer
         effective_channel_slugs:
           items:
+            type: string
+          type: array
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
             type: string
           type: array
         timestamp:

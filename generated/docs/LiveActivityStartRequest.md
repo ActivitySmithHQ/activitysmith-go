@@ -6,9 +6,10 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ContentState** | [**ContentStateStart**](ContentStateStart.md) |  | 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
-**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
+**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 **Alert** | Pointer to [**AlertPayload**](AlertPayload.md) |  | [optional] 
 **Target** | Pointer to [**ChannelTarget**](ChannelTarget.md) |  | [optional] 
+**Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
 
 ## Methods
 
@@ -148,6 +149,31 @@ SetTarget sets Target field to given value.
 `func (o *LiveActivityStartRequest) HasTarget() bool`
 
 HasTarget returns a boolean if a field has been set.
+
+### GetTags
+
+`func (o *LiveActivityStartRequest) GetTags() []string`
+
+GetTags returns the Tags field if non-nil, zero value otherwise.
+
+### GetTagsOk
+
+`func (o *LiveActivityStartRequest) GetTagsOk() (*[]string, bool)`
+
+GetTagsOk returns a tuple with the Tags field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTags
+
+`func (o *LiveActivityStartRequest) SetTags(v []string)`
+
+SetTags sets Tags field to given value.
+
+### HasTags
+
+`func (o *LiveActivityStartRequest) HasTags() bool`
+
+HasTags returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

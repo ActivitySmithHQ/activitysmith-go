@@ -38,9 +38,9 @@ func (r ApiUpdateAppIconBadgeCountRequest) Execute() (*AppIconBadgeCountUpdateRe
 }
 
 /*
-UpdateAppIconBadgeCount Update App Icon Badge Count
+UpdateAppIconBadgeCount Set App Icon Badge Count
 
-Updates the App Icon Badge Count on devices matched by API key scope and optional target channels. Send `badge: 0` to clear the count. Badge updates are independent of push notifications and do not create a push notification history item.
+Shows a number on the ActivitySmith app icon.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiUpdateAppIconBadgeCountRequest

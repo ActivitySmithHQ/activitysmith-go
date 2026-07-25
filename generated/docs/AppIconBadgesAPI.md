@@ -4,7 +4,7 @@ All URIs are relative to *https://activitysmith.com/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**UpdateAppIconBadgeCount**](AppIconBadgesAPI.md#UpdateAppIconBadgeCount) | **Post** /badge | Update App Icon Badge Count
+[**UpdateAppIconBadgeCount**](AppIconBadgesAPI.md#UpdateAppIconBadgeCount) | **Post** /badge | Set App Icon Badge Count
 
 
 
@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 > AppIconBadgeCountUpdateResponse UpdateAppIconBadgeCount(ctx).AppIconBadgeCountUpdateRequest(appIconBadgeCountUpdateRequest).Execute()
 
-Update App Icon Badge Count
+Set App Icon Badge Count
 
 
 

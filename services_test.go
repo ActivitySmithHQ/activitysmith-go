@@ -536,6 +536,52 @@ func TestDXInputsIncludeOptionalFields(t *testing.T) {
 	}
 }
 
+func TestDXInputsIncludeTags(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	if _, err := client.Notifications.Send(PushNotificationInput{
+		Title: "Build Failed",
+		Tags:  []string{"user:382", "environment:production"},
+	}); err != nil {
+		t.Fatalf("Send returned error: %v", err)
+	}
+
+	if _, err := client.LiveActivities.Start(LiveActivityStartInput{
+		Title:         "Deploy",
+		Type:          "segmented_progress",
+		NumberOfSteps: 4,
+		CurrentStep:   1,
+		Tags:          []string{"user:382", "deployment"},
+	}); err != nil {
+		t.Fatalf("Start returned error: %v", err)
+	}
+
+	if _, err := client.LiveActivities.Stream("prod-web-1", LiveActivityStreamInput{
+		Title:      "Deploy",
+		Type:       "progress",
+		Percentage: 42,
+		Tags:       []string{"user:382", "environment:production"},
+	}); err != nil {
+		t.Fatalf("Stream returned error: %v", err)
+	}
+
+	if len(*requests) != 3 {
+		t.Fatalf("expected 3 requests, got %d", len(*requests))
+	}
+	for index, request := range *requests {
+		if !strings.Contains(request.Body, `"tags":["user:382"`) {
+			t.Fatalf("request %d body missing tags: %s", index, request.Body)
+		}
+	}
+}
+
 func TestActionOpenURLsAllowShortcutsScheme(t *testing.T) {
 	server, requests := newAPITestServer(t)
 	defer server.Close()
