@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 **ActivityId** | **string** |  | 
 **ContentState** | [**ContentStateEnd**](ContentStateEnd.md) |  | 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
-**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
+**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 
 ## Methods
 

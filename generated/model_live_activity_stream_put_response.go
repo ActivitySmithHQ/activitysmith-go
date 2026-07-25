@@ -31,6 +31,8 @@ type LiveActivityStreamPutResponse struct {
 	DevicesQueued *int32 `json:"devices_queued,omitempty"`
 	UsersNotified *int32 `json:"users_notified,omitempty"`
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
+	// Optional tags to organize and filter notification history.
+	Tags []string `json:"tags,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
 }
 
@@ -331,6 +333,38 @@ func (o *LiveActivityStreamPutResponse) SetEffectiveChannelSlugs(v []string) {
 	o.EffectiveChannelSlugs = v
 }
 
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *LiveActivityStreamPutResponse) GetTags() []string {
+	if o == nil || IsNil(o.Tags) {
+		var ret []string
+		return ret
+	}
+	return o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamPutResponse) GetTagsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Tags) {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *LiveActivityStreamPutResponse) HasTags() bool {
+	if o != nil && !IsNil(o.Tags) {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given []string and assigns it to the Tags field.
+func (o *LiveActivityStreamPutResponse) SetTags(v []string) {
+	o.Tags = v
+}
+
 // GetTimestamp returns the Timestamp field value
 func (o *LiveActivityStreamPutResponse) GetTimestamp() time.Time {
 	if o == nil {
@@ -385,6 +419,9 @@ func (o LiveActivityStreamPutResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.EffectiveChannelSlugs) {
 		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
+	}
+	if !IsNil(o.Tags) {
+		toSerialize["tags"] = o.Tags
 	}
 	toSerialize["timestamp"] = o.Timestamp
 	return toSerialize, nil

@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **DevicesNotified** | Pointer to **int32** |  | [optional] 
 **UsersNotified** | Pointer to **int32** |  | [optional] 
 **EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
+**Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
 **Timestamp** | **time.Time** |  | 
 
 ## Methods
@@ -123,6 +124,31 @@ SetEffectiveChannelSlugs sets EffectiveChannelSlugs field to given value.
 `func (o *PushNotificationResponse) HasEffectiveChannelSlugs() bool`
 
 HasEffectiveChannelSlugs returns a boolean if a field has been set.
+
+### GetTags
+
+`func (o *PushNotificationResponse) GetTags() []string`
+
+GetTags returns the Tags field if non-nil, zero value otherwise.
+
+### GetTagsOk
+
+`func (o *PushNotificationResponse) GetTagsOk() (*[]string, bool)`
+
+GetTagsOk returns a tuple with the Tags field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTags
+
+`func (o *PushNotificationResponse) SetTags(v []string)`
+
+SetTags sets Tags field to given value.
+
+### HasTags
+
+`func (o *PushNotificationResponse) HasTags() bool`
+
+HasTags returns a boolean if a field has been set.
 
 ### GetTimestamp
 

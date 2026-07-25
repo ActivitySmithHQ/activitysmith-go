@@ -26,6 +26,8 @@ type PushNotificationResponse struct {
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	UsersNotified *int32 `json:"users_notified,omitempty"`
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
+	// Optional tags to organize and filter notification history.
+	Tags []string `json:"tags,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
 }
 
@@ -170,6 +172,38 @@ func (o *PushNotificationResponse) SetEffectiveChannelSlugs(v []string) {
 	o.EffectiveChannelSlugs = v
 }
 
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetTags() []string {
+	if o == nil || IsNil(o.Tags) {
+		var ret []string
+		return ret
+	}
+	return o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetTagsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Tags) {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasTags() bool {
+	if o != nil && !IsNil(o.Tags) {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given []string and assigns it to the Tags field.
+func (o *PushNotificationResponse) SetTags(v []string) {
+	o.Tags = v
+}
+
 // GetTimestamp returns the Timestamp field value
 func (o *PushNotificationResponse) GetTimestamp() time.Time {
 	if o == nil {
@@ -213,6 +247,9 @@ func (o PushNotificationResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.EffectiveChannelSlugs) {
 		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
+	}
+	if !IsNil(o.Tags) {
+		toSerialize["tags"] = o.Tags
 	}
 	toSerialize["timestamp"] = o.Timestamp
 	return toSerialize, nil

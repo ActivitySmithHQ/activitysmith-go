@@ -23,10 +23,12 @@ var _ MappedNullable = &LiveActivityStartRequest{}
 type LiveActivityStartRequest struct {
 	ContentState ContentStateStart `json:"content_state"`
 	Action *LiveActivityAction `json:"action,omitempty"`
-	// Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+	// Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
 	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
 	Alert *AlertPayload `json:"alert,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
+	// Optional tags to organize and filter notification history.
+	Tags []string `json:"tags,omitempty"`
 }
 
 type _LiveActivityStartRequest LiveActivityStartRequest
@@ -201,6 +203,38 @@ func (o *LiveActivityStartRequest) SetTarget(v ChannelTarget) {
 	o.Target = &v
 }
 
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *LiveActivityStartRequest) GetTags() []string {
+	if o == nil || IsNil(o.Tags) {
+		var ret []string
+		return ret
+	}
+	return o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartRequest) GetTagsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Tags) {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *LiveActivityStartRequest) HasTags() bool {
+	if o != nil && !IsNil(o.Tags) {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given []string and assigns it to the Tags field.
+func (o *LiveActivityStartRequest) SetTags(v []string) {
+	o.Tags = v
+}
+
 func (o LiveActivityStartRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -223,6 +257,9 @@ func (o LiveActivityStartRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Target) {
 		toSerialize["target"] = o.Target
+	}
+	if !IsNil(o.Tags) {
+		toSerialize["tags"] = o.Tags
 	}
 	return toSerialize, nil
 }

@@ -23,12 +23,14 @@ var _ MappedNullable = &LiveActivityStreamRequest{}
 type LiveActivityStreamRequest struct {
 	ContentState StreamContentState `json:"content_state"`
 	Action *LiveActivityAction `json:"action,omitempty"`
-	// Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+	// Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
 	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
 	Alert *AlertPayload `json:"alert,omitempty"`
 	// Channel slugs. When omitted, API key scope determines recipients.
 	Channels []string `json:"channels,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
+	// Optional tags to organize and filter notification history.
+	Tags []string `json:"tags,omitempty"`
 }
 
 type _LiveActivityStreamRequest LiveActivityStreamRequest
@@ -235,6 +237,38 @@ func (o *LiveActivityStreamRequest) SetTarget(v ChannelTarget) {
 	o.Target = &v
 }
 
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *LiveActivityStreamRequest) GetTags() []string {
+	if o == nil || IsNil(o.Tags) {
+		var ret []string
+		return ret
+	}
+	return o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamRequest) GetTagsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Tags) {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *LiveActivityStreamRequest) HasTags() bool {
+	if o != nil && !IsNil(o.Tags) {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given []string and assigns it to the Tags field.
+func (o *LiveActivityStreamRequest) SetTags(v []string) {
+	o.Tags = v
+}
+
 func (o LiveActivityStreamRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -260,6 +294,9 @@ func (o LiveActivityStreamRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Target) {
 		toSerialize["target"] = o.Target
+	}
+	if !IsNil(o.Tags) {
+		toSerialize["tags"] = o.Tags
 	}
 	return toSerialize, nil
 }

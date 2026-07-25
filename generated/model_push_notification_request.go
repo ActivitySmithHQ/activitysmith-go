@@ -25,14 +25,16 @@ type PushNotificationRequest struct {
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
 	Media *string `json:"media,omitempty" validate:"regexp=^https:\\/\\/"`
-	// Optional HTTPS URL or shortcuts://run-shortcut?name=... URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name=... to run a specific iPhone Shortcut that already exists on the user's device. Overrides the default tap target from `media` when both are provided.
-	Redirection *string `json:"redirection,omitempty" validate:"regexp=^(https|shortcuts):\\/\\/"`
+	// Optional HTTP URL, HTTPS URL, or shortcuts://run-shortcut?name=... URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name=... to run a specific iPhone Shortcut that already exists on the user's device. Overrides the default tap target from `media` when both are provided.
+	Redirection *string `json:"redirection,omitempty" validate:"regexp=^(http|https|shortcuts):\\/\\/"`
 	// Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
 	Actions []PushNotificationAction `json:"actions,omitempty"`
 	Payload map[string]interface{} `json:"payload,omitempty"`
 	Badge *int32 `json:"badge,omitempty"`
 	Sound *string `json:"sound,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
+	// Optional tags to organize and filter notification history.
+	Tags []string `json:"tags,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -368,6 +370,38 @@ func (o *PushNotificationRequest) SetTarget(v ChannelTarget) {
 	o.Target = &v
 }
 
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetTags() []string {
+	if o == nil || IsNil(o.Tags) {
+		var ret []string
+		return ret
+	}
+	return o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetTagsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Tags) {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasTags() bool {
+	if o != nil && !IsNil(o.Tags) {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given []string and assigns it to the Tags field.
+func (o *PushNotificationRequest) SetTags(v []string) {
+	o.Tags = v
+}
+
 func (o PushNotificationRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -405,6 +439,9 @@ func (o PushNotificationRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Target) {
 		toSerialize["target"] = o.Target
+	}
+	if !IsNil(o.Tags) {
+		toSerialize["tags"] = o.Tags
 	}
 
 	for key, value := range o.AdditionalProperties {
@@ -459,6 +496,7 @@ func (o *PushNotificationRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "badge")
 		delete(additionalProperties, "sound")
 		delete(additionalProperties, "target")
+		delete(additionalProperties, "tags")
 		o.AdditionalProperties = additionalProperties
 	}
 
