@@ -7,13 +7,13 @@ Name | Type | Description | Notes
 **Error** | **string** |  | 
 **Message** | **string** |  | 
 **Limit** | **int32** |  | 
-**Active** | **int32** | Current number of active Live Activities. | 
+**BlockedDevices** | **int32** | Number of targeted devices that have reached the enforced iOS Live Activity concurrency threshold. | 
 
 ## Methods
 
 ### NewSendPushNotification429Response
 
-`func NewSendPushNotification429Response(error_ string, message string, limit int32, active int32, ) *SendPushNotification429Response`
+`func NewSendPushNotification429Response(error_ string, message string, limit int32, blockedDevices int32, ) *SendPushNotification429Response`
 
 NewSendPushNotification429Response instantiates a new SendPushNotification429Response object
 This constructor will assign default values to properties that have it defined,
@@ -88,24 +88,24 @@ and a boolean to check if the value has been set.
 SetLimit sets Limit field to given value.
 
 
-### GetActive
+### GetBlockedDevices
 
-`func (o *SendPushNotification429Response) GetActive() int32`
+`func (o *SendPushNotification429Response) GetBlockedDevices() int32`
 
-GetActive returns the Active field if non-nil, zero value otherwise.
+GetBlockedDevices returns the BlockedDevices field if non-nil, zero value otherwise.
 
-### GetActiveOk
+### GetBlockedDevicesOk
 
-`func (o *SendPushNotification429Response) GetActiveOk() (*int32, bool)`
+`func (o *SendPushNotification429Response) GetBlockedDevicesOk() (*int32, bool)`
 
-GetActiveOk returns a tuple with the Active field if it's non-nil, zero value otherwise
+GetBlockedDevicesOk returns a tuple with the BlockedDevices field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetActive
+### SetBlockedDevices
 
-`func (o *SendPushNotification429Response) SetActive(v int32)`
+`func (o *SendPushNotification429Response) SetBlockedDevices(v int32)`
 
-SetActive sets Active field to given value.
+SetBlockedDevices sets BlockedDevices field to given value.
 
 
 

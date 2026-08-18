@@ -7,13 +7,13 @@ Name | Type | Description | Notes
 **Error** | **string** |  | 
 **Message** | **string** |  | 
 **Limit** | **int32** |  | 
-**Active** | **int32** | Current number of active Live Activities. | 
+**BlockedDevices** | **int32** | Number of targeted devices that have reached the enforced iOS Live Activity concurrency threshold. | 
 
 ## Methods
 
 ### NewLiveActivityLimitError
 
-`func NewLiveActivityLimitError(error_ string, message string, limit int32, active int32, ) *LiveActivityLimitError`
+`func NewLiveActivityLimitError(error_ string, message string, limit int32, blockedDevices int32, ) *LiveActivityLimitError`
 
 NewLiveActivityLimitError instantiates a new LiveActivityLimitError object
 This constructor will assign default values to properties that have it defined,
@@ -88,24 +88,24 @@ and a boolean to check if the value has been set.
 SetLimit sets Limit field to given value.
 
 
-### GetActive
+### GetBlockedDevices
 
-`func (o *LiveActivityLimitError) GetActive() int32`
+`func (o *LiveActivityLimitError) GetBlockedDevices() int32`
 
-GetActive returns the Active field if non-nil, zero value otherwise.
+GetBlockedDevices returns the BlockedDevices field if non-nil, zero value otherwise.
 
-### GetActiveOk
+### GetBlockedDevicesOk
 
-`func (o *LiveActivityLimitError) GetActiveOk() (*int32, bool)`
+`func (o *LiveActivityLimitError) GetBlockedDevicesOk() (*int32, bool)`
 
-GetActiveOk returns a tuple with the Active field if it's non-nil, zero value otherwise
+GetBlockedDevicesOk returns a tuple with the BlockedDevices field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetActive
+### SetBlockedDevices
 
-`func (o *LiveActivityLimitError) SetActive(v int32)`
+`func (o *LiveActivityLimitError) SetBlockedDevices(v int32)`
 
-SetActive sets Active field to given value.
+SetBlockedDevices sets BlockedDevices field to given value.
 
 
 

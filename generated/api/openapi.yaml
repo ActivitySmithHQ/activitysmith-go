@@ -769,9 +769,10 @@ paths:
                 concurrent_live_activity_limit_reached:
                   value:
                     error: Live Activity limit reached
-                    message: Only 4 concurrent Live Activities are allowed per account
-                    limit: 4
-                    active: 4
+                    message: iOS supports up to 5 concurrent Live Activities per app
+                      on a device. End an active Live Activity before starting another.
+                    limit: 5
+                    blocked_devices: 1
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
@@ -1078,9 +1079,10 @@ paths:
                 concurrent_live_activity_limit_reached:
                   value:
                     error: Live Activity limit reached
-                    message: Only 4 concurrent Live Activities are allowed per account
-                    limit: 4
-                    active: 4
+                    message: iOS supports up to 5 concurrent Live Activities per app
+                      on a device. End an active Live Activity before starting another.
+                    limit: 5
+                    blocked_devices: 1
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
@@ -3368,11 +3370,12 @@ components:
           type: string
         limit:
           type: integer
-        active:
-          description: Current number of active Live Activities.
+        blocked_devices:
+          description: Number of targeted devices that have reached the enforced iOS
+            Live Activity concurrency threshold.
           type: integer
       required:
-      - active
+      - blocked_devices
       - error
       - limit
       - message

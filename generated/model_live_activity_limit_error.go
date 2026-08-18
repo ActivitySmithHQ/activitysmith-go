@@ -24,8 +24,8 @@ type LiveActivityLimitError struct {
 	Error string `json:"error"`
 	Message string `json:"message"`
 	Limit int32 `json:"limit"`
-	// Current number of active Live Activities.
-	Active int32 `json:"active"`
+	// Number of targeted devices that have reached the enforced iOS Live Activity concurrency threshold.
+	BlockedDevices int32 `json:"blocked_devices"`
 }
 
 type _LiveActivityLimitError LiveActivityLimitError
@@ -34,12 +34,12 @@ type _LiveActivityLimitError LiveActivityLimitError
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewLiveActivityLimitError(error_ string, message string, limit int32, active int32) *LiveActivityLimitError {
+func NewLiveActivityLimitError(error_ string, message string, limit int32, blockedDevices int32) *LiveActivityLimitError {
 	this := LiveActivityLimitError{}
 	this.Error = error_
 	this.Message = message
 	this.Limit = limit
-	this.Active = active
+	this.BlockedDevices = blockedDevices
 	return &this
 }
 
@@ -123,28 +123,28 @@ func (o *LiveActivityLimitError) SetLimit(v int32) {
 	o.Limit = v
 }
 
-// GetActive returns the Active field value
-func (o *LiveActivityLimitError) GetActive() int32 {
+// GetBlockedDevices returns the BlockedDevices field value
+func (o *LiveActivityLimitError) GetBlockedDevices() int32 {
 	if o == nil {
 		var ret int32
 		return ret
 	}
 
-	return o.Active
+	return o.BlockedDevices
 }
 
-// GetActiveOk returns a tuple with the Active field value
+// GetBlockedDevicesOk returns a tuple with the BlockedDevices field value
 // and a boolean to check if the value has been set.
-func (o *LiveActivityLimitError) GetActiveOk() (*int32, bool) {
+func (o *LiveActivityLimitError) GetBlockedDevicesOk() (*int32, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Active, true
+	return &o.BlockedDevices, true
 }
 
-// SetActive sets field value
-func (o *LiveActivityLimitError) SetActive(v int32) {
-	o.Active = v
+// SetBlockedDevices sets field value
+func (o *LiveActivityLimitError) SetBlockedDevices(v int32) {
+	o.BlockedDevices = v
 }
 
 func (o LiveActivityLimitError) MarshalJSON() ([]byte, error) {
@@ -160,7 +160,7 @@ func (o LiveActivityLimitError) ToMap() (map[string]interface{}, error) {
 	toSerialize["error"] = o.Error
 	toSerialize["message"] = o.Message
 	toSerialize["limit"] = o.Limit
-	toSerialize["active"] = o.Active
+	toSerialize["blocked_devices"] = o.BlockedDevices
 	return toSerialize, nil
 }
 
@@ -172,7 +172,7 @@ func (o *LiveActivityLimitError) UnmarshalJSON(data []byte) (err error) {
 		"error",
 		"message",
 		"limit",
-		"active",
+		"blocked_devices",
 	}
 
 	allProperties := make(map[string]interface{})
