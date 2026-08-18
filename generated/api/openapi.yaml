@@ -51,16 +51,16 @@ paths:
                   value:
                     success: true
                     badge: 8333
-                    devices_notified: 2
-                    users_notified: 1
+                    devices_updated: 2
+                    users_updated: 1
                     effective_channel_slugs: null
                     timestamp: 2026-07-10T12:00:00.000Z
                 channel_targeted:
                   value:
                     success: true
                     badge: 3
-                    devices_notified: 2
-                    users_notified: 1
+                    devices_updated: 2
+                    users_updated: 1
                     effective_channel_slugs:
                     - sales
                     - customer-success
@@ -80,12 +80,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
           description: Forbidden
-        "404":
+        "422":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NoRecipientsError'
-          description: No recipients found for effective channel target
+                $ref: '#/components/schemas/updateAppIconBadgeCount_422_response'
+          description: "No matching devices found, or a targeted device needs to reconnect"
+        "502":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppIconBadgeCountUpdateError'
+          description: App Icon Badge Count could not be updated
         "429":
           content:
             application/json:
@@ -769,9 +775,10 @@ paths:
                 concurrent_live_activity_limit_reached:
                   value:
                     error: Live Activity limit reached
-                    message: Only 4 concurrent Live Activities are allowed per account
-                    limit: 4
-                    active: 4
+                    message: iOS supports up to 5 concurrent Live Activities per app
+                      on a device. End an active Live Activity before starting another.
+                    limit: 5
+                    active: 5
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
@@ -1078,9 +1085,10 @@ paths:
                 concurrent_live_activity_limit_reached:
                   value:
                     error: Live Activity limit reached
-                    message: Only 4 concurrent Live Activities are allowed per account
-                    limit: 4
-                    active: 4
+                    message: iOS supports up to 5 concurrent Live Activities per app
+                      on a device. End an active Live Activity before starting another.
+                    limit: 5
+                    active: 5
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
@@ -2677,8 +2685,10 @@ components:
       example:
         badge: 171976544
         success: true
-        users_notified: 1
-        devices_notified: 6
+        users_updated: 1
+        users_notified: 5
+        devices_notified: 5
+        devices_updated: 6
         effective_channel_slugs:
         - effective_channel_slugs
         - effective_channel_slugs
@@ -2690,9 +2700,19 @@ components:
           maximum: 2147483647
           minimum: 0
           type: integer
+        devices_updated:
+          description: Number of devices whose App Icon Badge Count was updated.
+          type: integer
+        users_updated:
+          description: Number of account users with at least one updated device.
+          type: integer
         devices_notified:
+          deprecated: true
+          description: Deprecated compatibility alias for devices_updated.
           type: integer
         users_notified:
+          deprecated: true
+          description: Deprecated compatibility alias for users_updated.
           type: integer
         effective_channel_slugs:
           items:
@@ -2703,11 +2723,59 @@ components:
           type: string
       required:
       - badge
-      - devices_notified
+      - devices_updated
       - effective_channel_slugs
       - success
       - timestamp
-      - users_notified
+      - users_updated
+    AppIconBadgeCountUpdateError:
+      additionalProperties: false
+      example:
+        badge: 494379917
+        code: badge_device_disconnected
+        users_updated: 3
+        devices_notified: 2
+        error: error
+        message: message
+        devices_updated: 9
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
+        devices_targeted: 7
+      properties:
+        error:
+          type: string
+        code:
+          enum:
+          - badge_device_disconnected
+          - badge_update_failed
+          type: string
+        message:
+          type: string
+        badge:
+          maximum: 2147483647
+          minimum: 0
+          type: integer
+        devices_targeted:
+          type: integer
+        devices_updated:
+          type: integer
+        users_updated:
+          type: integer
+        devices_notified:
+          deprecated: true
+          description: Deprecated compatibility alias for devices_updated.
+          type: integer
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
+      required:
+      - badge
+      - code
+      - devices_updated
+      - error
+      - message
     TagSlugs:
       description: Optional tags to organize and filter notification history.
       items:
@@ -3369,7 +3437,17 @@ components:
         limit:
           type: integer
         active:
-          description: Current number of active Live Activities.
+          description: Highest number of active Live Activities among the targeted
+            devices.
+          type: integer
+        blocked_devices:
+          description: Number of targeted devices that have reached the enforced iOS
+            Live Activity concurrency threshold. Included only when targeted devices
+            have mixed capacity.
+          type: integer
+        targeted_devices:
+          description: Total number of targeted devices. Included only when targeted
+            devices have mixed capacity.
           type: integer
       required:
       - active
@@ -3575,6 +3653,10 @@ components:
       - activity_id
       - success
       - timestamp
+    updateAppIconBadgeCount_422_response:
+      oneOf:
+      - $ref: '#/components/schemas/NoRecipientsError'
+      - $ref: '#/components/schemas/AppIconBadgeCountUpdateError'
     sendPushNotification_429_response:
       oneOf:
       - $ref: '#/components/schemas/RateLimitError'
