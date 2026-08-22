@@ -7,7 +7,9 @@ Name | Type | Description | Notes
 **Error** | **string** |  | 
 **Message** | **string** |  | 
 **Limit** | **int32** |  | 
-**Active** | **int32** | Current number of active Live Activities. | 
+**Active** | **int32** | Highest number of active Live Activities among the targeted devices. | 
+**BlockedDevices** | Pointer to **int32** | Number of targeted devices that have reached the enforced iOS Live Activity concurrency threshold. Included only when targeted devices have mixed capacity. | [optional] 
+**TargetedDevices** | Pointer to **int32** | Total number of targeted devices. Included only when targeted devices have mixed capacity. | [optional] 
 
 ## Methods
 
@@ -107,6 +109,56 @@ and a boolean to check if the value has been set.
 
 SetActive sets Active field to given value.
 
+
+### GetBlockedDevices
+
+`func (o *SendPushNotification429Response) GetBlockedDevices() int32`
+
+GetBlockedDevices returns the BlockedDevices field if non-nil, zero value otherwise.
+
+### GetBlockedDevicesOk
+
+`func (o *SendPushNotification429Response) GetBlockedDevicesOk() (*int32, bool)`
+
+GetBlockedDevicesOk returns a tuple with the BlockedDevices field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetBlockedDevices
+
+`func (o *SendPushNotification429Response) SetBlockedDevices(v int32)`
+
+SetBlockedDevices sets BlockedDevices field to given value.
+
+### HasBlockedDevices
+
+`func (o *SendPushNotification429Response) HasBlockedDevices() bool`
+
+HasBlockedDevices returns a boolean if a field has been set.
+
+### GetTargetedDevices
+
+`func (o *SendPushNotification429Response) GetTargetedDevices() int32`
+
+GetTargetedDevices returns the TargetedDevices field if non-nil, zero value otherwise.
+
+### GetTargetedDevicesOk
+
+`func (o *SendPushNotification429Response) GetTargetedDevicesOk() (*int32, bool)`
+
+GetTargetedDevicesOk returns a tuple with the TargetedDevices field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTargetedDevices
+
+`func (o *SendPushNotification429Response) SetTargetedDevices(v int32)`
+
+SetTargetedDevices sets TargetedDevices field to given value.
+
+### HasTargetedDevices
+
+`func (o *SendPushNotification429Response) HasTargetedDevices() bool`
+
+HasTargetedDevices returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
