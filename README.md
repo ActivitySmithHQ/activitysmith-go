@@ -538,6 +538,7 @@ Metadata adds extra information to Push Notification and Live Activity details i
 ```go
 activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
     Title: "New subscription 💸",
+    Message: "Customer upgraded to Pro plan",
     Metadata: map[string]any{
         "customer_id": "382", "plan": "Pro", "amount": 29, "trial": false,
     },
@@ -577,8 +578,6 @@ activitysmith.LiveActivities.Update(activitysmithsdk.LiveActivityUpdateInput{
     Tags: []string{},
 })
 ```
-
-`EndStream` also accepts final Tags and Metadata. Omit them to preserve existing values, or supply empty collections to clear them.
 
 ## Channels
 
