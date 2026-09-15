@@ -24,8 +24,12 @@ type LiveActivityLimitError struct {
 	Error string `json:"error"`
 	Message string `json:"message"`
 	Limit int32 `json:"limit"`
-	// Current number of active Live Activities.
+	// Highest number of active Live Activities among the targeted devices.
 	Active int32 `json:"active"`
+	// Number of targeted devices that have reached the enforced iOS Live Activity concurrency threshold. Included only when targeted devices have mixed capacity.
+	BlockedDevices *int32 `json:"blocked_devices,omitempty"`
+	// Total number of targeted devices. Included only when targeted devices have mixed capacity.
+	TargetedDevices *int32 `json:"targeted_devices,omitempty"`
 }
 
 type _LiveActivityLimitError LiveActivityLimitError
@@ -147,6 +151,70 @@ func (o *LiveActivityLimitError) SetActive(v int32) {
 	o.Active = v
 }
 
+// GetBlockedDevices returns the BlockedDevices field value if set, zero value otherwise.
+func (o *LiveActivityLimitError) GetBlockedDevices() int32 {
+	if o == nil || IsNil(o.BlockedDevices) {
+		var ret int32
+		return ret
+	}
+	return *o.BlockedDevices
+}
+
+// GetBlockedDevicesOk returns a tuple with the BlockedDevices field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityLimitError) GetBlockedDevicesOk() (*int32, bool) {
+	if o == nil || IsNil(o.BlockedDevices) {
+		return nil, false
+	}
+	return o.BlockedDevices, true
+}
+
+// HasBlockedDevices returns a boolean if a field has been set.
+func (o *LiveActivityLimitError) HasBlockedDevices() bool {
+	if o != nil && !IsNil(o.BlockedDevices) {
+		return true
+	}
+
+	return false
+}
+
+// SetBlockedDevices gets a reference to the given int32 and assigns it to the BlockedDevices field.
+func (o *LiveActivityLimitError) SetBlockedDevices(v int32) {
+	o.BlockedDevices = &v
+}
+
+// GetTargetedDevices returns the TargetedDevices field value if set, zero value otherwise.
+func (o *LiveActivityLimitError) GetTargetedDevices() int32 {
+	if o == nil || IsNil(o.TargetedDevices) {
+		var ret int32
+		return ret
+	}
+	return *o.TargetedDevices
+}
+
+// GetTargetedDevicesOk returns a tuple with the TargetedDevices field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityLimitError) GetTargetedDevicesOk() (*int32, bool) {
+	if o == nil || IsNil(o.TargetedDevices) {
+		return nil, false
+	}
+	return o.TargetedDevices, true
+}
+
+// HasTargetedDevices returns a boolean if a field has been set.
+func (o *LiveActivityLimitError) HasTargetedDevices() bool {
+	if o != nil && !IsNil(o.TargetedDevices) {
+		return true
+	}
+
+	return false
+}
+
+// SetTargetedDevices gets a reference to the given int32 and assigns it to the TargetedDevices field.
+func (o *LiveActivityLimitError) SetTargetedDevices(v int32) {
+	o.TargetedDevices = &v
+}
+
 func (o LiveActivityLimitError) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -161,6 +229,12 @@ func (o LiveActivityLimitError) ToMap() (map[string]interface{}, error) {
 	toSerialize["message"] = o.Message
 	toSerialize["limit"] = o.Limit
 	toSerialize["active"] = o.Active
+	if !IsNil(o.BlockedDevices) {
+		toSerialize["blocked_devices"] = o.BlockedDevices
+	}
+	if !IsNil(o.TargetedDevices) {
+		toSerialize["targeted_devices"] = o.TargetedDevices
+	}
 	return toSerialize, nil
 }
 

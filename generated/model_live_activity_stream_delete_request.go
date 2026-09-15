@@ -19,6 +19,10 @@ var _ MappedNullable = &LiveActivityStreamDeleteRequest{}
 
 // LiveActivityStreamDeleteRequest Optional payload for ending a managed stream. When omitted, ActivitySmith ends the stream using the latest known state when possible.
 type LiveActivityStreamDeleteRequest struct {
+	// Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
+	Metadata map[string]MetadataValue `json:"metadata,omitempty"`
+	// Optional tags to organize and filter notification history.
+	Tags []string `json:"tags,omitempty"`
 	ContentState *StreamContentState `json:"content_state,omitempty"`
 	Action *LiveActivityAction `json:"action,omitempty"`
 	// Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
@@ -41,6 +45,70 @@ func NewLiveActivityStreamDeleteRequest() *LiveActivityStreamDeleteRequest {
 func NewLiveActivityStreamDeleteRequestWithDefaults() *LiveActivityStreamDeleteRequest {
 	this := LiveActivityStreamDeleteRequest{}
 	return &this
+}
+
+// GetMetadata returns the Metadata field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteRequest) GetMetadata() map[string]MetadataValue {
+	if o == nil || IsNil(o.Metadata) {
+		var ret map[string]MetadataValue
+		return ret
+	}
+	return o.Metadata
+}
+
+// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteRequest) GetMetadataOk() (map[string]MetadataValue, bool) {
+	if o == nil || IsNil(o.Metadata) {
+		return map[string]MetadataValue{}, false
+	}
+	return o.Metadata, true
+}
+
+// HasMetadata returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteRequest) HasMetadata() bool {
+	if o != nil && !IsNil(o.Metadata) {
+		return true
+	}
+
+	return false
+}
+
+// SetMetadata gets a reference to the given map[string]MetadataValue and assigns it to the Metadata field.
+func (o *LiveActivityStreamDeleteRequest) SetMetadata(v map[string]MetadataValue) {
+	o.Metadata = v
+}
+
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteRequest) GetTags() []string {
+	if o == nil || IsNil(o.Tags) {
+		var ret []string
+		return ret
+	}
+	return o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteRequest) GetTagsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Tags) {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteRequest) HasTags() bool {
+	if o != nil && !IsNil(o.Tags) {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given []string and assigns it to the Tags field.
+func (o *LiveActivityStreamDeleteRequest) SetTags(v []string) {
+	o.Tags = v
 }
 
 // GetContentState returns the ContentState field value if set, zero value otherwise.
@@ -181,6 +249,12 @@ func (o LiveActivityStreamDeleteRequest) MarshalJSON() ([]byte, error) {
 
 func (o LiveActivityStreamDeleteRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Metadata) {
+		toSerialize["metadata"] = o.Metadata
+	}
+	if !IsNil(o.Tags) {
+		toSerialize["tags"] = o.Tags
+	}
 	if !IsNil(o.ContentState) {
 		toSerialize["content_state"] = o.ContentState
 	}

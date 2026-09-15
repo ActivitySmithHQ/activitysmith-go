@@ -6,8 +6,10 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Success** | **bool** |  | 
 **Badge** | **int32** |  | 
-**DevicesNotified** | **int32** |  | 
-**UsersNotified** | **int32** |  | 
+**DevicesUpdated** | **int32** | Number of devices whose App Icon Badge Count was updated. | 
+**UsersUpdated** | **int32** | Number of account users with at least one updated device. | 
+**DevicesNotified** | Pointer to **int32** | Deprecated compatibility alias for devices_updated. | [optional] 
+**UsersNotified** | Pointer to **int32** | Deprecated compatibility alias for users_updated. | [optional] 
 **EffectiveChannelSlugs** | **[]string** |  | 
 **Timestamp** | **time.Time** |  | 
 
@@ -15,7 +17,7 @@ Name | Type | Description | Notes
 
 ### NewAppIconBadgeCountUpdateResponse
 
-`func NewAppIconBadgeCountUpdateResponse(success bool, badge int32, devicesNotified int32, usersNotified int32, effectiveChannelSlugs []string, timestamp time.Time, ) *AppIconBadgeCountUpdateResponse`
+`func NewAppIconBadgeCountUpdateResponse(success bool, badge int32, devicesUpdated int32, usersUpdated int32, effectiveChannelSlugs []string, timestamp time.Time, ) *AppIconBadgeCountUpdateResponse`
 
 NewAppIconBadgeCountUpdateResponse instantiates a new AppIconBadgeCountUpdateResponse object
 This constructor will assign default values to properties that have it defined,
@@ -70,6 +72,46 @@ and a boolean to check if the value has been set.
 SetBadge sets Badge field to given value.
 
 
+### GetDevicesUpdated
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesUpdated() int32`
+
+GetDevicesUpdated returns the DevicesUpdated field if non-nil, zero value otherwise.
+
+### GetDevicesUpdatedOk
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesUpdatedOk() (*int32, bool)`
+
+GetDevicesUpdatedOk returns a tuple with the DevicesUpdated field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDevicesUpdated
+
+`func (o *AppIconBadgeCountUpdateResponse) SetDevicesUpdated(v int32)`
+
+SetDevicesUpdated sets DevicesUpdated field to given value.
+
+
+### GetUsersUpdated
+
+`func (o *AppIconBadgeCountUpdateResponse) GetUsersUpdated() int32`
+
+GetUsersUpdated returns the UsersUpdated field if non-nil, zero value otherwise.
+
+### GetUsersUpdatedOk
+
+`func (o *AppIconBadgeCountUpdateResponse) GetUsersUpdatedOk() (*int32, bool)`
+
+GetUsersUpdatedOk returns a tuple with the UsersUpdated field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUsersUpdated
+
+`func (o *AppIconBadgeCountUpdateResponse) SetUsersUpdated(v int32)`
+
+SetUsersUpdated sets UsersUpdated field to given value.
+
+
 ### GetDevicesNotified
 
 `func (o *AppIconBadgeCountUpdateResponse) GetDevicesNotified() int32`
@@ -89,6 +131,11 @@ and a boolean to check if the value has been set.
 
 SetDevicesNotified sets DevicesNotified field to given value.
 
+### HasDevicesNotified
+
+`func (o *AppIconBadgeCountUpdateResponse) HasDevicesNotified() bool`
+
+HasDevicesNotified returns a boolean if a field has been set.
 
 ### GetUsersNotified
 
@@ -109,6 +156,11 @@ and a boolean to check if the value has been set.
 
 SetUsersNotified sets UsersNotified field to given value.
 
+### HasUsersNotified
+
+`func (o *AppIconBadgeCountUpdateResponse) HasUsersNotified() bool`
+
+HasUsersNotified returns a boolean if a field has been set.
 
 ### GetEffectiveChannelSlugs
 

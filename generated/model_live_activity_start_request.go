@@ -21,6 +21,8 @@ var _ MappedNullable = &LiveActivityStartRequest{}
 
 // LiveActivityStartRequest Start a new Live Activity. The response includes activity_id for later update and end calls.
 type LiveActivityStartRequest struct {
+	// Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
+	Metadata map[string]MetadataValue `json:"metadata,omitempty"`
 	ContentState ContentStateStart `json:"content_state"`
 	Action *LiveActivityAction `json:"action,omitempty"`
 	// Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
@@ -49,6 +51,38 @@ func NewLiveActivityStartRequest(contentState ContentStateStart) *LiveActivitySt
 func NewLiveActivityStartRequestWithDefaults() *LiveActivityStartRequest {
 	this := LiveActivityStartRequest{}
 	return &this
+}
+
+// GetMetadata returns the Metadata field value if set, zero value otherwise.
+func (o *LiveActivityStartRequest) GetMetadata() map[string]MetadataValue {
+	if o == nil || IsNil(o.Metadata) {
+		var ret map[string]MetadataValue
+		return ret
+	}
+	return o.Metadata
+}
+
+// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartRequest) GetMetadataOk() (map[string]MetadataValue, bool) {
+	if o == nil || IsNil(o.Metadata) {
+		return map[string]MetadataValue{}, false
+	}
+	return o.Metadata, true
+}
+
+// HasMetadata returns a boolean if a field has been set.
+func (o *LiveActivityStartRequest) HasMetadata() bool {
+	if o != nil && !IsNil(o.Metadata) {
+		return true
+	}
+
+	return false
+}
+
+// SetMetadata gets a reference to the given map[string]MetadataValue and assigns it to the Metadata field.
+func (o *LiveActivityStartRequest) SetMetadata(v map[string]MetadataValue) {
+	o.Metadata = v
 }
 
 // GetContentState returns the ContentState field value
@@ -245,6 +279,9 @@ func (o LiveActivityStartRequest) MarshalJSON() ([]byte, error) {
 
 func (o LiveActivityStartRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Metadata) {
+		toSerialize["metadata"] = o.Metadata
+	}
 	toSerialize["content_state"] = o.ContentState
 	if !IsNil(o.Action) {
 		toSerialize["action"] = o.Action
