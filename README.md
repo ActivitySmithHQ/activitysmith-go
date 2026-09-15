@@ -1,54 +1,31 @@
 # ActivitySmith Go SDK
 
-The ActivitySmith Go SDK provides convenient access to the ActivitySmith API from Go applications.
-
-## Documentation
-
-See [API reference](https://activitysmith.com/docs/api-reference/introduction).
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Setup](#setup)
-- [Push Notifications](#push-notifications)
-  - [Send a Push Notification](#send-a-push-notification)
-  - [Rich Push Notifications with Media](#rich-push-notifications-with-media)
-  - [Actionable Push Notifications](#actionable-push-notifications)
-- [Live Activities](#live-activities)
-  - [Start & Update Live Activity](#start--update-live-activity)
-  - [End Live Activity](#end-live-activity)
-  - [Live Activity Action](#live-activity-action)
-  - [Icons and Badges](#icons-and-badges)
-  - [Live Activity Colors](#live-activity-colors)
-- [Widgets](#widgets)
-- [App Icon Badge Count](#app-icon-badge-count)
-- [Channels](#channels)
-- [Tags](#tags)
+[Documentation](https://activitysmith.com/docs/sdks/go)
 
 ## Installation
 
-```sh
+Install the ActivitySmith Go SDK with `go get`:
+
+```bash
 go get github.com/ActivitySmithHQ/activitysmith-go
 ```
 
-## Setup
+## Quickstart
+
+1. [Create an API key](https://activitysmith.com/app/keys)
+2. Pass the API key into `activitysmithsdk.New`.
 
 ```go
 package main
 
 import (
-	"log"
+	"os"
 
 	activitysmithsdk "github.com/ActivitySmithHQ/activitysmith-go"
 )
 
 func main() {
-	activitysmith, err := activitysmithsdk.New("YOUR_API_KEY")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_ = activitysmith
+	activitysmith, _ := activitysmithsdk.New(os.Getenv("ACTIVITYSMITH_API_KEY"))
 }
 ```
 
@@ -56,11 +33,9 @@ func main() {
 
 ### Send a Push Notification
 
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png" alt="Push notification example" width="680" />
-</p>
+Send an immediate notification for a completed task or event.
 
-Use `activitysmith.Notifications.Send` with either `activitysmithsdk.PushNotificationInput` for common notification fields or `generated.PushNotificationRequest` if you want full control over the generated model.
+![Push Notification example for a new subscription event](https://cdn.activitysmith.com/features/new-subscription-push-notification.png)
 
 ```go
 input := activitysmithsdk.PushNotificationInput{
@@ -68,37 +43,26 @@ input := activitysmithsdk.PushNotificationInput{
 	Message: "Customer upgraded to Pro plan",
 }
 
-_, err := activitysmith.Notifications.Send(input)
-if err != nil {
-	log.Fatal(err)
-}
+activitysmith.Notifications.Send(input)
 ```
 
 ### Rich Push Notifications with Media
 
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-image.png" alt="Rich push notification with image" width="680" />
-</p>
+![Rich Push Notification with image](https://cdn.activitysmith.com/features/rich-push-notification-with-image.png)
 
 ```go
 input := activitysmithsdk.PushNotificationInput{
-	Title:       "Homepage ready",
-	Message:     "Your agent finished the redesign.",
-	Media:       "https://cdn.example.com/output/homepage-v2.png",
-	Redirection: "https://github.com/acme/web/pull/482",
+	Title:   "Homepage ready",
+	Message: "Your agent finished the redesign.",
+	Media:   "https://cdn.example.com/output/homepage-v2.png",
 }
 
-_, err := activitysmith.Notifications.Send(input)
-if err != nil {
-	log.Fatal(err)
-}
+activitysmith.Notifications.Send(input)
 ```
 
-Send images, videos, or audio with your push notifications, press and hold to preview media directly from the notification, then tap through to open the linked content.
+Attach images, videos, or audio to your Push Notifications. Press and hold the notification to preview the media.
 
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png" alt="Rich push notification with audio" width="680" />
-</p>
+![Rich Push Notification with audio](https://cdn.activitysmith.com/features/rich-push-notification-with-audio.png)
 
 What will work:
 
@@ -107,23 +71,35 @@ What will work:
 - direct video file URL: `.mp4`, `.mov`, etc.
 - URL that responds with a proper media `Content-Type`, even if the path has no extension
 
-### Actionable Push Notifications
+`Media` cannot be combined with `Actions`.
 
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/actionable-push-notifications-2.png" alt="Actionable push notification example" width="680" />
-</p>
+### Push Notifications with Redirection
 
-Push notification `Redirection` and `Actions` are optional. Use them to open HTTPS URLs, run a specific iPhone Shortcut with `shortcuts://run-shortcut?name=...`, or trigger backend webhook workflows.
-Webhooks are executed by the ActivitySmith backend.
+Open a web page, an iPhone Shortcut, or an installed app when someone taps the notification. Set `Redirection` to an HTTP, HTTPS, or Shortcuts URL, or an app deep link such as `spotify:track:123`.
 
 ```go
-_, err := activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+input := activitysmithsdk.PushNotificationInput{
+	Title:       "Homepage ready",
+	Message:     "Your agent finished the redesign.",
+	Redirection: "https://github.com/acme/web/pull/482",
+}
+
+activitysmith.Notifications.Send(input)
+```
+
+### Actionable Push Notifications
+
+![Actionable Push Notification with redirection and actions](https://cdn.activitysmith.com/features/actionable-push-notifications-2.png)
+
+For expanded notification actions, `open_url` supports HTTP, HTTPS, Shortcuts, and installed app deep links. Webhooks are executed by the ActivitySmith backend and must use HTTPS. Custom app links require iOS 1.13.4 build 2 or later and an installed app that handles the URL.
+
+```go
+input := activitysmithsdk.PushNotificationInput{
 	Title:       "New subscription 💸",
 	Message:     "Customer upgraded to Pro plan",
-	Redirection: "https://crm.example.com/customers/cus_9f3a1d",
 	Actions: []activitysmithsdk.PushNotificationAction{
 		activitysmithsdk.PushAction(
-			"Open CRM Profile",
+			"Open CRM",
 			"open_url",
 			"https://crm.example.com/customers/cus_9f3a1d",
 		),
@@ -143,22 +119,26 @@ _, err := activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInpu
 			}),
 		),
 	},
-})
-if err != nil {
-	log.Fatal(err)
 }
+
+activitysmith.Notifications.Send(input)
 ```
 
 ## Live Activities
 
-There are six types of Live Activities:
+Choose the Live Activity type that matches what you want to show:
 
-- `stats`: best for showing business numbers side by side, such as revenue, sales, new users, conversion, refunds, or any other value you want visible at a glance
-- `metrics`: best for live percentage values that change often, like server CPU, memory usage, disk usage, or error rate
-- `segmented_progress`: best for anything that moves through clear stages, like deployments, onboarding flows, backups, ETL pipelines, migrations, and AI agent runs
-- `progress`: best for tracking real-time progress with percentage, like tasks, backups, migrations, syncs, or uploads
-- `alert`: best for status updates, such as feature adoption, reactivation, onboarding blockers, incidents, escalations, and other operational states
-- `timer`: best for countdowns and elapsed runtime, like benchmark runs, uploads, backups, transcodes, and long-running jobs
+- ![Stats Live Activity with six labeled sales metrics](https://cdn.activitysmith.com/features/stats-live-activity.png) **Stats**: Show up to 8 labeled values on your Lock Screen, from revenue and orders to uptime and conversion.
+
+- ![Metrics Live Activity with CPU and memory values](https://cdn.activitysmith.com/features/metrics-live-activity-start.png) **Metrics**: Track two related values with segmented bars, such as CPU and memory.
+
+- ![Segmented Progress Live Activity showing a workflow step](https://cdn.activitysmith.com/features/update-live-activity.png) **Segmented Progress**: Show progress through a known set of steps, like build, test, deploy, and verify.
+
+- ![Progress Live Activity showing percentage completion](https://cdn.activitysmith.com/features/progress-live-activity.png) **Progress**: Show percentage progress for jobs that move continuously toward completion.
+
+- ![Alert Live Activity showing a customer reactivation update](https://cdn.activitysmith.com/features/alert-live-activity.png) **Alert**: Show status updates with a clear message, badge, and icon. When you add an action button, `color` controls the button tint.
+
+- ![Timer Live Activity showing a benchmark run countdown](https://cdn.activitysmith.com/features/timer-live-activity.png) **Timer**: Count down from a duration, or count up from 00:00 while a job runs.
 
 ### Start & Update Live Activity
 
@@ -166,13 +146,7 @@ Use a stable `streamKey` to identify the metric, job, deployment, or system you 
 
 #### Stats
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/stats-live-activity.png"
-    alt="Stats Live Activity stream example"
-    width="680"
-  />
-</p>
+![Stats Live Activity stream example](https://cdn.activitysmith.com/features/stats-live-activity.png)
 
 ```go
 activitysmith.LiveActivities.Stream(
@@ -195,13 +169,7 @@ activitysmith.LiveActivities.Stream(
 
 #### Metrics
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/metrics-live-activity-start.png"
-    alt="Metrics Live Activity stream example"
-    width="680"
-  />
-</p>
+![Metrics Live Activity stream example](https://cdn.activitysmith.com/features/metrics-live-activity-start.png)
 
 ```go
 activitysmith.LiveActivities.Stream(
@@ -220,13 +188,7 @@ activitysmith.LiveActivities.Stream(
 
 #### Segmented Progress
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/update-live-activity.png"
-    alt="Segmented Progress Live Activity stream example"
-    width="680"
-  />
-</p>
+![Segmented Progress Live Activity stream example](https://cdn.activitysmith.com/features/update-live-activity.png)
 
 ```go
 activitysmith.LiveActivities.Stream(
@@ -243,13 +205,7 @@ activitysmith.LiveActivities.Stream(
 
 #### Progress
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/progress-live-activity.png"
-    alt="Progress Live Activity stream example"
-    width="680"
-  />
-</p>
+![Progress Live Activity stream example](https://cdn.activitysmith.com/features/progress-live-activity.png)
 
 ```go
 activitysmith.LiveActivities.Stream(
@@ -265,13 +221,7 @@ activitysmith.LiveActivities.Stream(
 
 #### Alert
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/alert-live-activity.png"
-    alt="Alert Live Activity stream example"
-    width="680"
-  />
-</p>
+![Alert Live Activity stream example](https://cdn.activitysmith.com/features/alert-live-activity.png)
 
 ```go
 activitysmith.LiveActivities.Stream(
@@ -288,13 +238,7 @@ activitysmith.LiveActivities.Stream(
 
 #### Timer
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/timer-live-activity.png"
-    alt="Timer Live Activity showing a benchmark run countdown"
-    width="680"
-  />
-</p>
+![Timer Live Activity stream example](https://cdn.activitysmith.com/features/timer-live-activity.png)
 
 ```go
 activitysmith.LiveActivities.Stream(
@@ -309,45 +253,98 @@ activitysmith.LiveActivities.Stream(
 )
 ```
 
-For a countdown, send `duration_seconds`. You can update `title`, `subtitle`, `color`, or any other visible field as the work changes. Leave `duration_seconds` out unless you want to change the timer.
+For a countdown, send `DurationSeconds`. You can update `Title`, `Subtitle`, `Color`, or any other visible field as the work changes. Leave `DurationSeconds` out unless you want to change the timer.
 
-To start at 00:00 and count up, set `counts_down: false` and leave out `duration_seconds`.
+To start at 00:00 and count up, set `CountsDown` to `false` and leave out `DurationSeconds`.
 
 ### End Live Activity
 
-Call `EndStream(...)` with the same `streamKey` to dismiss the Live Activity. You can include final values before it is removed. By default, iOS removes the Live Activity after two minutes. Set `AutoDismissMinutes` to choose a different dismissal time, including `0` for immediate dismissal.
+Call `EndStream(...)` with the same `streamKey` to dismiss the Live Activity. You can include final values before it is removed. Set `AutoDismissSeconds` or `AutoDismissMinutes` on `ContentState` to delay dismissal. Seconds take precedence when both are supplied. Use `WithAutoDismissSeconds(0)` or `WithAutoDismissMinutes(0)` for immediate dismissal.
 
 ```go
 activitysmith.LiveActivities.EndStream(
+    "prod-web-1",
+    activitysmithsdk.LiveActivityStreamEndInput{
+        ContentState: activitysmithsdk.LiveActivityContentStateInput{
+            Title: "Server Health",
+            Subtitle: "prod-web-1",
+            Type: "metrics",
+            Metrics: []activitysmithsdk.ActivityMetric{
+                activitysmithsdk.Metric("CPU", 7, activitysmithsdk.MetricUnit("%")),
+                activitysmithsdk.Metric("MEM", 38, activitysmithsdk.MetricUnit("%")),
+            },
+            AutoDismissSeconds: 30,
+        },
+    },
+)
+```
+
+### Icons and Badges
+
+Add more context to Live Activities with icons and badges.
+
+#### Icon
+
+Supported Live Activity types: `stats`, `metrics`, `progress`, `segmented_progress`, `alert`, and `timer`.
+
+![Metrics Live Activity with an SF Symbol icon on the iPhone Lock Screen](https://cdn.activitysmith.com/features/metrics-live-activity-with-icon.png)
+
+```go
+activitysmith.LiveActivities.Stream(
 	"prod-web-1",
-	activitysmithsdk.LiveActivityStreamEndInput{
+	activitysmithsdk.LiveActivityStreamInput{
 		Title:    "Server Health",
 		Subtitle: "prod-web-1",
 		Type:     "metrics",
+		Icon:     activitysmithsdk.AlertIcon("server.rack", "blue"),
 		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("CPU", 7, activitysmithsdk.MetricUnit("%")),
-			activitysmithsdk.Metric("MEM", 38, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("CPU", 18, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 42, activitysmithsdk.MetricUnit("%")),
 		},
-		AutoDismissMinutes: 2,
 	},
 )
 ```
 
+The `Icon` symbol value is an Apple SF Symbol name. Browse the catalog with one of these tools:
+
+- [ActivitySmith app](https://apps.apple.com/us/app/activitysmith/id6752254835) - Open Settings -> SF Symbols to browse 45 hand-picked icons ready to use
+- [SF Symbols](https://developer.apple.com/sf-symbols/) - Apple's official macOS app
+- [Interactful](https://apps.apple.com/app/interactful/id1528095640) - free third-party iOS app listing all SF Symbols under Foundations -> Iconography
+
+#### Badge
+
+Badges are supported by `alert`, `progress`, and `segmented_progress` Live Activities.
+
+![Progress Live Activity with a badge on the iPhone Lock Screen](https://cdn.activitysmith.com/features/progress-live-activity-with-badge.png)
+
+```go
+activitysmith.LiveActivities.Stream(
+	"nightly-database-backup",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:      "Nightly Database Backup",
+		Subtitle:   "verify restore",
+		Type:       "progress",
+		Badge:      activitysmithsdk.AlertBadge("S3", "cyan"),
+		Percentage: 62,
+	},
+)
+```
+
+### Live Activity Colors
+
+Choose from these colors for the Live Activity accent, including progress bars and action buttons, or apply them to an individual icon or badge:
+
+`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`, `gray`
+
 ### Live Activity Action
+
+![Metrics Live Activity with action](https://cdn.activitysmith.com/features/metrics-live-activity-action.png)
 
 Live Activities can include an action button.
 
-- `open_url`: open an HTTPS URL.
-- `open_url` with a `shortcuts://` URL: run an Apple Shortcut, for example to open an app.
+- `open_url`: open an HTTP or HTTPS URL.
+- `open_url` with a `shortcuts://run-shortcut?name=...` URL: run a specific iPhone Shortcut, for example to open an app.
 - `webhook`: trigger a backend GET/POST workflow.
-
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/metrics-live-activity-action.png"
-    alt="Live Activity with action button"
-    width="680"
-  />
-</p>
 
 #### Open URL action
 
@@ -365,7 +362,7 @@ activitysmith.LiveActivities.Stream(
 		Action: &activitysmithsdk.LiveActivityActionInput{
 			Title: "Dashboard",
 			Type:  "open_url",
-			URL:   "https://ops.example.com/servers/prod-web-1",
+			URL:   "https://status.example.com/servers/prod-web-1",
 		},
 	},
 )
@@ -375,13 +372,15 @@ activitysmith.LiveActivities.Stream(
 
 ```go
 activitysmith.LiveActivities.Stream(
-	"deploy-payments-api",
+	"prod-web-1",
 	activitysmithsdk.LiveActivityStreamInput{
-		Title:         "Deploying payments-api",
-		Subtitle:      "Running database migrations",
-		Type:          "segmented_progress",
-		NumberOfSteps: 5,
-		CurrentStep:   3,
+		Title:    "Server Health",
+		Subtitle: "prod-web-1",
+		Type:     "metrics",
+		Metrics: []activitysmithsdk.ActivityMetric{
+			activitysmithsdk.Metric("CPU", 76, activitysmithsdk.MetricUnit("%")),
+			activitysmithsdk.Metric("MEM", 52, activitysmithsdk.MetricUnit("%")),
+		},
 		Action: &activitysmithsdk.LiveActivityActionInput{
 			Title: "Chat with Jarvis",
 			Type:  "open_url",
@@ -418,15 +417,9 @@ activitysmith.LiveActivities.Stream(
 
 #### Secondary action
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/live-activity-secondary-action.png"
-    alt="Alert Live Activity with primary and secondary action buttons"
-    width="680"
-  />
-</p>
+![Alert Live Activity with primary and secondary action buttons](https://cdn.activitysmith.com/features/live-activity-secondary-action.png)
 
-Use `SecondaryAction` when you want a second button beside the primary `Action`.
+Use `secondary_action` when you want a second button beside the primary `action`.
 
 The secondary action button is supported for `alert`, `progress`, and `segmented_progress` Live Activities. Both buttons use the same `open_url`, `webhook`, and Apple Shortcut payload shapes.
 
@@ -464,128 +457,100 @@ activitysmith.LiveActivities.Stream(
 )
 ```
 
-### Icons and Badges
+## Lock Screen Widgets
 
-Add more context to Live Activities with icons and badges.
+![Lock screen widgets](https://cdn.activitysmith.com/features/lock-screen-widgets.png)
 
-#### Icon
+ActivitySmith lets you display any value on your Lock Screen with widgets - SaaS metrics, revenue, signups, uptime, habits, or anything else you want to track. Create a metric in the [web app](https://activitysmith.com/app/widgets), then update the metric value using our API, add a widget to your lock screen and it will fetch the latest update automatically.
 
-Supported Live Activity types: `stats`, `metrics`, `progress`, `segmented_progress`, `alert`, and `timer`.
+![Create widget metric](https://cdn.activitysmith.com/features/create-widget-metric.png)
 
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/metrics-live-activity-with-icon.png"
-    alt="Metrics Live Activity with an SF Symbol icon on the iPhone Lock Screen"
-    width="680"
-  />
-</p>
+Use the metric key to update its value.
 
 ```go
-activitysmith.LiveActivities.Stream(
-	"prod-web-1",
-	activitysmithsdk.LiveActivityStreamInput{
-		Title:    "Server Health",
-		Subtitle: "prod-web-1",
-		Type:     "metrics",
-		Icon:     activitysmithsdk.AlertIcon("server.rack", "blue"),
-		Metrics: []activitysmithsdk.ActivityMetric{
-			activitysmithsdk.Metric("CPU", 18, activitysmithsdk.MetricUnit("%")),
-			activitysmithsdk.Metric("MEM", 42, activitysmithsdk.MetricUnit("%")),
-		},
-	},
-)
-```
-
-The `Icon` symbol value is an Apple SF Symbol name. Browse the catalog with one of these tools:
-
-- [ActivitySmith app](https://apps.apple.com/us/app/activitysmith/id6752254835) - Open Settings -> SF Symbols to browse 45 hand-picked icons ready to use
-- [SF Symbols](https://developer.apple.com/sf-symbols/) - Apple's official macOS app
-- [Interactful](https://apps.apple.com/app/interactful/id1528095640) - free third-party iOS app listing all SF Symbols under Foundations -> Iconography
-
-#### Badge
-
-Badges are supported by `alert`, `progress`, and `segmented_progress` Live Activities.
-
-<p align="center">
-  <img
-    src="https://cdn.activitysmith.com/features/progress-live-activity-with-badge.png"
-    alt="Progress Live Activity with a badge on the iPhone Lock Screen"
-    width="680"
-  />
-</p>
-
-```go
-activitysmith.LiveActivities.Stream(
-	"nightly-database-backup",
-	activitysmithsdk.LiveActivityStreamInput{
-		Title:      "Nightly Database Backup",
-		Subtitle:   "verify restore",
-		Type:       "progress",
-		Badge:      activitysmithsdk.AlertBadge("S3", "cyan"),
-		Percentage: 62,
-	},
-)
-```
-
-### Live Activity Colors
-
-Choose from these colors for the Live Activity accent, including progress bars and action buttons, or apply them to an individual icon or badge:
-
-`lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`, `gray`
-
-## Widgets
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/lock-screen-widgets.png" alt="Lock screen widgets" width="680" />
-</p>
-
-ActivitySmith lets you display any value on your Lock Screen with widgets - SaaS metrics, revenue, signups, uptime, habits, or anything else you want to track. Create a metric in the <a href="https://activitysmith.com/app/widgets" target="_blank" rel="noopener noreferrer">web app</a>, then update the metric value using our API, add a widget to your lock screen and it will fetch the latest update automatically.
-
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/create-widget-metric.png" alt="Create widget metric" width="680" />
-</p>
-
-```go
-_, err := activitysmith.Metrics.Update("deploy.success_rate", 99.9)
-if err != nil {
-	log.Fatal(err)
-}
+activitysmith.Metrics.Update("deploy.success_rate", 99.9)
 ```
 
 String metric values work too.
 
 ```go
-_, err = activitysmith.Metrics.Update("prod.status", "healthy")
-if err != nil {
-	log.Fatal(err)
-}
+activitysmith.Metrics.Update("prod.status", "healthy")
 ```
 
 ## App Icon Badge Count
 
-<p align="center">
-  <img src="https://cdn.activitysmith.com/features/badge-count.png" alt="ActivitySmith app icon with an App Icon Badge Count" width="680" />
-</p>
+![ActivitySmith app icon with an App Icon Badge Count](https://cdn.activitysmith.com/features/badge-count.png)
 
 Show the number you care about on your ActivitySmith app icon. Track MRR, a customer count, a stock price, or any other value you want to keep in view.
 
-Set or update the badge value.
+### Set or update the badge value
 
 ```go
 activitysmith.BadgeCount(8333)
 ```
 
-To clear the badge, set its value to 0.
+### Clear the badge
+
+Pass `0` to clear the badge.
 
 ```go
 activitysmith.BadgeCount(0)
 ```
 
+## Tags
+
+Use Tags to organize and filter Push Notification and Live Activity history. Tags are created automatically when you first use them. Sending Tags requires SDK version 1.10.0 or later.
+
+```go
+activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+    Title: "New subscription 💸",
+    Message: "Customer upgraded to Pro plan",
+    Tags: []string{"user:382", "billing"},
+})
+```
+
+On Live Activity stream updates and legacy `Update` or `End` calls, leave `Tags` nil to keep existing Tags, supply a slice to replace them, or pass `Tags: []string{}` to clear them.
+
+```go
+activitysmith.LiveActivities.Update(activitysmithsdk.LiveActivityUpdateInput{
+    ActivityID: "YOUR_ACTIVITY_ID",
+    ContentState: activitysmithsdk.LiveActivityContentStateInput{
+        Title: "Customer Import",
+        Percentage: 60,
+    },
+    Tags: []string{},
+})
+```
+
+`EndStream` also accepts final Tags and Metadata. Omit them to preserve existing values, or supply empty collections to clear them.
+
+## Metadata
+
+Metadata adds information to Push Notification and Live Activity details in ActivitySmith. It does not appear in the notification or Live Activity on your device.
+
+```go
+activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+    Title: "New subscription 💸",
+    Metadata: map[string]any{
+        "customer_id": "382", "plan": "Pro", "amount": 29, "trial": false,
+    },
+})
+
+activitysmith.LiveActivities.Stream("customer-import", activitysmithsdk.LiveActivityStreamInput{
+    ContentState: activitysmithsdk.LiveActivityContentStateInput{
+        Title: "Customer Import", Type: "progress", Percentage: 60,
+    },
+    Metadata: map[string]any{"job_id": "import-382", "records": 1200},
+})
+```
+
+Supported on Push Notifications, Live Activity streams, and legacy `Start`, `Update`, and `End` calls. On updates or end calls, leave `Metadata` nil to keep it, supply an object to replace it, or send `Metadata: map[string]any{}` to clear it.
+
+Values can be strings, numbers, or booleans. Metadata supports up to 50 entries and 16 KB of JSON, with keys up to 100 characters and strings up to 4,000 characters. Nested objects, arrays, and null values are not supported.
+
 ## Channels
 
-Use `channels` to target specific team members or devices
-
-### Push Notifications
+Use `Channels` to target specific team members or devices when sending Push Notifications, Live Activities, or App Icon Badge Count updates. Omit it for account-wide delivery.
 
 ```go
 activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
@@ -593,46 +558,27 @@ activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
 	Message:  "Customer upgraded to Pro plan",
 	Channels: []string{"sales", "customer-success"},
 })
-```
 
-### Live Activities
+activitysmith.LiveActivities.Stream(
+	"nightly-backup",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:         "Nightly database backup",
+		NumberOfSteps: 3,
+		CurrentStep:   1,
+		Type:          "segmented_progress",
+		Channels:      []string{"ios-builds"},
+	},
+)
 
-```go
-activitysmith.LiveActivities.Start(activitysmithsdk.LiveActivityStartInput{
-	Title:      "Nightly Database Backup",
-	Subtitle:   "verify restore",
-	Type:       "progress",
-	Percentage: 62,
-	Channels:   []string{"sales", "customer-success"},
-})
-```
-
-### App Icon Badge Count
-
-```go
 activitysmith.BadgeCount(3, "sales", "customer-success")
-```
-
-## Tags
-
-Use `tags` to organize and filter your Push Notification and Live Activity history. Tags are created automatically when you first use them.
-
-```go
-activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
-	Title:   "New subscription 💸",
-	Message: "Customer upgraded to Pro plan",
-	Tags:    []string{"user:382", "billing"},
-})
 ```
 
 ## Error Handling
 
-SDK methods return `(response, error)`. Always check `error` on each call.
+SDK calls return `response, err`, so check `err` after every call.
 
-## Requirements
+## Additional Resources
 
-- Go 1.22+
+### [Source Code](https://github.com/ActivitySmithHQ/activitysmith-go)
 
-## License
-
-MIT
+View the Go SDK source on GitHub

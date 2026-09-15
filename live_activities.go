@@ -105,12 +105,18 @@ func (s *LiveActivitiesService) EndLiveActivityStream(streamKey string, request 
 func normalizeLiveActivityStartRequest(input any) (generated.LiveActivityStartRequest, error) {
 	switch v := input.(type) {
 	case LiveActivityStartInput:
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case *LiveActivityStartInput:
 		if v == nil {
 			return generated.LiveActivityStartRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
 		}
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case generated.LiveActivityStartRequest:
 		return v, nil
 	case *generated.LiveActivityStartRequest:
@@ -129,12 +135,18 @@ func normalizeLiveActivityStartRequest(input any) (generated.LiveActivityStartRe
 func normalizeLiveActivityUpdateRequest(input any) (generated.LiveActivityUpdateRequest, error) {
 	switch v := input.(type) {
 	case LiveActivityUpdateInput:
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case *LiveActivityUpdateInput:
 		if v == nil {
 			return generated.LiveActivityUpdateRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
 		}
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case generated.LiveActivityUpdateRequest:
 		return v, nil
 	case *generated.LiveActivityUpdateRequest:
@@ -153,12 +165,18 @@ func normalizeLiveActivityUpdateRequest(input any) (generated.LiveActivityUpdate
 func normalizeLiveActivityEndRequest(input any) (generated.LiveActivityEndRequest, error) {
 	switch v := input.(type) {
 	case LiveActivityEndInput:
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case *LiveActivityEndInput:
 		if v == nil {
 			return generated.LiveActivityEndRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
 		}
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case generated.LiveActivityEndRequest:
 		return v, nil
 	case *generated.LiveActivityEndRequest:
@@ -177,12 +195,18 @@ func normalizeLiveActivityEndRequest(input any) (generated.LiveActivityEndReques
 func normalizeLiveActivityStreamRequest(input any) (generated.LiveActivityStreamRequest, error) {
 	switch v := input.(type) {
 	case LiveActivityStreamInput:
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case *LiveActivityStreamInput:
 		if v == nil {
 			return generated.LiveActivityStreamRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
 		}
-		return v.toGenerated(), nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, err
 	case generated.LiveActivityStreamRequest:
 		return v, nil
 	case *generated.LiveActivityStreamRequest:
@@ -203,12 +227,18 @@ func normalizeLiveActivityStreamDeleteRequest(input any) (generated.LiveActivity
 	case nil:
 		return generated.LiveActivityStreamDeleteRequest{}, false, nil
 	case LiveActivityStreamEndInput:
-		return v.toGenerated(), true, nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, true, err
 	case *LiveActivityStreamEndInput:
 		if v == nil {
 			return generated.LiveActivityStreamDeleteRequest{}, false, nil
 		}
-		return v.toGenerated(), true, nil
+		request := v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		request.Metadata = metadata
+		return request, true, err
 	case generated.LiveActivityStreamDeleteRequest:
 		return v, true, nil
 	case *generated.LiveActivityStreamDeleteRequest:
