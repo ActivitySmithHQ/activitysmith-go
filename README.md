@@ -540,15 +540,23 @@ activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
     Title: "New subscription 💸",
     Message: "Customer upgraded to Pro plan",
     Metadata: map[string]any{
-        "customer_id": "382", "plan": "Pro", "amount": 29, "trial": false,
+        "customer_id": "382",
+        "plan": "Pro",
+        "amount": 29,
+        "trial": false,
     },
 })
 
 activitysmith.LiveActivities.Stream("customer-import", activitysmithsdk.LiveActivityStreamInput{
     ContentState: activitysmithsdk.LiveActivityContentStateInput{
-        Title: "Customer Import", Type: "progress", Percentage: 60,
+        Title: "Customer Import",
+        Type: "progress",
+        Percentage: 60,
     },
-    Metadata: map[string]any{"job_id": "import-382", "records": 1200},
+    Metadata: map[string]any{
+        "job_id": "import-382",
+        "records": 1200,
+    },
 })
 ```
 
