@@ -598,9 +598,3 @@ activitysmith.BadgeCount(3, "sales", "customer-success")
 ## Error Handling
 
 SDK calls return `response, err`, so check `err` after every call.
-
-## Additional Resources
-
-### [Source Code](https://github.com/ActivitySmithHQ/activitysmith-go)
-
-View the Go SDK source on GitHub
