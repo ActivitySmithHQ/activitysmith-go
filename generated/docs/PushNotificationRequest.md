@@ -4,11 +4,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Metadata** | Pointer to [**map[string]MetadataValue**](MetadataValue.md) | Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it. | [optional] 
 **Title** | **string** |  | 
 **Message** | Pointer to **string** |  | [optional] 
 **Subtitle** | Pointer to **string** |  | [optional] 
 **Media** | Pointer to **string** | Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If &#x60;redirection&#x60; is omitted, tapping the notification opens this URL. Cannot be combined with &#x60;actions&#x60;. | [optional] 
-**Redirection** | Pointer to **string** | Optional HTTP URL, HTTPS URL, or shortcuts://run-shortcut?name&#x3D;... URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name&#x3D;... to run a specific iPhone Shortcut that already exists on the user&#39;s device. Overrides the default tap target from &#x60;media&#x60; when both are provided. | [optional] 
+**Redirection** | Pointer to **string** | Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media. | [optional] 
 **Actions** | Pointer to [**[]PushNotificationAction**](PushNotificationAction.md) | Optional interactive actions shown when users expand the notification. Cannot be combined with &#x60;media&#x60;. | [optional] 
 **Payload** | Pointer to **map[string]interface{}** |  | [optional] 
 **Badge** | Pointer to **int32** |  | [optional] 
@@ -34,6 +35,31 @@ will change when the set of required properties is changed
 NewPushNotificationRequestWithDefaults instantiates a new PushNotificationRequest object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetMetadata
+
+`func (o *PushNotificationRequest) GetMetadata() map[string]MetadataValue`
+
+GetMetadata returns the Metadata field if non-nil, zero value otherwise.
+
+### GetMetadataOk
+
+`func (o *PushNotificationRequest) GetMetadataOk() (*map[string]MetadataValue, bool)`
+
+GetMetadataOk returns a tuple with the Metadata field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMetadata
+
+`func (o *PushNotificationRequest) SetMetadata(v map[string]MetadataValue)`
+
+SetMetadata sets Metadata field to given value.
+
+### HasMetadata
+
+`func (o *PushNotificationRequest) HasMetadata() bool`
+
+HasMetadata returns a boolean if a field has been set.
 
 ### GetTitle
 

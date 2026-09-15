@@ -21,6 +21,8 @@ var _ MappedNullable = &LiveActivityStreamRequest{}
 
 // LiveActivityStreamRequest Send the latest state for a managed Live Activity stream. channels is the streamlined form for stream targeting. target.channels is also accepted for compatibility. If both are provided, they must match.
 type LiveActivityStreamRequest struct {
+	// Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
+	Metadata map[string]MetadataValue `json:"metadata,omitempty"`
 	ContentState StreamContentState `json:"content_state"`
 	Action *LiveActivityAction `json:"action,omitempty"`
 	// Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
@@ -51,6 +53,38 @@ func NewLiveActivityStreamRequest(contentState StreamContentState) *LiveActivity
 func NewLiveActivityStreamRequestWithDefaults() *LiveActivityStreamRequest {
 	this := LiveActivityStreamRequest{}
 	return &this
+}
+
+// GetMetadata returns the Metadata field value if set, zero value otherwise.
+func (o *LiveActivityStreamRequest) GetMetadata() map[string]MetadataValue {
+	if o == nil || IsNil(o.Metadata) {
+		var ret map[string]MetadataValue
+		return ret
+	}
+	return o.Metadata
+}
+
+// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamRequest) GetMetadataOk() (map[string]MetadataValue, bool) {
+	if o == nil || IsNil(o.Metadata) {
+		return map[string]MetadataValue{}, false
+	}
+	return o.Metadata, true
+}
+
+// HasMetadata returns a boolean if a field has been set.
+func (o *LiveActivityStreamRequest) HasMetadata() bool {
+	if o != nil && !IsNil(o.Metadata) {
+		return true
+	}
+
+	return false
+}
+
+// SetMetadata gets a reference to the given map[string]MetadataValue and assigns it to the Metadata field.
+func (o *LiveActivityStreamRequest) SetMetadata(v map[string]MetadataValue) {
+	o.Metadata = v
 }
 
 // GetContentState returns the ContentState field value
@@ -279,6 +313,9 @@ func (o LiveActivityStreamRequest) MarshalJSON() ([]byte, error) {
 
 func (o LiveActivityStreamRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Metadata) {
+		toSerialize["metadata"] = o.Metadata
+	}
 	toSerialize["content_state"] = o.ContentState
 	if !IsNil(o.Action) {
 		toSerialize["action"] = o.Action

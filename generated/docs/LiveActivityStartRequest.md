@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Metadata** | Pointer to [**map[string]MetadataValue**](MetadataValue.md) | Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it. | [optional] 
 **ContentState** | [**ContentStateStart**](ContentStateStart.md) |  | 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
 **SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
@@ -29,6 +30,31 @@ will change when the set of required properties is changed
 NewLiveActivityStartRequestWithDefaults instantiates a new LiveActivityStartRequest object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetMetadata
+
+`func (o *LiveActivityStartRequest) GetMetadata() map[string]MetadataValue`
+
+GetMetadata returns the Metadata field if non-nil, zero value otherwise.
+
+### GetMetadataOk
+
+`func (o *LiveActivityStartRequest) GetMetadataOk() (*map[string]MetadataValue, bool)`
+
+GetMetadataOk returns a tuple with the Metadata field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMetadata
+
+`func (o *LiveActivityStartRequest) SetMetadata(v map[string]MetadataValue)`
+
+SetMetadata sets Metadata field to given value.
+
+### HasMetadata
+
+`func (o *LiveActivityStartRequest) HasMetadata() bool`
+
+HasMetadata returns a boolean if a field has been set.
 
 ### GetContentState
 

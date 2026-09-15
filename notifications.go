@@ -36,11 +36,21 @@ func normalizePushNotificationRequest(input any) (generated.PushNotificationRequ
 	switch v := input.(type) {
 	case PushNotificationInput:
 		request = v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		if err != nil {
+			return request, err
+		}
+		request.Metadata = metadata
 	case *PushNotificationInput:
 		if v == nil {
 			return generated.PushNotificationRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
 		}
 		request = v.toGenerated()
+		metadata, err := metadataValues(v.Metadata)
+		if err != nil {
+			return request, err
+		}
+		request.Metadata = metadata
 	case generated.PushNotificationRequest:
 		request = v
 	case *generated.PushNotificationRequest:

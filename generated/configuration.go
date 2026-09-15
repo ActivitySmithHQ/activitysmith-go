@@ -28,6 +28,9 @@ func (c contextKey) String() string {
 }
 
 var (
+	// ContextOAuth2 takes an oauth2.TokenSource as authentication for the request.
+	ContextOAuth2 = contextKey("token")
+
 	// ContextAccessToken takes a string oauth2 access token as authentication for the request.
 	ContextAccessToken = contextKey("accesstoken")
 
@@ -89,7 +92,7 @@ type Configuration struct {
 func NewConfiguration() *Configuration {
 	cfg := &Configuration{
 		DefaultHeader:    make(map[string]string),
-		UserAgent:        "OpenAPI-Generator/1.10.0/go",
+		UserAgent:        "OpenAPI-Generator/1.11.0/go",
 		Debug:            false,
 		Servers:          ServerConfigurations{
 			{

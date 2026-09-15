@@ -180,6 +180,7 @@ func PushActionBody(body map[string]interface{}) PushNotificationActionOption {
 
 // PushNotificationInput is a handwritten DX input with plain optional values.
 type PushNotificationInput struct {
+	Metadata    map[string]any
 	Title       string
 	Message     string
 	Subtitle    string
@@ -261,6 +262,8 @@ type LiveActivityContentStateInput struct {
 	Color              string
 	StepColor          string
 	AutoDismissMinutes int32
+	// AutoDismissSeconds applies to stream requests and takes precedence over minutes.
+	AutoDismissSeconds int32
 	Metrics            []ActivityMetric
 
 	numberOfStepsSet      bool
@@ -271,6 +274,7 @@ type LiveActivityContentStateInput struct {
 	durationSecondsSet    bool
 	countsDownSet         bool
 	autoDismissMinutesSet bool
+	autoDismissSecondsSet bool
 }
 
 func (in LiveActivityContentStateInput) isSet() bool {
@@ -288,6 +292,7 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.Value != 0 ||
 		in.UpperLimit != 0 ||
 		in.DurationSeconds != 0 ||
+		in.AutoDismissSeconds != 0 ||
 		in.AutoDismissMinutes != 0 ||
 		len(in.Metrics) > 0 ||
 		in.numberOfStepsSet ||
@@ -297,7 +302,8 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.upperLimitSet ||
 		in.durationSecondsSet ||
 		in.countsDownSet ||
-		in.autoDismissMinutesSet
+		in.autoDismissMinutesSet ||
+		in.autoDismissSecondsSet
 }
 
 func (in LiveActivityContentStateInput) applyTimerFields(state timerContentState) {
@@ -489,6 +495,9 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 	if in.AutoDismissMinutes != 0 || in.autoDismissMinutesSet {
 		state.SetAutoDismissMinutes(in.AutoDismissMinutes)
 	}
+	if in.AutoDismissSeconds != 0 || in.autoDismissSecondsSet {
+		state.SetAutoDismissSeconds(in.AutoDismissSeconds)
+	}
 	in.applyTimerFields(state)
 	in.applyAlertFields(state)
 }
@@ -535,6 +544,13 @@ func (in LiveActivityContentStateInput) WithCountsDown(v bool) LiveActivityConte
 	return in
 }
 
+// WithAutoDismissSeconds includes stream dismissal seconds, including explicit zero.
+func (in LiveActivityContentStateInput) WithAutoDismissSeconds(v int32) LiveActivityContentStateInput {
+	in.AutoDismissSeconds = v
+	in.autoDismissSecondsSet = true
+	return in
+}
+
 func (in LiveActivityContentStateInput) WithAutoDismissMinutes(v int32) LiveActivityContentStateInput {
 	in.AutoDismissMinutes = v
 	in.autoDismissMinutesSet = true
@@ -543,6 +559,7 @@ func (in LiveActivityContentStateInput) WithAutoDismissMinutes(v int32) LiveActi
 
 // LiveActivityStartInput is a handwritten DX input with plain optional values.
 type LiveActivityStartInput struct {
+	Metadata        map[string]any
 	ContentState    LiveActivityContentStateInput
 	Title           string
 	NumberOfSteps   int32
@@ -697,6 +714,7 @@ func (in LiveActivityStartInput) WithSecondaryAction(v LiveActivityActionInput) 
 
 // LiveActivityUpdateInput is a handwritten DX input with plain optional values.
 type LiveActivityUpdateInput struct {
+	Metadata        map[string]any
 	ActivityID      string
 	ContentState    LiveActivityContentStateInput
 	Title           string
@@ -725,6 +743,7 @@ type LiveActivityUpdateInput struct {
 	upperLimitSet      bool
 	durationSecondsSet bool
 	countsDownSet      bool
+	Tags               []string
 }
 
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
@@ -787,6 +806,9 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	if in.SecondaryAction != nil {
 		req.SetSecondaryAction(in.SecondaryAction.toGenerated())
 	}
+	if in.Tags != nil {
+		req.SetTags(append([]string{}, in.Tags...))
+	}
 	return req
 }
 
@@ -848,6 +870,7 @@ func (in LiveActivityUpdateInput) WithSecondaryAction(v LiveActivityActionInput)
 
 // LiveActivityEndInput is a handwritten DX input with plain optional values.
 type LiveActivityEndInput struct {
+	Metadata           map[string]any
 	ActivityID         string
 	ContentState       LiveActivityContentStateInput
 	Title              string
@@ -878,6 +901,7 @@ type LiveActivityEndInput struct {
 	durationSecondsSet    bool
 	countsDownSet         bool
 	autoDismissMinutesSet bool
+	Tags                  []string
 }
 
 func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
@@ -942,6 +966,9 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	}
 	if in.SecondaryAction != nil {
 		req.SetSecondaryAction(in.SecondaryAction.toGenerated())
+	}
+	if in.Tags != nil {
+		req.SetTags(append([]string{}, in.Tags...))
 	}
 	return req
 }
@@ -1011,6 +1038,7 @@ func (in LiveActivityEndInput) WithSecondaryAction(v LiveActivityActionInput) Li
 
 // LiveActivityStreamInput is a handwritten DX input with plain optional values.
 type LiveActivityStreamInput struct {
+	Metadata        map[string]any
 	ContentState    LiveActivityContentStateInput
 	Title           string
 	NumberOfSteps   int32
@@ -1168,6 +1196,8 @@ func (in LiveActivityStreamInput) WithSecondaryAction(v LiveActivityActionInput)
 
 // LiveActivityStreamEndInput is an optional payload for ending a managed stream.
 type LiveActivityStreamEndInput struct {
+	Tags            []string
+	Metadata        map[string]any
 	ContentState    LiveActivityContentStateInput
 	Title           string
 	NumberOfSteps   int32
@@ -1200,6 +1230,9 @@ type LiveActivityStreamEndInput struct {
 
 func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamDeleteRequest {
 	req := generated.NewLiveActivityStreamDeleteRequest()
+	if in.Tags != nil {
+		req.SetTags(in.Tags)
+	}
 	contentStateInput := in.ContentState
 	if !contentStateInput.isSet() && in.Title != "" {
 		contentStateInput = LiveActivityContentStateInput{
