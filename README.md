@@ -531,6 +531,30 @@ Pass `0` to clear the badge.
 activitysmith.BadgeCount(0)
 ```
 
+## Metadata
+
+Metadata adds information to Push Notification and Live Activity details in ActivitySmith. It does not appear in the notification or Live Activity on your device.
+
+```go
+activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+    Title: "New subscription 💸",
+    Metadata: map[string]any{
+        "customer_id": "382", "plan": "Pro", "amount": 29, "trial": false,
+    },
+})
+
+activitysmith.LiveActivities.Stream("customer-import", activitysmithsdk.LiveActivityStreamInput{
+    ContentState: activitysmithsdk.LiveActivityContentStateInput{
+        Title: "Customer Import", Type: "progress", Percentage: 60,
+    },
+    Metadata: map[string]any{"job_id": "import-382", "records": 1200},
+})
+```
+
+Supported on Push Notifications, Live Activity streams, and legacy `Start`, `Update`, and `End` calls. On updates or end calls, leave `Metadata` nil to keep it, supply an object to replace it, or send `Metadata: map[string]any{}` to clear it.
+
+Values can be strings, numbers, or booleans. Metadata supports up to 50 entries and 16 KB of JSON, with keys up to 100 characters and strings up to 4,000 characters. Nested objects, arrays, and null values are not supported.
+
 ## Tags
 
 Use Tags to organize and filter Push Notification and Live Activity history. Tags are created automatically when you first use them. Sending Tags requires SDK version 1.10.0 or later.
@@ -557,30 +581,6 @@ activitysmith.LiveActivities.Update(activitysmithsdk.LiveActivityUpdateInput{
 ```
 
 `EndStream` also accepts final Tags and Metadata. Omit them to preserve existing values, or supply empty collections to clear them.
-
-## Metadata
-
-Metadata adds information to Push Notification and Live Activity details in ActivitySmith. It does not appear in the notification or Live Activity on your device.
-
-```go
-activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
-    Title: "New subscription 💸",
-    Metadata: map[string]any{
-        "customer_id": "382", "plan": "Pro", "amount": 29, "trial": false,
-    },
-})
-
-activitysmith.LiveActivities.Stream("customer-import", activitysmithsdk.LiveActivityStreamInput{
-    ContentState: activitysmithsdk.LiveActivityContentStateInput{
-        Title: "Customer Import", Type: "progress", Percentage: 60,
-    },
-    Metadata: map[string]any{"job_id": "import-382", "records": 1200},
-})
-```
-
-Supported on Push Notifications, Live Activity streams, and legacy `Start`, `Update`, and `End` calls. On updates or end calls, leave `Metadata` nil to keep it, supply an object to replace it, or send `Metadata: map[string]any{}` to clear it.
-
-Values can be strings, numbers, or booleans. Metadata supports up to 50 entries and 16 KB of JSON, with keys up to 100 characters and strings up to 4,000 characters. Nested objects, arrays, and null values are not supported.
 
 ## Channels
 
