@@ -32,6 +32,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"golang.org/x/oauth2"
 )
 
 var (
@@ -55,6 +56,8 @@ type APIClient struct {
 
 	MetricsAPI *MetricsAPIService
 
+	PublicAPI *PublicAPIService
+
 	PushNotificationsAPI *PushNotificationsAPIService
 }
 
@@ -77,6 +80,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.AppIconBadgesAPI = (*AppIconBadgesAPIService)(&c.common)
 	c.LiveActivitiesAPI = (*LiveActivitiesAPIService)(&c.common)
 	c.MetricsAPI = (*MetricsAPIService)(&c.common)
+	c.PublicAPI = (*PublicAPIService)(&c.common)
 	c.PushNotificationsAPI = (*PushNotificationsAPIService)(&c.common)
 
 	return c
@@ -418,6 +422,17 @@ func (c *APIClient) prepareRequest(
 		localVarRequest = localVarRequest.WithContext(ctx)
 
 		// Walk through any authentication.
+
+		// OAuth2 authentication
+		if tok, ok := ctx.Value(ContextOAuth2).(oauth2.TokenSource); ok {
+			// We were able to grab an oauth2 token from the context
+			var latestToken *oauth2.Token
+			if latestToken, err = tok.Token(); err != nil {
+				return nil, err
+			}
+
+			latestToken.SetAuthHeader(localVarRequest)
+		}
 
 		// AccessToken Authentication
 		if auth, ok := ctx.Value(ContextAccessToken).(string); ok {

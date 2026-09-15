@@ -20,13 +20,15 @@ var _ MappedNullable = &PushNotificationRequest{}
 
 // PushNotificationRequest struct for PushNotificationRequest
 type PushNotificationRequest struct {
+	// Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
+	Metadata map[string]MetadataValue `json:"metadata,omitempty"`
 	Title string `json:"title"`
 	Message *string `json:"message,omitempty"`
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
 	Media *string `json:"media,omitempty" validate:"regexp=^https:\\/\\/"`
-	// Optional HTTP URL, HTTPS URL, or shortcuts://run-shortcut?name=... URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name=... to run a specific iPhone Shortcut that already exists on the user's device. Overrides the default tap target from `media` when both are provided.
-	Redirection *string `json:"redirection,omitempty" validate:"regexp=^(http|https|shortcuts):\\/\\/"`
+	// Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
+	Redirection *string `json:"redirection,omitempty" validate:"regexp=^[A-Za-z][A-Za-z0-9+.-]*:"`
 	// Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
 	Actions []PushNotificationAction `json:"actions,omitempty"`
 	Payload map[string]interface{} `json:"payload,omitempty"`
@@ -56,6 +58,38 @@ func NewPushNotificationRequest(title string) *PushNotificationRequest {
 func NewPushNotificationRequestWithDefaults() *PushNotificationRequest {
 	this := PushNotificationRequest{}
 	return &this
+}
+
+// GetMetadata returns the Metadata field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetMetadata() map[string]MetadataValue {
+	if o == nil || IsNil(o.Metadata) {
+		var ret map[string]MetadataValue
+		return ret
+	}
+	return o.Metadata
+}
+
+// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetMetadataOk() (map[string]MetadataValue, bool) {
+	if o == nil || IsNil(o.Metadata) {
+		return map[string]MetadataValue{}, false
+	}
+	return o.Metadata, true
+}
+
+// HasMetadata returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasMetadata() bool {
+	if o != nil && !IsNil(o.Metadata) {
+		return true
+	}
+
+	return false
+}
+
+// SetMetadata gets a reference to the given map[string]MetadataValue and assigns it to the Metadata field.
+func (o *PushNotificationRequest) SetMetadata(v map[string]MetadataValue) {
+	o.Metadata = v
 }
 
 // GetTitle returns the Title field value
@@ -412,6 +446,9 @@ func (o PushNotificationRequest) MarshalJSON() ([]byte, error) {
 
 func (o PushNotificationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Metadata) {
+		toSerialize["metadata"] = o.Metadata
+	}
 	toSerialize["title"] = o.Title
 	if !IsNil(o.Message) {
 		toSerialize["message"] = o.Message
@@ -486,6 +523,7 @@ func (o *PushNotificationRequest) UnmarshalJSON(data []byte) (err error) {
 	additionalProperties := make(map[string]interface{})
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "metadata")
 		delete(additionalProperties, "title")
 		delete(additionalProperties, "message")
 		delete(additionalProperties, "subtitle")
