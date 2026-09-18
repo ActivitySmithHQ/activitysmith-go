@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
 **ContentState** | Pointer to [**StreamContentState**](StreamContentState.md) |  | [optional] 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
-**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
+**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, segmented_progress, and value Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 **Alert** | Pointer to [**AlertPayload**](AlertPayload.md) |  | [optional] 
 
 ## Methods
