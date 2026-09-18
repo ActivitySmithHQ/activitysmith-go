@@ -9,17 +9,17 @@ Name | Type | Description | Notes
 **NumberOfSteps** | Pointer to **int32** | Total number of steps. Use for type&#x3D;segmented_progress. Optional on end, and safe to change if the final workflow used more or fewer steps than originally planned. | [optional] 
 **CurrentStep** | Pointer to **int32** | Current completed step count. Use for type&#x3D;segmented_progress. Must be less than or equal to number_of_steps when number_of_steps is provided. | [optional] 
 **Percentage** | Pointer to **float32** | Progress percentage (0–100). Use for type&#x3D;progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
-**Value** | Pointer to **float32** | Current progress value. Use with upper_limit for type&#x3D;progress. | [optional] 
+**Value** | Pointer to **string** | For type&#x3D;value, the required prominent readout (string or finite number); strings preserve exact formatting. For type&#x3D;progress, a numeric progress value used with upper_limit. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for type&#x3D;progress. | [optional] 
 **DurationSeconds** | Pointer to **float32** | Timer duration in seconds. For type&#x3D;timer, omit duration_seconds on end to preserve and freeze the latest timer state. | [optional] 
 **CountsDown** | Pointer to **bool** | Use with type&#x3D;timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer. | [optional] [default to true]
 **IsRunning** | Pointer to **bool** | Use with type&#x3D;timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume. | [optional] [default to true]
 **Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for type&#x3D;metrics or type&#x3D;stats. | [optional] 
 **Message** | Pointer to **string** | Alert message. Use for type&#x3D;alert. | [optional] 
-**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer. | [optional] 
-**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge. Supported by alert, progress, and segmented_progress. | [optional] 
+**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, timer, and value. | [optional] 
+**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge. Supported by alert, progress, segmented_progress, and value. | [optional] 
 **Type** | Pointer to **string** | Optional. When omitted, the API uses the existing Live Activity type. | [optional] 
-**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included. | [optional] 
+**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, metrics, timer, and value Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included. | [optional] 
 **StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to type&#x3D;segmented_progress. | [optional] 
 **StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
 **AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max. | [optional] [default to 3]
@@ -165,20 +165,20 @@ HasPercentage returns a boolean if a field has been set.
 
 ### GetValue
 
-`func (o *ContentStateEnd) GetValue() float32`
+`func (o *ContentStateEnd) GetValue() string`
 
 GetValue returns the Value field if non-nil, zero value otherwise.
 
 ### GetValueOk
 
-`func (o *ContentStateEnd) GetValueOk() (*float32, bool)`
+`func (o *ContentStateEnd) GetValueOk() (*string, bool)`
 
 GetValueOk returns a tuple with the Value field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetValue
 
-`func (o *ContentStateEnd) SetValue(v float32)`
+`func (o *ContentStateEnd) SetValue(v string)`
 
 SetValue sets Value field to given value.
 

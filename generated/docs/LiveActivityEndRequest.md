@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **Tags** | Pointer to **[]string** | Tags for notification history. Omit to keep existing Tags, supply an array to replace them, or send an empty array to clear them. | [optional] 
 **ContentState** | [**ContentStateEnd**](ContentStateEnd.md) |  | 
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
-**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
+**SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, segmented_progress, and value Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 
 ## Methods
 

@@ -25,7 +25,7 @@ type LiveActivityStartRequest struct {
 	Metadata map[string]MetadataValue `json:"metadata,omitempty"`
 	ContentState ContentStateStart `json:"content_state"`
 	Action *LiveActivityAction `json:"action,omitempty"`
-	// Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+	// Optional secondary action button. Supported for alert, progress, segmented_progress, and value Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
 	SecondaryAction *LiveActivityAction `json:"secondary_action,omitempty"`
 	Alert *AlertPayload `json:"alert,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
