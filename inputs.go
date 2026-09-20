@@ -14,6 +14,7 @@ const (
 	LiveActivityTypeStats             = "stats"
 	LiveActivityTypeAlert             = "alert"
 	LiveActivityTypeTimer             = "timer"
+	LiveActivityTypeValue             = "value"
 )
 
 type ActivityMetricOption func(*generated.ActivityMetric)
@@ -250,7 +251,7 @@ type LiveActivityContentStateInput struct {
 	NumberOfSteps      int32
 	CurrentStep        int32
 	Percentage         float32
-	Value              float32
+	Value              any
 	UpperLimit         float32
 	DurationSeconds    float32
 	CountsDown         bool
@@ -289,7 +290,7 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.NumberOfSteps != 0 ||
 		in.CurrentStep != 0 ||
 		in.Percentage != 0 ||
-		in.Value != 0 ||
+		in.Value != nil ||
 		in.UpperLimit != 0 ||
 		in.DurationSeconds != 0 ||
 		in.AutoDismissSeconds != 0 ||
@@ -362,8 +363,8 @@ func (in LiveActivityContentStateInput) applyStart(state *generated.ContentState
 	if in.Percentage != 0 || in.percentageSet {
 		state.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		state.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		state.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		state.SetUpperLimit(in.UpperLimit)
@@ -391,8 +392,8 @@ func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStat
 	if in.Percentage != 0 || in.percentageSet {
 		state.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		state.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		state.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		state.SetUpperLimit(in.UpperLimit)
@@ -433,8 +434,8 @@ func (in LiveActivityContentStateInput) applyEndBase(state *generated.ContentSta
 	if in.Percentage != 0 || in.percentageSet {
 		state.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		state.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		state.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		state.SetUpperLimit(in.UpperLimit)
@@ -471,8 +472,8 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 	if in.Percentage != 0 || in.percentageSet {
 		state.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		state.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		state.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		state.SetUpperLimit(in.UpperLimit)
@@ -520,7 +521,7 @@ func (in LiveActivityContentStateInput) WithPercentage(v float32) LiveActivityCo
 	return in
 }
 
-func (in LiveActivityContentStateInput) WithValue(v float32) LiveActivityContentStateInput {
+func (in LiveActivityContentStateInput) WithValue(v any) LiveActivityContentStateInput {
 	in.Value = v
 	in.valueSet = true
 	return in
@@ -565,7 +566,7 @@ type LiveActivityStartInput struct {
 	NumberOfSteps   int32
 	CurrentStep     int32
 	Percentage      float32
-	Value           float32
+	Value           any
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
@@ -615,8 +616,8 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	if in.Percentage != 0 || in.percentageSet {
 		req.ContentState.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		req.ContentState.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		req.ContentState.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
@@ -677,7 +678,7 @@ func (in LiveActivityStartInput) WithPercentage(v float32) LiveActivityStartInpu
 }
 
 // WithValue forces inclusion of value, including explicit zero.
-func (in LiveActivityStartInput) WithValue(v float32) LiveActivityStartInput {
+func (in LiveActivityStartInput) WithValue(v any) LiveActivityStartInput {
 	in.Value = v
 	in.valueSet = true
 	return in
@@ -720,7 +721,7 @@ type LiveActivityUpdateInput struct {
 	Title           string
 	CurrentStep     int32
 	Percentage      float32
-	Value           float32
+	Value           any
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
@@ -768,8 +769,8 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	if in.Percentage != 0 || in.percentageSet {
 		req.ContentState.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		req.ContentState.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		req.ContentState.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
@@ -833,7 +834,7 @@ func (in LiveActivityUpdateInput) WithPercentage(v float32) LiveActivityUpdateIn
 }
 
 // WithValue forces inclusion of value, including explicit zero.
-func (in LiveActivityUpdateInput) WithValue(v float32) LiveActivityUpdateInput {
+func (in LiveActivityUpdateInput) WithValue(v any) LiveActivityUpdateInput {
 	in.Value = v
 	in.valueSet = true
 	return in
@@ -876,7 +877,7 @@ type LiveActivityEndInput struct {
 	Title              string
 	CurrentStep        int32
 	Percentage         float32
-	Value              float32
+	Value              any
 	UpperLimit         float32
 	DurationSeconds    float32
 	CountsDown         bool
@@ -926,8 +927,8 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	if in.Percentage != 0 || in.percentageSet {
 		req.ContentState.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		req.ContentState.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		req.ContentState.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
@@ -994,7 +995,7 @@ func (in LiveActivityEndInput) WithPercentage(v float32) LiveActivityEndInput {
 }
 
 // WithValue forces inclusion of value, including explicit zero.
-func (in LiveActivityEndInput) WithValue(v float32) LiveActivityEndInput {
+func (in LiveActivityEndInput) WithValue(v any) LiveActivityEndInput {
 	in.Value = v
 	in.valueSet = true
 	return in
@@ -1044,7 +1045,7 @@ type LiveActivityStreamInput struct {
 	NumberOfSteps   int32
 	CurrentStep     int32
 	Percentage      float32
-	Value           float32
+	Value           any
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
@@ -1095,8 +1096,8 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	if in.Percentage != 0 || in.percentageSet {
 		req.ContentState.SetPercentage(in.Percentage)
 	}
-	if in.Value != 0 || in.valueSet {
-		req.ContentState.SetValue(in.Value)
+	if in.Value != nil || in.valueSet {
+		req.ContentState.SetValue(liveActivityValue(in.Value))
 	}
 	if in.UpperLimit != 0 || in.upperLimitSet {
 		req.ContentState.SetUpperLimit(in.UpperLimit)
@@ -1160,7 +1161,7 @@ func (in LiveActivityStreamInput) WithPercentage(v float32) LiveActivityStreamIn
 	return in
 }
 
-func (in LiveActivityStreamInput) WithValue(v float32) LiveActivityStreamInput {
+func (in LiveActivityStreamInput) WithValue(v any) LiveActivityStreamInput {
 	in.Value = v
 	in.valueSet = true
 	return in
@@ -1203,7 +1204,7 @@ type LiveActivityStreamEndInput struct {
 	NumberOfSteps   int32
 	CurrentStep     int32
 	Percentage      float32
-	Value           float32
+	Value           any
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
@@ -1255,8 +1256,8 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 		if in.Percentage != 0 || in.percentageSet {
 			contentState.SetPercentage(in.Percentage)
 		}
-		if in.Value != 0 || in.valueSet {
-			contentState.SetValue(in.Value)
+		if in.Value != nil || in.valueSet {
+			contentState.SetValue(liveActivityValue(in.Value))
 		}
 		if in.UpperLimit != 0 || in.upperLimitSet {
 			contentState.SetUpperLimit(in.UpperLimit)
@@ -1316,7 +1317,7 @@ func (in LiveActivityStreamEndInput) WithPercentage(v float32) LiveActivityStrea
 	return in
 }
 
-func (in LiveActivityStreamEndInput) WithValue(v float32) LiveActivityStreamEndInput {
+func (in LiveActivityStreamEndInput) WithValue(v any) LiveActivityStreamEndInput {
 	in.Value = v
 	in.valueSet = true
 	return in
