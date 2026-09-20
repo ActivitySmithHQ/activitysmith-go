@@ -9,19 +9,19 @@ Name | Type | Description | Notes
 **NumberOfSteps** | Pointer to **int32** | Use for segmented_progress. | [optional] 
 **CurrentStep** | Pointer to **int32** | Use for segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided. | [optional] 
 **Percentage** | Pointer to **float32** | Use for progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
-**Value** | Pointer to **float32** | Current progress value. Use with upper_limit for progress. | [optional] 
+**Value** | Pointer to [**LiveActivityValue**](LiveActivityValue.md) | For type&#x3D;value, the required prominent readout (string or finite number); strings preserve exact formatting. For progress, a numeric progress value used with upper_limit. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for progress. | [optional] 
 **DurationSeconds** | Pointer to **float32** | Timer duration in seconds. For type&#x3D;timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window. | [optional] 
 **CountsDown** | Pointer to **bool** | Use with type&#x3D;timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer. | [optional] [default to true]
 **IsRunning** | Pointer to **bool** | Use with type&#x3D;timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume. | [optional] [default to true]
 **Type** | Pointer to **string** | Required on the first PUT or whenever the stream cannot infer the current activity type. | [optional] 
-**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included. | [optional] 
+**Color** | Pointer to **string** | Optional. Accent color for progress, segmented_progress, metrics, timer, and value Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included. | [optional] 
 **StepColor** | Pointer to **string** | Optional. Overrides color for the current step. Only applies to segmented_progress. | [optional] 
 **StepColors** | Pointer to **[]string** | Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step. | [optional] 
 **Metrics** | Pointer to [**[]ActivityMetric**](ActivityMetric.md) | Use for metrics and stats activities. | [optional] 
 **Message** | Pointer to **string** | Required for type&#x3D;alert. | [optional] 
-**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer. | [optional] 
-**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge. Supported by alert, progress, and segmented_progress. | [optional] 
+**Icon** | Pointer to [**LiveActivityAlertIcon**](LiveActivityAlertIcon.md) | Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, timer, and value. | [optional] 
+**Badge** | Pointer to [**LiveActivityAlertBadge**](LiveActivityAlertBadge.md) | Optional badge. Supported by alert, progress, segmented_progress, and value. | [optional] 
 **AutoDismissSeconds** | Pointer to **int32** | Optional. Seconds before the ended Live Activity is dismissed. | [optional] 
 **AutoDismissMinutes** | Pointer to **int32** | Optional. Minutes before the ended Live Activity is dismissed. | [optional] 
 
@@ -166,20 +166,20 @@ HasPercentage returns a boolean if a field has been set.
 
 ### GetValue
 
-`func (o *StreamContentState) GetValue() float32`
+`func (o *StreamContentState) GetValue() LiveActivityValue`
 
 GetValue returns the Value field if non-nil, zero value otherwise.
 
 ### GetValueOk
 
-`func (o *StreamContentState) GetValueOk() (*float32, bool)`
+`func (o *StreamContentState) GetValueOk() (*LiveActivityValue, bool)`
 
 GetValueOk returns a tuple with the Value field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetValue
 
-`func (o *StreamContentState) SetValue(v float32)`
+`func (o *StreamContentState) SetValue(v LiveActivityValue)`
 
 SetValue sets Value field to given value.
 

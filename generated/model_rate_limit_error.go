@@ -21,6 +21,7 @@ var _ MappedNullable = &RateLimitError{}
 
 // RateLimitError struct for RateLimitError
 type RateLimitError struct {
+	Code *string `json:"code,omitempty"`
 	Error string `json:"error"`
 	Message string `json:"message"`
 }
@@ -44,6 +45,38 @@ func NewRateLimitError(error_ string, message string) *RateLimitError {
 func NewRateLimitErrorWithDefaults() *RateLimitError {
 	this := RateLimitError{}
 	return &this
+}
+
+// GetCode returns the Code field value if set, zero value otherwise.
+func (o *RateLimitError) GetCode() string {
+	if o == nil || IsNil(o.Code) {
+		var ret string
+		return ret
+	}
+	return *o.Code
+}
+
+// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *RateLimitError) GetCodeOk() (*string, bool) {
+	if o == nil || IsNil(o.Code) {
+		return nil, false
+	}
+	return o.Code, true
+}
+
+// HasCode returns a boolean if a field has been set.
+func (o *RateLimitError) HasCode() bool {
+	if o != nil && !IsNil(o.Code) {
+		return true
+	}
+
+	return false
+}
+
+// SetCode gets a reference to the given string and assigns it to the Code field.
+func (o *RateLimitError) SetCode(v string) {
+	o.Code = &v
 }
 
 // GetError returns the Error field value
@@ -104,6 +137,9 @@ func (o RateLimitError) MarshalJSON() ([]byte, error) {
 
 func (o RateLimitError) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Code) {
+		toSerialize["code"] = o.Code
+	}
 	toSerialize["error"] = o.Error
 	toSerialize["message"] = o.Message
 	return toSerialize, nil

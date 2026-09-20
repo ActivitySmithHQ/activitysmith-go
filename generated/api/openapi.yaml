@@ -68,36 +68,184 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppIconBadgeCountUpdateResponse'
           description: App Icon Badge Count updated
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:badges\"; r=599; t=60, \"account:badges\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:badges\"; q=600; w=60, \"account:badges\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "400":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
           description: Bad request
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:badges\"; r=599; t=60, \"account:badges\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:badges\"; q=600; w=60, \"account:badges\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "403":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
           description: Forbidden
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:badges\"; r=599; t=60, \"account:badges\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:badges\"; q=600; w=60, \"account:badges\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "422":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/updateAppIconBadgeCount_422_response'
           description: "No matching devices found, or a targeted device needs to reconnect"
-        "502":
-          content:
-            application/json:
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:badges\"; r=599; t=60, \"account:badges\"\
+                ; r=59; t=60"
+              explode: false
               schema:
-                $ref: '#/components/schemas/AppIconBadgeCountUpdateError'
-          description: App Icon Badge Count could not be updated
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:badges\"; q=600; w=60, \"account:badges\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:badges\"; r=599; t=60, \"account:badges\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:badges\"; q=600; w=60, \"account:badges\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
+        "502":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppIconBadgeCountUpdateError'
+          description: App Icon Badge Count could not be updated
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:badges\"; r=599; t=60, \"account:badges\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:badges\"; q=600; w=60, \"account:badges\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
       summary: Set App Icon Badge Count
       tags:
       - AppIconBadges
@@ -237,6 +385,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/PushNotificationResponse'
           description: Push notification sent
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "400":
           content:
             application/json:
@@ -254,6 +425,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
           description: Bad request (invalid payload or channel targeting input)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "403":
           content:
             application/json:
@@ -266,6 +460,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
           description: Forbidden (API key scope or channel assignment violation)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "404":
           content:
             application/json:
@@ -279,6 +496,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/NoRecipientsError'
           description: No recipients found for effective channel target
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
@@ -290,6 +530,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
       summary: Send a push notification
       tags:
       - PushNotifications
@@ -367,7 +640,7 @@ paths:
         \ ends the current Live Activity for this stream and dismisses it from devices.\
         \ If you need direct lifecycle control, use /live-activity/start, /live-activity/update,\
         \ and /live-activity/end instead. Use secondary_action for a second button\
-        \ on alert, progress, and segmented_progress Live Activities."
+        \ on alert, progress, segmented_progress, and value Live Activities."
       operationId: endLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -427,6 +700,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/LiveActivityStreamDeleteResponse'
           description: Managed stream ended
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "400":
           content:
             application/json:
@@ -439,6 +735,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
           description: Bad request (invalid stream_key or action)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "404":
           content:
             application/json:
@@ -450,6 +769,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFoundError'
           description: Managed stream not found
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
@@ -461,6 +803,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
       summary: End a stream
       tags:
       - LiveActivities
@@ -583,7 +958,7 @@ paths:
         \ ActivitySmith will keep the Live Activity in sync. For timer streams, send\
         \ duration_seconds to start or reset the timer; omit duration_seconds on later\
         \ updates to preserve the existing timer window. Use secondary_action for\
-        \ a second button on alert, progress, and segmented_progress Live Activities.\
+        \ a second button on alert, progress, segmented_progress, and value Live Activities.\
         \ Optional tags to organize and filter notification history. On later stream\
         \ updates, omit tags to keep the current tags, send tags again to replace\
         \ them, or send an empty array to clear them."
@@ -716,6 +1091,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/LiveActivityStreamPutResponse'
           description: Stream reconciled
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "400":
           content:
             application/json:
@@ -738,6 +1136,29 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
           description: "Bad request (invalid stream_key, payload, action, or channel\
             \ targeting input)"
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "403":
           content:
             application/json:
@@ -750,6 +1171,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
           description: Forbidden (API key scope or channel assignment violation)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "404":
           content:
             application/json:
@@ -764,6 +1208,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/NoRecipientsError'
           description: No recipients found for effective channel target
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
@@ -782,6 +1249,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
       summary: Start a new Live Activity or update an existing one
       tags:
       - LiveActivities
@@ -886,11 +1386,11 @@ paths:
         \ rotation, and end state for you. This endpoint remains supported for existing\
         \ integrations and advanced lifecycle control. Starts a Live Activity on devices\
         \ matched by API key scope and optional target channels. Supports segmented_progress,\
-        \ progress, metrics, stats, alert, and timer activity types. For segmented_progress\
+        \ progress, metrics, stats, alert, timer, and value activity types. For segmented_progress\
         \ activities, number_of_steps can be changed later during update or end calls\
         \ if the workflow changes. Use secondary_action for a second button on alert,\
-        \ progress, and segmented_progress Live Activities. Optional tags to organize\
-        \ and filter notification history."
+        \ progress, segmented_progress, and value Live Activities. Optional tags to\
+        \ organize and filter notification history."
       operationId: startLiveActivity
       requestBody:
         content:
@@ -951,6 +1451,23 @@ paths:
                     channels:
                     - devs
                     - ops
+              value:
+                summary: Current revenue with a badge and footer button
+                value:
+                  content_state:
+                    type: value
+                    title: Current revenue
+                    subtitle: Today
+                    value: "$1,240"
+                    color: cyan
+                    icon: dollarsign.circle
+                    badge:
+                      title: Live
+                      color: green
+                  action:
+                    title: Dashboard
+                    type: open_url
+                    url: https://example.com/dashboard
               timer:
                 value:
                   content_state:
@@ -1031,6 +1548,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/LiveActivityStartResponse'
           description: Live Activity started
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "400":
           content:
             application/json:
@@ -1048,6 +1588,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
           description: Bad request (invalid payload or channel targeting input)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "403":
           content:
             application/json:
@@ -1060,6 +1623,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
           description: Forbidden (API key scope or channel assignment violation)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "404":
           content:
             application/json:
@@ -1074,6 +1660,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/NoRecipientsError'
           description: No recipients found for effective channel target
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
@@ -1092,6 +1701,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/sendPushNotification_429_response'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
       summary: Start a Live Activity (legacy manual lifecycle)
       tags:
       - LiveActivities
@@ -1212,12 +1854,12 @@ paths:
         \ rotation, and end state for you. This endpoint remains supported for existing\
         \ integrations and advanced lifecycle control. Updates an existing Live Activity.\
         \ If the per-activity token is not registered yet, the update is queued. Supports\
-        \ segmented_progress, progress, metrics, stats, alert, and timer activity\
+        \ segmented_progress, progress, metrics, stats, alert, timer, and value activity\
         \ types. For segmented_progress activities, you can increase or decrease number_of_steps\
         \ here as the workflow changes. For timer activities, send duration_seconds\
         \ only when you want to reset the timer window; omit it to keep the current\
         \ timer running. Use secondary_action for a second button on alert, progress,\
-        \ and segmented_progress Live Activities."
+        \ segmented_progress, and value Live Activities."
       operationId: updateLiveActivity
       requestBody:
         content:
@@ -1302,6 +1944,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/LiveActivityUpdateResponse'
           description: Live Activity updated (or queued)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "403":
           content:
             application/json:
@@ -1313,6 +1978,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
           description: Forbidden (activity not owned by this API key account)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
@@ -1324,6 +2012,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
       summary: Update a Live Activity (legacy manual lifecycle)
       tags:
       - LiveActivities
@@ -1429,10 +2150,10 @@ paths:
         \ /live-activity/stream/{stream_key} to end a managed Live Activity stream.\
         \ This endpoint remains supported for existing integrations and advanced lifecycle\
         \ control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress,\
-        \ progress, metrics, stats, alert, and timer activity types. For segmented_progress\
+        \ progress, metrics, stats, alert, timer, and value activity types. For segmented_progress\
         \ activities, you can send the latest number_of_steps here if the workflow\
         \ changed after start. Use secondary_action for a second button on alert,\
-        \ progress, and segmented_progress Live Activities."
+        \ progress, segmented_progress, and value Live Activities."
       operationId: endLiveActivity
       requestBody:
         content:
@@ -1509,6 +2230,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/LiveActivityEndResponse'
           description: Live Activity ended
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "403":
           content:
             application/json:
@@ -1520,6 +2264,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
           description: Forbidden (activity not owned by this API key account)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
@@ -1531,6 +2298,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:live-activities\"; r=599; t=60, \"account:live-activities\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:live-activities\"; q=600; w=60, \"account:live-activities\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
       summary: End a Live Activity (legacy manual lifecycle)
       tags:
       - LiveActivities
@@ -1640,7 +2440,9 @@ paths:
     post:
       description: "Updates the latest value for a metric displayed in ActivitySmith\
         \ widgets. Create the metric in the web app first, then update its value using\
-        \ the key."
+        \ the key. Metric updates have an independent 300-requests-per-minute account\
+        \ allowance. They do not consume the Push Notification, badge, or Live Activity\
+        \ allowances."
       operationId: updateMetricValue
       parameters:
       - description: "Metric key configured in the web app. Lowercase letters, numbers,\
@@ -1674,6 +2476,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/MetricValueUpdateResponse'
           description: Metric value updated
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "400":
           content:
             application/json:
@@ -1684,6 +2509,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/MetricError'
           description: Bad request (invalid key or value)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "404":
           content:
             application/json:
@@ -1694,6 +2542,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/MetricError'
           description: Metric not found
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
         "429":
           content:
             application/json:
@@ -1705,6 +2576,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/RateLimitError'
           description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
       summary: Update a widget metric value
       tags:
       - Metrics
@@ -1767,20 +2671,21 @@ components:
       description: "Start payload requires title and type. For segmented_progress\
         \ include number_of_steps and current_step. For progress include percentage\
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
-        \ array. For alert include message. For timer include duration_seconds for\
-        \ countdowns, or set counts_down false without duration_seconds for an open-ended\
-        \ elapsed timer. Optional icon is supported by all Live Activity types. Optional\
-        \ badge is supported by alert, progress, and segmented_progress. For segmented_progress,\
-        \ number_of_steps is not locked and can be changed in later update or end\
-        \ calls."
+        \ array. For value include a string or number in value; strings preserve currency,\
+        \ units, and other formatting. For alert include message. For timer include\
+        \ duration_seconds for countdowns, or set counts_down false without duration_seconds\
+        \ for an open-ended elapsed timer. Optional icon is supported by all Live\
+        \ Activity types. Optional badge is supported by alert, progress, segmented_progress,\
+        \ and value. For segmented_progress, number_of_steps is not locked and can\
+        \ be changed in later update or end calls."
       example:
-        duration_seconds: 2.3021358869347655
+        duration_seconds: 5.637376656633329
         color: lime
         step_color: lime
         icon:
           symbol: symbol
           color: lime
-        upper_limit: 5.637376656633329
+        upper_limit: 5.962133916683182
         title: title
         message: message
         type: segmented_progress
@@ -1798,25 +2703,25 @@ components:
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         number_of_steps: 1
-        value: 5.962133916683182
+        value: LiveActivityValue
         current_step: 0
       properties:
         title:
@@ -1842,8 +2747,7 @@ components:
           minimum: 0
           type: number
         value:
-          description: Current progress value. Use with upper_limit for type=progress.
-          type: number
+          $ref: '#/components/schemas/LiveActivityValue'
         upper_limit:
           description: Maximum progress value. Use with value for type=progress.
           type: number
@@ -1885,11 +2789,12 @@ components:
           - stats
           - alert
           - timer
+          - value
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints action\
-            \ and secondary_action buttons when included."
+            \ timer, and value Live Activities. For Alert Live Activities, this tints\
+            \ action and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -1942,20 +2847,21 @@ components:
       description: "Update payload requires title. For segmented_progress include\
         \ current_step and optionally number_of_steps. For progress include percentage\
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
-        \ array. For alert include message. For timer, omit duration_seconds to preserve\
-        \ the current timer window or send duration_seconds to reset the timer from\
-        \ the update request time. Optional icon is supported by all Live Activity\
-        \ types. Optional badge is supported by alert, progress, and segmented_progress.\
-        \ Type is optional when updating an existing activity. You can increase or\
-        \ decrease number_of_steps during updates."
+        \ array. For value include a string or number in value; strings preserve currency,\
+        \ units, and other formatting. For alert include message. For timer, omit\
+        \ duration_seconds to preserve the current timer window or send duration_seconds\
+        \ to reset the timer from the update request time. Optional icon is supported\
+        \ by all Live Activity types. Optional badge is supported by alert, progress,\
+        \ segmented_progress, and value. Type is optional when updating an existing\
+        \ activity. You can increase or decrease number_of_steps during updates."
       example:
-        duration_seconds: 2.3021358869347655
+        duration_seconds: 5.637376656633329
         color: lime
         step_color: lime
         icon:
           symbol: symbol
           color: lime
-        upper_limit: 5.637376656633329
+        upper_limit: 5.962133916683182
         title: title
         message: message
         type: segmented_progress
@@ -1973,25 +2879,25 @@ components:
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         number_of_steps: 1
-        value: 5.962133916683182
+        value: LiveActivityValue
         current_step: 0
       properties:
         title:
@@ -2016,8 +2922,7 @@ components:
           minimum: 0
           type: number
         value:
-          description: Current progress value. Use with upper_limit for type=progress.
-          type: number
+          $ref: '#/components/schemas/LiveActivityValue'
         upper_limit:
           description: Maximum progress value. Use with value for type=progress.
           type: number
@@ -2062,11 +2967,12 @@ components:
           - stats
           - alert
           - timer
+          - value
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints action\
-            \ and secondary_action buttons when included."
+            \ timer, and value Live Activities. For Alert Live Activities, this tints\
+            \ action and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -2118,20 +3024,22 @@ components:
       description: "End payload requires title. For segmented_progress include current_step\
         \ and optionally number_of_steps. For progress include percentage or value\
         \ with upper_limit. For metrics and stats include a non-empty metrics array.\
-        \ For alert include message. For timer, omit duration_seconds to preserve\
-        \ and freeze the latest timer state. Optional icon is supported by all Live\
-        \ Activity types. Optional badge is supported by alert, progress, and segmented_progress.\
-        \ Type is optional when ending an existing activity. You can send an updated\
-        \ number_of_steps here if the workflow changed after start."
+        \ For value include a string or number in value; strings preserve currency,\
+        \ units, and other formatting. For alert include message. For timer, omit\
+        \ duration_seconds to preserve and freeze the latest timer state. Optional\
+        \ icon is supported by all Live Activity types. Optional badge is supported\
+        \ by alert, progress, segmented_progress, and value. Type is optional when\
+        \ ending an existing activity. You can send an updated number_of_steps here\
+        \ if the workflow changed after start."
       example:
-        duration_seconds: 2.3021358869347655
+        duration_seconds: 5.637376656633329
         color: lime
         step_color: lime
         icon:
           symbol: symbol
           color: lime
         auto_dismiss_minutes: 0
-        upper_limit: 5.637376656633329
+        upper_limit: 5.962133916683182
         title: title
         message: message
         type: segmented_progress
@@ -2149,25 +3057,25 @@ components:
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         number_of_steps: 1
-        value: 5.962133916683182
+        value: LiveActivityValue
         current_step: 0
       properties:
         title:
@@ -2193,8 +3101,7 @@ components:
           minimum: 0
           type: number
         value:
-          description: Current progress value. Use with upper_limit for type=progress.
-          type: number
+          $ref: '#/components/schemas/LiveActivityValue'
         upper_limit:
           description: Maximum progress value. Use with value for type=progress.
           type: number
@@ -2238,11 +3145,12 @@ components:
           - stats
           - alert
           - timer
+          - value
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints action\
-            \ and secondary_action buttons when included."
+            \ timer, and value Live Activities. For Alert Live Activities, this tints\
+            \ action and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -2300,18 +3208,19 @@ components:
       additionalProperties: false
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
-        \ Supports segmented_progress, progress, metrics, stats, alert, and timer\
-        \ types. For timer, send duration_seconds to start or reset a bounded timer;\
-        \ omit duration_seconds on later updates to preserve the existing timer window."
+        \ Supports segmented_progress, progress, metrics, stats, alert, timer, and\
+        \ value types. For timer, send duration_seconds to start or reset a bounded\
+        \ timer; omit duration_seconds on later updates to preserve the existing timer\
+        \ window."
       example:
-        duration_seconds: 2.3021358869347655
+        duration_seconds: 5.637376656633329
         color: lime
         step_color: lime
         icon:
           symbol: symbol
           color: lime
         auto_dismiss_minutes: 0
-        upper_limit: 5.637376656633329
+        upper_limit: 5.962133916683182
         title: title
         type: segmented_progress
         message: message
@@ -2329,26 +3238,26 @@ components:
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         - unit: unit
           color: lime
           label: label
-          value: 0.7061401241503109
+          value: 0.23021358869347652
         number_of_steps: 1
         auto_dismiss_seconds: 0
-        value: 5.962133916683182
+        value: LiveActivityValue
         current_step: 0
       properties:
         title:
@@ -2372,8 +3281,7 @@ components:
           minimum: 0
           type: number
         value:
-          description: Current progress value. Use with upper_limit for progress.
-          type: number
+          $ref: '#/components/schemas/LiveActivityValue'
         upper_limit:
           description: Maximum progress value. Use with value for progress.
           type: number
@@ -2403,11 +3311,12 @@ components:
           - stats
           - alert
           - timer
+          - value
           type: string
         color:
           description: "Optional. Accent color for progress, segmented_progress, metrics,\
-            \ and timer Live Activities. For Alert Live Activities, this tints action\
-            \ and secondary_action buttons when included."
+            \ timer, and value Live Activities. For Alert Live Activities, this tints\
+            \ action and secondary_action buttons when included."
           enum:
           - lime
           - green
@@ -2477,13 +3386,19 @@ components:
           type: integer
       required:
       - title
+    LiveActivityValue:
+      description: A formatted string or finite numeric Live Activity value. String
+        formatting is preserved.
+      oneOf:
+      - type: string
+      - type: number
     ActivityMetric:
       additionalProperties: false
       example:
         unit: unit
         color: lime
         label: label
-        value: 0.7061401241503109
+        value: 0.23021358869347652
       properties:
         label:
           minLength: 1
@@ -2589,9 +3504,6 @@ components:
       type: string
     PushNotificationAction:
       additionalProperties: {}
-      allOf:
-      - {}
-      - {}
       example:
         method: POST
         title: title
@@ -2632,12 +3544,9 @@ components:
       type: string
     LiveActivityAction:
       additionalProperties: {}
-      allOf:
-      - {}
-      - {}
       description: "Optional action button shown in the Live Activity UI. Use action\
         \ for the primary button, or secondary_action for a secondary button on alert,\
-        \ progress, and segmented_progress Live Activities."
+        \ progress, segmented_progress, and value Live Activities."
       example:
         method: POST
         title: title
@@ -2848,9 +3757,12 @@ components:
             \ Omit on updates to preserve existing Metadata; send {} to clear it."
           maxProperties: 50
           x-max-json-bytes: 16384
-        title: {}
-        message: {}
-        subtitle: {}
+        title:
+          type: string
+        message:
+          type: string
+        subtitle:
+          type: string
         media:
           description: "Optional HTTPS URL for an image, audio file, or video that\
             \ users can preview or play when they expand the notification. If `redirection`\
@@ -2876,7 +3788,8 @@ components:
         payload:
           additionalProperties: false
         badge: {}
-        sound: {}
+        sound:
+          type: string
         target:
           $ref: '#/components/schemas/ChannelTarget'
         tags:
@@ -2935,13 +3848,13 @@ components:
         metadata:
           key: Metadata_value
         content_state:
-          duration_seconds: 2.3021358869347655
+          duration_seconds: 5.637376656633329
           color: lime
           step_color: lime
           icon:
             symbol: symbol
             color: lime
-          upper_limit: 5.637376656633329
+          upper_limit: 5.962133916683182
           title: title
           message: message
           type: segmented_progress
@@ -2959,25 +3872,25 @@ components:
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           number_of_steps: 1
-          value: 5.962133916683182
+          value: LiveActivityValue
           current_step: 0
         secondary_action:
           method: POST
@@ -3085,14 +3998,14 @@ components:
         metadata:
           key: Metadata_value
         content_state:
-          duration_seconds: 2.3021358869347655
+          duration_seconds: 5.637376656633329
           color: lime
           step_color: lime
           icon:
             symbol: symbol
             color: lime
           auto_dismiss_minutes: 0
-          upper_limit: 5.637376656633329
+          upper_limit: 5.962133916683182
           title: title
           type: segmented_progress
           message: message
@@ -3110,26 +4023,26 @@ components:
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           number_of_steps: 1
           auto_dismiss_seconds: 0
-          value: 5.962133916683182
+          value: LiveActivityValue
           current_step: 0
         secondary_action:
           method: POST
@@ -3264,14 +4177,14 @@ components:
         metadata:
           key: Metadata_value
         content_state:
-          duration_seconds: 2.3021358869347655
+          duration_seconds: 5.637376656633329
           color: lime
           step_color: lime
           icon:
             symbol: symbol
             color: lime
           auto_dismiss_minutes: 0
-          upper_limit: 5.637376656633329
+          upper_limit: 5.962133916683182
           title: title
           type: segmented_progress
           message: message
@@ -3289,26 +4202,26 @@ components:
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           number_of_steps: 1
           auto_dismiss_seconds: 0
-          value: 5.962133916683182
+          value: LiveActivityValue
           current_step: 0
         secondary_action:
           method: POST
@@ -3489,9 +4402,14 @@ components:
     RateLimitError:
       additionalProperties: false
       example:
+        code: rate_limited
         error: error
         message: message
       properties:
+        code:
+          enum:
+          - rate_limited
+          type: string
         error:
           type: string
         message:
@@ -3533,13 +4451,13 @@ components:
         metadata:
           key: Metadata_value
         content_state:
-          duration_seconds: 2.3021358869347655
+          duration_seconds: 5.637376656633329
           color: lime
           step_color: lime
           icon:
             symbol: symbol
             color: lime
-          upper_limit: 5.637376656633329
+          upper_limit: 5.962133916683182
           title: title
           message: message
           type: segmented_progress
@@ -3557,25 +4475,25 @@ components:
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           number_of_steps: 1
-          value: 5.962133916683182
+          value: LiveActivityValue
           current_step: 0
         secondary_action:
           method: POST
@@ -3659,14 +4577,14 @@ components:
         metadata:
           key: Metadata_value
         content_state:
-          duration_seconds: 2.3021358869347655
+          duration_seconds: 5.637376656633329
           color: lime
           step_color: lime
           icon:
             symbol: symbol
             color: lime
           auto_dismiss_minutes: 0
-          upper_limit: 5.637376656633329
+          upper_limit: 5.962133916683182
           title: title
           message: message
           type: segmented_progress
@@ -3684,25 +4602,25 @@ components:
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           - unit: unit
             color: lime
             label: label
-            value: 0.7061401241503109
+            value: 0.23021358869347652
           number_of_steps: 1
-          value: 5.962133916683182
+          value: LiveActivityValue
           current_step: 0
         secondary_action:
           method: POST

@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Code** | Pointer to **string** |  | [optional] 
 **Error** | **string** |  | 
 **Message** | **string** |  | 
 **Limit** | **int32** |  | 
@@ -29,6 +30,31 @@ will change when the set of required properties is changed
 NewSendPushNotification429ResponseWithDefaults instantiates a new SendPushNotification429Response object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetCode
+
+`func (o *SendPushNotification429Response) GetCode() string`
+
+GetCode returns the Code field if non-nil, zero value otherwise.
+
+### GetCodeOk
+
+`func (o *SendPushNotification429Response) GetCodeOk() (*string, bool)`
+
+GetCodeOk returns a tuple with the Code field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCode
+
+`func (o *SendPushNotification429Response) SetCode(v string)`
+
+SetCode sets Code field to given value.
+
+### HasCode
+
+`func (o *SendPushNotification429Response) HasCode() bool`
+
+HasCode returns a boolean if a field has been set.
 
 ### GetError
 
