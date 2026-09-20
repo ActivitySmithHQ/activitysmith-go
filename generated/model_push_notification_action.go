@@ -40,6 +40,11 @@ type _PushNotificationAction PushNotificationAction
 // will change when the set of required properties is changed
 func NewPushNotificationAction(title string, type_ PushNotificationActionType, url string) *PushNotificationAction {
 	this := PushNotificationAction{}
+	this.Title = title
+	this.Type = type_
+	this.Url = url
+	var method PushNotificationWebhookMethod = PUSHNOTIFICATIONWEBHOOKMETHOD_POST
+	this.Method = &method
 	return &this
 }
 

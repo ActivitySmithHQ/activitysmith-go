@@ -19,7 +19,7 @@ import (
 // checks if the ContentStateStart type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateStart{}
 
-// ContentStateStart Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. For timer include duration_seconds for countdowns, or set counts_down false without duration_seconds for an open-ended elapsed timer. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
+// ContentStateStart Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer include duration_seconds for countdowns, or set counts_down false without duration_seconds for an open-ended elapsed timer. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
 type ContentStateStart struct {
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
@@ -29,8 +29,8 @@ type ContentStateStart struct {
 	CurrentStep *int32 `json:"current_step,omitempty"`
 	// Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
 	Percentage *float32 `json:"percentage,omitempty"`
-	// Current progress value. Use with upper_limit for type=progress.
-	Value *float32 `json:"value,omitempty"`
+	// For type=value, the required prominent readout (string or finite number); strings preserve exact formatting. For type=progress, a numeric progress value used with upper_limit.
+	Value *LiveActivityValue `json:"value,omitempty"`
 	// Maximum progress value. Use with value for type=progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
 	// Timer duration in seconds. For type=timer countdowns, required on start when counts_down is true or omitted.
@@ -43,12 +43,12 @@ type ContentStateStart struct {
 	Metrics []ActivityMetric `json:"metrics,omitempty"`
 	// Required for type=alert.
 	Message *string `json:"message,omitempty"`
-	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer.
+	// Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, timer, and value.
 	Icon *LiveActivityAlertIcon `json:"icon,omitempty"`
-	// Optional badge. Supported by alert, progress, and segmented_progress.
+	// Optional badge. Supported by alert, progress, segmented_progress, and value.
 	Badge *LiveActivityAlertBadge `json:"badge,omitempty"`
 	Type string `json:"type"`
-	// Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included.
+	// Optional. Accent color for progress, segmented_progress, metrics, timer, and value Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included.
 	Color *string `json:"color,omitempty"`
 	// Optional. Overrides color for the current step. Only applies to type=segmented_progress.
 	StepColor *string `json:"step_color,omitempty"`
@@ -238,9 +238,9 @@ func (o *ContentStateStart) SetPercentage(v float32) {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise.
-func (o *ContentStateStart) GetValue() float32 {
+func (o *ContentStateStart) GetValue() LiveActivityValue {
 	if o == nil || IsNil(o.Value) {
-		var ret float32
+		var ret LiveActivityValue
 		return ret
 	}
 	return *o.Value
@@ -248,7 +248,7 @@ func (o *ContentStateStart) GetValue() float32 {
 
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ContentStateStart) GetValueOk() (*float32, bool) {
+func (o *ContentStateStart) GetValueOk() (*LiveActivityValue, bool) {
 	if o == nil || IsNil(o.Value) {
 		return nil, false
 	}
@@ -264,8 +264,8 @@ func (o *ContentStateStart) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given float32 and assigns it to the Value field.
-func (o *ContentStateStart) SetValue(v float32) {
+// SetValue gets a reference to the given LiveActivityValue and assigns it to the Value field.
+func (o *ContentStateStart) SetValue(v LiveActivityValue) {
 	o.Value = &v
 }
 

@@ -150,8 +150,8 @@ func (a *AppIconBadgesAPIService) UpdateAppIconBadgeCountExecute(r ApiUpdateAppI
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 502 {
-			var v AppIconBadgeCountUpdateError
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v RateLimitError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -161,8 +161,8 @@ func (a *AppIconBadgesAPIService) UpdateAppIconBadgeCountExecute(r ApiUpdateAppI
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 429 {
-			var v RateLimitError
+		if localVarHTTPResponse.StatusCode == 502 {
+			var v AppIconBadgeCountUpdateError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

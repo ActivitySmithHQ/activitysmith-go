@@ -18,7 +18,7 @@ import (
 // checks if the LiveActivityAction type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LiveActivityAction{}
 
-// LiveActivityAction Optional action button shown in the Live Activity UI. Use action for the primary button, or secondary_action for a secondary button on alert, progress, and segmented_progress Live Activities.
+// LiveActivityAction Optional action button shown in the Live Activity UI. Use action for the primary button, or secondary_action for a secondary button on alert, progress, segmented_progress, and value Live Activities.
 type LiveActivityAction struct {
 	// Button title displayed in the Live Activity UI.
 	Title string `json:"title"`
@@ -40,6 +40,11 @@ type _LiveActivityAction LiveActivityAction
 // will change when the set of required properties is changed
 func NewLiveActivityAction(title string, type_ LiveActivityActionType, url string) *LiveActivityAction {
 	this := LiveActivityAction{}
+	this.Title = title
+	this.Type = type_
+	this.Url = url
+	var method LiveActivityWebhookMethod = LIVEACTIVITYWEBHOOKMETHOD_POST
+	this.Method = &method
 	return &this
 }
 
