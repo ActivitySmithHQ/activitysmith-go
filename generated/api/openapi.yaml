@@ -765,7 +765,8 @@ paths:
                 not_found:
                   value:
                     error: Live Activity stream not found
-                    message: "No Live Activity stream found for stream_key: prod-web-1"
+                    message: "No Live Activity stream found in this account for stream_key:\
+                      \ prod-web-1. The stream may have already ended or been deleted."
               schema:
                 $ref: '#/components/schemas/NotFoundError'
           description: Managed stream not found
