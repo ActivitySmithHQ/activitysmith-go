@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Success** | **bool** |  | 
-**DevicesNotified** | Pointer to **int32** |  | [optional] 
+**Success** | **bool** | True when APNs accepts the notification for at least one targeted device. | 
+**DevicesNotified** | Pointer to **int32** | Number of device tokens for which APNs accepted the notification, without confirming on-device delivery. | [optional] 
 **UsersNotified** | Pointer to **int32** |  | [optional] 
 **EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
