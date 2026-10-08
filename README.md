@@ -52,9 +52,9 @@ Set `Icon` to a publicly accessible HTTPS image URL to show an avatar or service
 
 ```go
 input := activitysmithsdk.PushNotificationInput{
-	Title:   "GitHub",
-	Message: "Your pull request is ready for review.",
-	Icon:    "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+	Title:   "MRR just crossed $10,000 🎉",
+	Message: "Up 18% this month from 31 new subscriptions.",
+	Icon:    "https://cdn.activitysmith.com/integrations/icons/stripe.png",
 }
 
 activitysmith.Notifications.Send(input)
@@ -200,9 +200,9 @@ Removing the interruption level from this example produces the same delivery beh
 
 ```go
 input := activitysmithsdk.PushNotificationInput{
-	Title:             "Deployment approval needed",
-	Message:           "Approve the production deployment before the window closes.",
-	Icon:              "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+	Title:             "Regression: PaymentTimeout",
+	Message:           "Resolved last week, now 38 events in the past hour.",
+	Icon:              "https://cdn.activitysmith.com/integrations/icons/sentry.png",
 	InterruptionLevel: "time-sensitive",
 }
 
@@ -217,9 +217,9 @@ With a custom icon and Time Sensitive delivery:
 
 ```json
 {
-  "title": "Deployment approval needed",
-  "message": "Approve the production deployment before the window closes.",
-  "icon": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+  "title": "Regression: PaymentTimeout",
+  "message": "Resolved last week, now 38 events in the past hour.",
+  "icon": "https://cdn.activitysmith.com/integrations/icons/sentry.png",
   "interruption_level": "time-sensitive"
 }
 ```
