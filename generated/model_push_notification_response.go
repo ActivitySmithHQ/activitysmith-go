@@ -20,9 +20,11 @@ import (
 // checks if the PushNotificationResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &PushNotificationResponse{}
 
-// PushNotificationResponse struct for PushNotificationResponse
+// PushNotificationResponse Apple APNs acceptance result. Acceptance does not confirm device delivery or presentation. Alerts remain eligible for APNs delivery retries for 24 hours; device settings and APNs storage policies still apply.
 type PushNotificationResponse struct {
+	// True when APNs accepts the notification for at least one targeted device.
 	Success bool `json:"success"`
+	// Number of device tokens for which APNs accepted the notification, without confirming on-device delivery.
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	UsersNotified *int32 `json:"users_notified,omitempty"`
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
