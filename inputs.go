@@ -181,7 +181,6 @@ func PushActionBody(body map[string]interface{}) PushNotificationActionOption {
 
 // PushNotificationInput is a handwritten DX input with plain optional values.
 // PushInterruptionLevel controls how a Push Notification interrupts the user.
-// Critical Alerts are not supported.
 type PushInterruptionLevel = generated.PushInterruptionLevel
 
 const (
