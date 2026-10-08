@@ -50,7 +50,7 @@ activitysmith.Notifications.Send(input)
 
 ![Push Notifications with custom icons](https://cdn.activitysmith.com/features/push-notifications-with-custom-icons.png)
 
-Set `Icon` to a publicly accessible HTTPS image URL to show an avatar or service logo alongside a smaller ActivitySmith app icon. With a custom icon, iOS may omit the subtitle from the notification. Requires ActivitySmith for iOS 1.16.0 or later.
+Set `Icon` to a publicly accessible HTTPS image URL to show an avatar or service logo alongside a smaller ActivitySmith app icon. With a custom icon, iOS may omit the subtitle from the notification.
 
 ```go
 input := activitysmithsdk.PushNotificationInput{
