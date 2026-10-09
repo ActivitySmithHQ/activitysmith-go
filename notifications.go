@@ -73,6 +73,10 @@ func normalizePushNotificationRequest(input any) (generated.PushNotificationRequ
 }
 
 func validatePushNotificationRequest(request generated.PushNotificationRequest) error {
+	if request.InterruptionLevel != nil && !request.InterruptionLevel.IsValid() {
+		return fmt.Errorf("activitysmith: interruption_level must be passive, active, or time-sensitive")
+	}
+
 	if request.Media == nil {
 		return nil
 	}

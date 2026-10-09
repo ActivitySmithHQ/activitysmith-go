@@ -8,6 +8,8 @@ Name | Type | Description | Notes
 **Title** | **string** |  | 
 **Message** | Pointer to **string** |  | [optional] 
 **Subtitle** | Pointer to **string** |  | [optional] 
+**Icon** | Pointer to **string** | Optional HTTPS image URL without credentials for a custom notification icon. If the image cannot be loaded, the app icon is used. iOS may omit subtitle when displaying a custom icon. | [optional] 
+**InterruptionLevel** | Pointer to [**PushInterruptionLevel**](PushInterruptionLevel.md) | Optional. How urgently iOS presents the notification: &#x60;passive&#x60; (quiet, no sound or screen wake), &#x60;active&#x60; (default), or &#x60;time-sensitive&#x60; (can break through Focus and Scheduled Summary when allowed). Omit for normal delivery. | [optional] 
 **Media** | Pointer to **string** | Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If &#x60;redirection&#x60; is omitted, tapping the notification opens this URL. Cannot be combined with &#x60;actions&#x60;. | [optional] 
 **Redirection** | Pointer to **string** | Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media. | [optional] 
 **Actions** | Pointer to [**[]PushNotificationAction**](PushNotificationAction.md) | Optional interactive actions shown when users expand the notification. Cannot be combined with &#x60;media&#x60;. | [optional] 
@@ -130,6 +132,56 @@ SetSubtitle sets Subtitle field to given value.
 `func (o *PushNotificationRequest) HasSubtitle() bool`
 
 HasSubtitle returns a boolean if a field has been set.
+
+### GetIcon
+
+`func (o *PushNotificationRequest) GetIcon() string`
+
+GetIcon returns the Icon field if non-nil, zero value otherwise.
+
+### GetIconOk
+
+`func (o *PushNotificationRequest) GetIconOk() (*string, bool)`
+
+GetIconOk returns a tuple with the Icon field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIcon
+
+`func (o *PushNotificationRequest) SetIcon(v string)`
+
+SetIcon sets Icon field to given value.
+
+### HasIcon
+
+`func (o *PushNotificationRequest) HasIcon() bool`
+
+HasIcon returns a boolean if a field has been set.
+
+### GetInterruptionLevel
+
+`func (o *PushNotificationRequest) GetInterruptionLevel() PushInterruptionLevel`
+
+GetInterruptionLevel returns the InterruptionLevel field if non-nil, zero value otherwise.
+
+### GetInterruptionLevelOk
+
+`func (o *PushNotificationRequest) GetInterruptionLevelOk() (*PushInterruptionLevel, bool)`
+
+GetInterruptionLevelOk returns a tuple with the InterruptionLevel field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetInterruptionLevel
+
+`func (o *PushNotificationRequest) SetInterruptionLevel(v PushInterruptionLevel)`
+
+SetInterruptionLevel sets InterruptionLevel field to given value.
+
+### HasInterruptionLevel
+
+`func (o *PushNotificationRequest) HasInterruptionLevel() bool`
+
+HasInterruptionLevel returns a boolean if a field has been set.
 
 ### GetMedia
 

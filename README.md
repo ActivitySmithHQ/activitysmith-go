@@ -46,6 +46,22 @@ input := activitysmithsdk.PushNotificationInput{
 activitysmith.Notifications.Send(input)
 ```
 
+### Custom Push Notification Icons
+
+![Push Notifications with custom icons](https://cdn.activitysmith.com/features/push-notifications-with-custom-icons.png)
+
+Set `Icon` to a publicly accessible HTTPS image URL to show an avatar or service logo alongside a smaller ActivitySmith app icon. With a custom icon, iOS may omit the subtitle from the notification.
+
+```go
+input := activitysmithsdk.PushNotificationInput{
+	Title:   "MRR just crossed $10,000 🎉",
+	Message: "Up 18% this month from 31 new subscriptions.",
+	Icon:    "https://cdn.activitysmith.com/integrations/icons/stripe.png",
+}
+
+activitysmith.Notifications.Send(input)
+```
+
 ### Rich Push Notifications with Media
 
 ![Rich Push Notification with image](https://cdn.activitysmith.com/features/rich-push-notification-with-image.png)
@@ -142,23 +158,91 @@ input := activitysmithsdk.PushNotificationInput{
 activitysmith.Notifications.Send(input)
 ```
 
+### Push Notification Interruption Levels
+
+![Time Sensitive Push Notification](https://cdn.activitysmith.com/features/time-sensitive-push-notifications.png)
+
+Use `InterruptionLevel` to choose how urgently iOS presents a Push Notification. Omit it for normal delivery. Explicit `active` has the same behavior as the default.
+
+| Value | Behavior |
+| --- | --- |
+| `passive` | Appears quietly in the notification list, without sound or waking the screen. |
+| `active` | Normal delivery, subject to the device's notification settings and Focus. This is the default. |
+| `time-sensitive` | Can bypass Scheduled Summary and Focus when the user allows Time Sensitive Notifications for ActivitySmith. |
+
+See Apple's [interruption levels](https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel) for the system behavior.
+
+The SDK also exports these values as `activitysmithsdk.PushInterruptionLevelPassive`, `activitysmithsdk.PushInterruptionLevelActive`, and `activitysmithsdk.PushInterruptionLevelTimeSensitive`.
+
+#### Passive
+
+```go
+input := activitysmithsdk.PushNotificationInput{
+	Title:             "Daily summary",
+	Message:           "All scheduled jobs completed successfully.",
+	InterruptionLevel: "passive",
+}
+
+activitysmith.Notifications.Send(input)
+```
+
+#### Active (default)
+
+```go
+input := activitysmithsdk.PushNotificationInput{
+	Title:             "Deployment complete",
+	Message:           "Your latest changes are live.",
+	InterruptionLevel: "active",
+}
+
+activitysmith.Notifications.Send(input)
+```
+
+Removing the interruption level from this example produces the same delivery behavior.
+
+#### Time Sensitive
+
+```go
+input := activitysmithsdk.PushNotificationInput{
+	Title:             "🚨 checkout-api is down",
+	Message:           "500 errors on 62% of requests. Customers can't complete payments.",
+	InterruptionLevel: "time-sensitive",
+}
+
+activitysmith.Notifications.Send(input)
+```
+
 ## Live Activities
 
 Choose the Live Activity type that matches what you want to show:
 
-- ![Value Live Activity showing revenue with a growth badge](https://cdn.activitysmith.com/features/value-live-activity.png) **Value**: Show a single value on your Lock Screen, such as revenue, a queue count, or a temperature.
+![Value Live Activity showing revenue with a growth badge](https://cdn.activitysmith.com/features/value-live-activity.png)
 
-- ![Stats Live Activity with six labeled sales metrics](https://cdn.activitysmith.com/features/stats-live-activity.png) **Stats**: Show up to 8 labeled values on your Lock Screen, from revenue and orders to uptime and conversion.
+**Value**: Show a single value on your Lock Screen, such as revenue, a queue count, or a temperature.
 
-- ![Alert Live Activity showing a customer reactivation update](https://cdn.activitysmith.com/features/alert-live-activity.png) **Alert**: Show status updates with a clear message, badge, and icon. When you add an action button, `color` controls the button tint.
+![Stats Live Activity with six labeled sales metrics](https://cdn.activitysmith.com/features/stats-live-activity.png)
 
-- ![Metrics Live Activity with CPU and memory values](https://cdn.activitysmith.com/features/metrics-live-activity-start.png) **Metrics**: Track two related values with segmented bars, such as CPU and memory.
+**Stats**: Show up to 8 labeled values on your Lock Screen, from revenue and orders to uptime and conversion.
 
-- ![Segmented Progress Live Activity showing a workflow step](https://cdn.activitysmith.com/features/update-live-activity.png) **Segmented Progress**: Show progress through a known set of steps, like build, test, deploy, and verify.
+![Alert Live Activity showing a customer reactivation update](https://cdn.activitysmith.com/features/alert-live-activity.png)
 
-- ![Progress Live Activity showing percentage completion](https://cdn.activitysmith.com/features/progress-live-activity.png) **Progress**: Show percentage progress for jobs that move continuously toward completion.
+**Alert**: Show status updates with a clear message, badge, and icon. When you add an action button, `color` controls the button tint.
 
-- ![Timer Live Activity showing a benchmark run countdown](https://cdn.activitysmith.com/features/timer-live-activity.png) **Timer**: Count down from a duration, or count up from 00:00 while a job runs.
+![Metrics Live Activity with CPU and memory values](https://cdn.activitysmith.com/features/metrics-live-activity-start.png)
+
+**Metrics**: Track two related values with segmented bars, such as CPU and memory.
+
+![Segmented Progress Live Activity showing a workflow step](https://cdn.activitysmith.com/features/update-live-activity.png)
+
+**Segmented Progress**: Show progress through a known set of steps, like build, test, deploy, and verify.
+
+![Progress Live Activity showing percentage completion](https://cdn.activitysmith.com/features/progress-live-activity.png)
+
+**Progress**: Show percentage progress for jobs that move continuously toward completion.
+
+![Timer Live Activity showing a benchmark run countdown](https://cdn.activitysmith.com/features/timer-live-activity.png)
+
+**Timer**: Count down from a duration, or count up from 00:00 while a job runs.
 
 ### Start & Update Live Activity
 

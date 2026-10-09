@@ -40,7 +40,7 @@ func (r ApiSendPushNotificationRequest) Execute() (*PushNotificationResponse, *h
 /*
 SendPushNotification Send a push notification
 
-Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`. Optional tags to organize and filter notification history.
+Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`. Optional `icon` shows a custom image, such as a service logo or avatar, next to a smaller app icon. Optional `interruption_level` sets how urgently iOS presents the notification. Optional tags to organize and filter notification history.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiSendPushNotificationRequest
@@ -128,6 +128,17 @@ func (a *PushNotificationsAPIService) SendPushNotificationExecute(r ApiSendPushN
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 402 {
+			var v BillingBlockedError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 403 {
 			var v ForbiddenError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -139,7 +150,7 @@ func (a *PushNotificationsAPIService) SendPushNotificationExecute(r ApiSendPushN
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 404 {
+		if localVarHTTPResponse.StatusCode == 422 {
 			var v NoRecipientsError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

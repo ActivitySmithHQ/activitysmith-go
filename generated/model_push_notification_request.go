@@ -25,6 +25,10 @@ type PushNotificationRequest struct {
 	Title string `json:"title"`
 	Message *string `json:"message,omitempty"`
 	Subtitle *string `json:"subtitle,omitempty"`
+	// Optional HTTPS image URL without credentials for a custom notification icon. If the image cannot be loaded, the app icon is used. iOS may omit subtitle when displaying a custom icon.
+	Icon *string `json:"icon,omitempty" validate:"regexp=^https:\\/\\/"`
+	// Optional. How urgently iOS presents the notification: `passive` (quiet, no sound or screen wake), `active` (default), or `time-sensitive` (can break through Focus and Scheduled Summary when allowed). Omit for normal delivery.
+	InterruptionLevel *PushInterruptionLevel `json:"interruption_level,omitempty"`
 	// Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
 	Media *string `json:"media,omitempty" validate:"regexp=^https:\\/\\/"`
 	// Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
@@ -178,6 +182,70 @@ func (o *PushNotificationRequest) HasSubtitle() bool {
 // SetSubtitle gets a reference to the given string and assigns it to the Subtitle field.
 func (o *PushNotificationRequest) SetSubtitle(v string) {
 	o.Subtitle = &v
+}
+
+// GetIcon returns the Icon field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetIcon() string {
+	if o == nil || IsNil(o.Icon) {
+		var ret string
+		return ret
+	}
+	return *o.Icon
+}
+
+// GetIconOk returns a tuple with the Icon field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetIconOk() (*string, bool) {
+	if o == nil || IsNil(o.Icon) {
+		return nil, false
+	}
+	return o.Icon, true
+}
+
+// HasIcon returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasIcon() bool {
+	if o != nil && !IsNil(o.Icon) {
+		return true
+	}
+
+	return false
+}
+
+// SetIcon gets a reference to the given string and assigns it to the Icon field.
+func (o *PushNotificationRequest) SetIcon(v string) {
+	o.Icon = &v
+}
+
+// GetInterruptionLevel returns the InterruptionLevel field value if set, zero value otherwise.
+func (o *PushNotificationRequest) GetInterruptionLevel() PushInterruptionLevel {
+	if o == nil || IsNil(o.InterruptionLevel) {
+		var ret PushInterruptionLevel
+		return ret
+	}
+	return *o.InterruptionLevel
+}
+
+// GetInterruptionLevelOk returns a tuple with the InterruptionLevel field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationRequest) GetInterruptionLevelOk() (*PushInterruptionLevel, bool) {
+	if o == nil || IsNil(o.InterruptionLevel) {
+		return nil, false
+	}
+	return o.InterruptionLevel, true
+}
+
+// HasInterruptionLevel returns a boolean if a field has been set.
+func (o *PushNotificationRequest) HasInterruptionLevel() bool {
+	if o != nil && !IsNil(o.InterruptionLevel) {
+		return true
+	}
+
+	return false
+}
+
+// SetInterruptionLevel gets a reference to the given PushInterruptionLevel and assigns it to the InterruptionLevel field.
+func (o *PushNotificationRequest) SetInterruptionLevel(v PushInterruptionLevel) {
+	o.InterruptionLevel = &v
 }
 
 // GetMedia returns the Media field value if set, zero value otherwise.
@@ -456,6 +524,12 @@ func (o PushNotificationRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Subtitle) {
 		toSerialize["subtitle"] = o.Subtitle
 	}
+	if !IsNil(o.Icon) {
+		toSerialize["icon"] = o.Icon
+	}
+	if !IsNil(o.InterruptionLevel) {
+		toSerialize["interruption_level"] = o.InterruptionLevel
+	}
 	if !IsNil(o.Media) {
 		toSerialize["media"] = o.Media
 	}
@@ -527,6 +601,8 @@ func (o *PushNotificationRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "title")
 		delete(additionalProperties, "message")
 		delete(additionalProperties, "subtitle")
+		delete(additionalProperties, "icon")
+		delete(additionalProperties, "interruption_level")
 		delete(additionalProperties, "media")
 		delete(additionalProperties, "redirection")
 		delete(additionalProperties, "actions")

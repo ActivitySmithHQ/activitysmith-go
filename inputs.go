@@ -180,16 +180,27 @@ func PushActionBody(body map[string]interface{}) PushNotificationActionOption {
 }
 
 // PushNotificationInput is a handwritten DX input with plain optional values.
+// PushInterruptionLevel controls how a Push Notification interrupts the user.
+type PushInterruptionLevel = generated.PushInterruptionLevel
+
+const (
+	PushInterruptionLevelPassive       = generated.PUSHINTERRUPTIONLEVEL_PASSIVE
+	PushInterruptionLevelActive        = generated.PUSHINTERRUPTIONLEVEL_ACTIVE
+	PushInterruptionLevelTimeSensitive = generated.PUSHINTERRUPTIONLEVEL_TIME_SENSITIVE
+)
+
 type PushNotificationInput struct {
-	Metadata    map[string]any
-	Title       string
-	Message     string
-	Subtitle    string
-	Media       string
-	Redirection string
-	Actions     []PushNotificationAction
-	Channels    []string
-	Tags        []string
+	Metadata          map[string]any
+	Title             string
+	Message           string
+	Subtitle          string
+	Media             string
+	Icon              string
+	InterruptionLevel PushInterruptionLevel
+	Redirection       string
+	Actions           []PushNotificationAction
+	Channels          []string
+	Tags              []string
 }
 
 func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest {
@@ -204,6 +215,12 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	}
 	if in.Media != "" {
 		req.SetMedia(in.Media)
+	}
+	if in.Icon != "" {
+		req.SetIcon(in.Icon)
+	}
+	if in.InterruptionLevel != "" {
+		req.SetInterruptionLevel(in.InterruptionLevel)
 	}
 	if in.Redirection != "" {
 		req.SetRedirection(in.Redirection)
