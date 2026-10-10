@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **UsersNotified** | Pointer to **int32** |  | [optional] 
 **EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
+**Warning** | Pointer to **string** | Present on &#x60;updated&#x60; responses when the current Live Activity has received more than 12 updates and has averaged more than one update every 2 minutes since it started. The update is still sent, but iOS may throttle Live Activities that update this often. | [optional] 
 **Timestamp** | **time.Time** |  | 
 
 ## Methods
@@ -279,6 +280,31 @@ SetTags sets Tags field to given value.
 `func (o *LiveActivityStreamPutResponse) HasTags() bool`
 
 HasTags returns a boolean if a field has been set.
+
+### GetWarning
+
+`func (o *LiveActivityStreamPutResponse) GetWarning() string`
+
+GetWarning returns the Warning field if non-nil, zero value otherwise.
+
+### GetWarningOk
+
+`func (o *LiveActivityStreamPutResponse) GetWarningOk() (*string, bool)`
+
+GetWarningOk returns a tuple with the Warning field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetWarning
+
+`func (o *LiveActivityStreamPutResponse) SetWarning(v string)`
+
+SetWarning sets Warning field to given value.
+
+### HasWarning
+
+`func (o *LiveActivityStreamPutResponse) HasWarning() bool`
+
+HasWarning returns a boolean if a field has been set.
 
 ### GetTimestamp
 
