@@ -289,9 +289,9 @@ paths:
         \ and optional target channels. Supports optional redirection URL, optional\
         \ media preview or playback when the notification is expanded, and up to 4\
         \ interactive actions. `media` cannot be combined with `actions`. Optional\
-        \ `icon` shows a custom image, such as a service logo or avatar, next to a\
-        \ smaller app icon. Optional `interruption_level` sets how urgently iOS presents\
-        \ the notification. Optional tags to organize and filter notification history."
+        \ `icon` shows a custom image, such as a logo or avatar, next to a smaller\
+        \ app icon. Optional `interruption_level` sets how urgently iOS presents the\
+        \ notification. Optional tags to organize and filter notification history."
       operationId: sendPushNotification
       requestBody:
         content:
@@ -4195,6 +4195,7 @@ components:
         users_notified: 1
         activity_id: activity_id
         devices_notified: 0
+        warning: warning
         operation: started
         stream_key: stream_key
         effective_channel_slugs:
@@ -4240,6 +4241,12 @@ components:
             pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
             type: string
           type: array
+        warning:
+          description: "Present on `updated` responses when the current Live Activity\
+            \ has received more than 12 updates and has averaged more than one update\
+            \ every 2 minutes since it started. The update is still sent, but iOS\
+            \ may throttle Live Activities that update this often."
+          type: string
         timestamp:
           format: date-time
           type: string
