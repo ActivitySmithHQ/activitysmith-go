@@ -33,6 +33,8 @@ type LiveActivityStreamPutResponse struct {
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
 	// Optional tags to organize and filter notification history.
 	Tags []string `json:"tags,omitempty"`
+	// Present on `updated` responses when the previous update to this stream was less than 2 minutes ago. The update is still sent, but iOS may throttle frequent Live Activity updates.
+	Warning *string `json:"warning,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
 }
 
@@ -365,6 +367,38 @@ func (o *LiveActivityStreamPutResponse) SetTags(v []string) {
 	o.Tags = v
 }
 
+// GetWarning returns the Warning field value if set, zero value otherwise.
+func (o *LiveActivityStreamPutResponse) GetWarning() string {
+	if o == nil || IsNil(o.Warning) {
+		var ret string
+		return ret
+	}
+	return *o.Warning
+}
+
+// GetWarningOk returns a tuple with the Warning field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamPutResponse) GetWarningOk() (*string, bool) {
+	if o == nil || IsNil(o.Warning) {
+		return nil, false
+	}
+	return o.Warning, true
+}
+
+// HasWarning returns a boolean if a field has been set.
+func (o *LiveActivityStreamPutResponse) HasWarning() bool {
+	if o != nil && !IsNil(o.Warning) {
+		return true
+	}
+
+	return false
+}
+
+// SetWarning gets a reference to the given string and assigns it to the Warning field.
+func (o *LiveActivityStreamPutResponse) SetWarning(v string) {
+	o.Warning = &v
+}
+
 // GetTimestamp returns the Timestamp field value
 func (o *LiveActivityStreamPutResponse) GetTimestamp() time.Time {
 	if o == nil {
@@ -422,6 +456,9 @@ func (o LiveActivityStreamPutResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Tags) {
 		toSerialize["tags"] = o.Tags
+	}
+	if !IsNil(o.Warning) {
+		toSerialize["warning"] = o.Warning
 	}
 	toSerialize["timestamp"] = o.Timestamp
 	return toSerialize, nil
