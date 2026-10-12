@@ -689,8 +689,8 @@ paths:
             examples:
               default:
                 value:
-                  title: Answered from desk ✅
-                  message: No input needed anymore
+                  title: ✅ checkout-api recovered
+                  message: Error rate is back to normal. Incident resolved.
             schema:
               $ref: '#/components/schemas/PushNotificationReplaceRequest'
         required: true
@@ -978,8 +978,8 @@ paths:
             -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{
-              "title": "Answered from desk ✅",
-              "message": "No input needed anymore"
+              "title": "✅ checkout-api recovered",
+              "message": "Error rate is back to normal. Incident resolved."
             }'
   /live-activity/stream/{stream_key}:
     delete:
