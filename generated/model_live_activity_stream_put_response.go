@@ -33,7 +33,15 @@ type LiveActivityStreamPutResponse struct {
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
 	// Optional tags to organize and filter notification history.
 	Tags []string `json:"tags,omitempty"`
+	// Present on `updated` responses when the current Live Activity has received more than 12 updates and has averaged more than one update every 2 minutes since it started. The update is still sent, but iOS may throttle Live Activities that update this often.
+	Warning *string `json:"warning,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	// True when the request had no effect.
+	Ignored *bool `json:"ignored,omitempty"`
+	RemotePushSent *bool `json:"remote_push_sent,omitempty"`
+	Message *string `json:"message,omitempty"`
+	// Per-device delivery errors when some devices could not be reached.
+	Errors []string `json:"errors,omitempty"`
 }
 
 type _LiveActivityStreamPutResponse LiveActivityStreamPutResponse
@@ -365,6 +373,38 @@ func (o *LiveActivityStreamPutResponse) SetTags(v []string) {
 	o.Tags = v
 }
 
+// GetWarning returns the Warning field value if set, zero value otherwise.
+func (o *LiveActivityStreamPutResponse) GetWarning() string {
+	if o == nil || IsNil(o.Warning) {
+		var ret string
+		return ret
+	}
+	return *o.Warning
+}
+
+// GetWarningOk returns a tuple with the Warning field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamPutResponse) GetWarningOk() (*string, bool) {
+	if o == nil || IsNil(o.Warning) {
+		return nil, false
+	}
+	return o.Warning, true
+}
+
+// HasWarning returns a boolean if a field has been set.
+func (o *LiveActivityStreamPutResponse) HasWarning() bool {
+	if o != nil && !IsNil(o.Warning) {
+		return true
+	}
+
+	return false
+}
+
+// SetWarning gets a reference to the given string and assigns it to the Warning field.
+func (o *LiveActivityStreamPutResponse) SetWarning(v string) {
+	o.Warning = &v
+}
+
 // GetTimestamp returns the Timestamp field value
 func (o *LiveActivityStreamPutResponse) GetTimestamp() time.Time {
 	if o == nil {
@@ -387,6 +427,134 @@ func (o *LiveActivityStreamPutResponse) GetTimestampOk() (*time.Time, bool) {
 // SetTimestamp sets field value
 func (o *LiveActivityStreamPutResponse) SetTimestamp(v time.Time) {
 	o.Timestamp = v
+}
+
+// GetIgnored returns the Ignored field value if set, zero value otherwise.
+func (o *LiveActivityStreamPutResponse) GetIgnored() bool {
+	if o == nil || IsNil(o.Ignored) {
+		var ret bool
+		return ret
+	}
+	return *o.Ignored
+}
+
+// GetIgnoredOk returns a tuple with the Ignored field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamPutResponse) GetIgnoredOk() (*bool, bool) {
+	if o == nil || IsNil(o.Ignored) {
+		return nil, false
+	}
+	return o.Ignored, true
+}
+
+// HasIgnored returns a boolean if a field has been set.
+func (o *LiveActivityStreamPutResponse) HasIgnored() bool {
+	if o != nil && !IsNil(o.Ignored) {
+		return true
+	}
+
+	return false
+}
+
+// SetIgnored gets a reference to the given bool and assigns it to the Ignored field.
+func (o *LiveActivityStreamPutResponse) SetIgnored(v bool) {
+	o.Ignored = &v
+}
+
+// GetRemotePushSent returns the RemotePushSent field value if set, zero value otherwise.
+func (o *LiveActivityStreamPutResponse) GetRemotePushSent() bool {
+	if o == nil || IsNil(o.RemotePushSent) {
+		var ret bool
+		return ret
+	}
+	return *o.RemotePushSent
+}
+
+// GetRemotePushSentOk returns a tuple with the RemotePushSent field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamPutResponse) GetRemotePushSentOk() (*bool, bool) {
+	if o == nil || IsNil(o.RemotePushSent) {
+		return nil, false
+	}
+	return o.RemotePushSent, true
+}
+
+// HasRemotePushSent returns a boolean if a field has been set.
+func (o *LiveActivityStreamPutResponse) HasRemotePushSent() bool {
+	if o != nil && !IsNil(o.RemotePushSent) {
+		return true
+	}
+
+	return false
+}
+
+// SetRemotePushSent gets a reference to the given bool and assigns it to the RemotePushSent field.
+func (o *LiveActivityStreamPutResponse) SetRemotePushSent(v bool) {
+	o.RemotePushSent = &v
+}
+
+// GetMessage returns the Message field value if set, zero value otherwise.
+func (o *LiveActivityStreamPutResponse) GetMessage() string {
+	if o == nil || IsNil(o.Message) {
+		var ret string
+		return ret
+	}
+	return *o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamPutResponse) GetMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *LiveActivityStreamPutResponse) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
+func (o *LiveActivityStreamPutResponse) SetMessage(v string) {
+	o.Message = &v
+}
+
+// GetErrors returns the Errors field value if set, zero value otherwise.
+func (o *LiveActivityStreamPutResponse) GetErrors() []string {
+	if o == nil || IsNil(o.Errors) {
+		var ret []string
+		return ret
+	}
+	return o.Errors
+}
+
+// GetErrorsOk returns a tuple with the Errors field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamPutResponse) GetErrorsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Errors) {
+		return nil, false
+	}
+	return o.Errors, true
+}
+
+// HasErrors returns a boolean if a field has been set.
+func (o *LiveActivityStreamPutResponse) HasErrors() bool {
+	if o != nil && !IsNil(o.Errors) {
+		return true
+	}
+
+	return false
+}
+
+// SetErrors gets a reference to the given []string and assigns it to the Errors field.
+func (o *LiveActivityStreamPutResponse) SetErrors(v []string) {
+	o.Errors = v
 }
 
 func (o LiveActivityStreamPutResponse) MarshalJSON() ([]byte, error) {
@@ -423,7 +591,22 @@ func (o LiveActivityStreamPutResponse) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Tags) {
 		toSerialize["tags"] = o.Tags
 	}
+	if !IsNil(o.Warning) {
+		toSerialize["warning"] = o.Warning
+	}
 	toSerialize["timestamp"] = o.Timestamp
+	if !IsNil(o.Ignored) {
+		toSerialize["ignored"] = o.Ignored
+	}
+	if !IsNil(o.RemotePushSent) {
+		toSerialize["remote_push_sent"] = o.RemotePushSent
+	}
+	if !IsNil(o.Message) {
+		toSerialize["message"] = o.Message
+	}
+	if !IsNil(o.Errors) {
+		toSerialize["errors"] = o.Errors
+	}
 	return toSerialize, nil
 }
 
@@ -455,7 +638,6 @@ func (o *LiveActivityStreamPutResponse) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityStreamPutResponse := _LiveActivityStreamPutResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityStreamPutResponse)
 
 	if err != nil {

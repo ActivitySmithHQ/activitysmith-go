@@ -289,9 +289,9 @@ paths:
         \ and optional target channels. Supports optional redirection URL, optional\
         \ media preview or playback when the notification is expanded, and up to 4\
         \ interactive actions. `media` cannot be combined with `actions`. Optional\
-        \ `icon` shows a custom image, such as a service logo or avatar, next to a\
-        \ smaller app icon. Optional `interruption_level` sets how urgently iOS presents\
-        \ the notification. Optional tags to organize and filter notification history."
+        \ `icon` shows a custom image, such as a logo or avatar, next to a smaller\
+        \ app icon. Optional `interruption_level` sets how urgently iOS presents the\
+        \ notification. Optional tags to organize and filter notification history."
       operationId: sendPushNotification
       requestBody:
         content:
@@ -381,12 +381,14 @@ paths:
                 default:
                   value:
                     success: true
+                    notification_id: Xk3pQ8mV2nR7tL9wB4yZ
                     devices_notified: 2
                     users_notified: 1
                     timestamp: 2025-08-12T12:00:00.000Z
                 channel_targeted:
                   value:
                     success: true
+                    notification_id: Xk3pQ8mV2nR7tL9wB4yZ
                     devices_notified: 2
                     users_notified: 1
                     effective_channel_slugs:
@@ -396,6 +398,7 @@ paths:
                 tagged:
                   value:
                     success: true
+                    notification_id: Xk3pQ8mV2nR7tL9wB4yZ
                     devices_notified: 2
                     users_notified: 1
                     effective_channel_slugs: null
@@ -659,6 +662,324 @@ paths:
             -d '{
               "title": "New subscription 💸",
               "message": "Customer upgraded to Pro plan"
+            }'
+  /push-notification/{notification_id}:
+    put:
+      description: "Replaces a Push Notification you already sent, using the `notification_id`\
+        \ from the send response. The replacement takes the original's place on the\
+        \ Lock Screen and in Notification Center instead of appearing as a second\
+        \ notification. It is delivered silently, with no sound or screen wake, to\
+        \ the same recipients as the original. Notification history is updated in\
+        \ place."
+      operationId: replacePushNotification
+      parameters:
+      - description: The `notification_id` returned when the Push Notification was
+          sent.
+        explode: false
+        in: path
+        name: notification_id
+        required: true
+        schema:
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  title: Answered from desk ✅
+                  message: No input needed anymore
+            schema:
+              $ref: '#/components/schemas/PushNotificationReplaceRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    success: true
+                    notification_id: Xk3pQ8mV2nR7tL9wB4yZ
+                    devices_notified: 2
+                    users_notified: 1
+                    effective_channel_slugs: null
+                    timestamp: 2025-08-12T12:05:00.000Z
+              schema:
+                $ref: '#/components/schemas/PushNotificationReplaceResponse'
+          description: Push notification replaced
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              examples:
+                missing_title:
+                  value:
+                    error: Missing title
+                    code: missing_title
+                    message: title is required in the request body.
+                invalid_tags:
+                  value:
+                    error: Invalid tags
+                    code: invalid_tags
+                    message: "tags must use 1-64 lowercase letters, numbers, dashes,\
+                      \ underscores, periods, or colons"
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad request (invalid payload or channel targeting input)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "402":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingBlockedError'
+          description: Billing access required
+        "403":
+          content:
+            application/json:
+              examples:
+                channel_scope_violation:
+                  value:
+                    error: Invalid channel targeting
+                    message: This API key can only target assigned channels. Requested
+                      channels include channels outside this key scope.
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: Forbidden (API key scope or channel assignment violation)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "404":
+          content:
+            application/json:
+              examples:
+                not_found:
+                  value:
+                    error: Push notification not found
+                    code: push_notification_not_found
+                    message: "No push notification found with id: Xk3pQ8mV2nR7tL9wB4yZ"
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+          description: Push notification not found
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "409":
+          content:
+            application/json:
+              examples:
+                not_replaceable:
+                  value:
+                    error: Push notification cannot be replaced
+                    code: push_notification_not_replaceable
+                    message: This push notification was sent before replacement was
+                      supported and cannot be replaced. Send a new push notification
+                      instead.
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+          description: Push notification was sent before replacement support
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "422":
+          content:
+            application/json:
+              examples:
+                no_devices:
+                  value:
+                    error: No recipients found
+                    message: No devices matched the effective channel target
+                    effective_channel_slugs:
+                    - marketing
+              schema:
+                $ref: '#/components/schemas/NoRecipientsError'
+          description: No recipients of the original Push Notification are still available
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+              schema:
+                $ref: '#/components/schemas/sendPushNotification_429_response'
+          description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:notifications\"; r=599; t=60, \"account:notifications\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:notifications\"; q=600; w=60, \"account:notifications\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
+      summary: Replace a push notification
+      tags:
+      - PushNotifications
+      x-codeSamples:
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X PUT "https://activitysmith.com/api/push-notification/Xk3pQ8mV2nR7tL9wB4yZ" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "title": "Answered from desk ✅",
+              "message": "No input needed anymore"
             }'
   /live-activity/stream/{stream_key}:
     delete:
@@ -3646,15 +3967,18 @@ components:
       additionalProperties: false
       example:
         badge: 171976544
+        devices_deactivated: 7
         success: true
         users_updated: 1
         users_notified: 5
+        devices_unregistered: 9
         devices_notified: 5
         devices_updated: 6
         effective_channel_slugs:
         - effective_channel_slugs
         - effective_channel_slugs
         timestamp: 2000-01-23T04:56:07.000+00:00
+        devices_targeted: 2
       properties:
         success:
           type: boolean
@@ -3683,6 +4007,16 @@ components:
         timestamp:
           format: date-time
           type: string
+        devices_targeted:
+          description: Number of device tokens targeted.
+          type: integer
+        devices_deactivated:
+          description: Number of device tokens deactivated because APNs reported them
+            unregistered.
+          type: integer
+        devices_unregistered:
+          description: Number of targeted device tokens APNs reported as unregistered.
+          type: integer
       required:
       - badge
       - devices_updated
@@ -3693,17 +4027,17 @@ components:
     AppIconBadgeCountUpdateError:
       additionalProperties: false
       example:
-        badge: 494379917
+        badge: 776546568
         code: badge_device_disconnected
-        users_updated: 3
-        devices_notified: 2
+        users_updated: 7
+        devices_notified: 1
         error: error
         message: message
-        devices_updated: 9
+        devices_updated: 4
         effective_channel_slugs:
         - effective_channel_slugs
         - effective_channel_slugs
-        devices_targeted: 7
+        devices_targeted: 2
       properties:
         error:
           type: string
@@ -3880,9 +4214,178 @@ components:
         delivery or presentation. Alerts remain eligible for APNs delivery retries
         for 24 hours; device settings and APNs storage policies still apply.
       example:
+        devices_deactivated: 5
+        success: true
+        users_notified: 6
+        devices_unregistered: 5
+        devices_notified: 0
+        credential_test: true
+        notification_id: notification_id
+        message: message
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
+        tags:
+        - tags
+        - tags
+        timestamp: 2000-01-23T04:56:07.000+00:00
+        devices_targeted: 1
+      properties:
+        success:
+          description: True when APNs accepts the notification for at least one targeted
+            device.
+          type: boolean
+        notification_id:
+          description: "ID of this Push Notification. Pass it to `PUT /push-notification/{notification_id}`\
+            \ to replace the notification later."
+          type: string
+        devices_notified:
+          description: "Number of device tokens for which APNs accepted the notification,\
+            \ without confirming on-device delivery."
+          type: integer
+        users_notified:
+          type: integer
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+        devices_targeted:
+          description: Number of device tokens targeted.
+          type: integer
+        devices_deactivated:
+          description: Number of device tokens deactivated because APNs reported them
+            unregistered.
+          type: integer
+        devices_unregistered:
+          description: Number of targeted device tokens APNs reported as unregistered.
+          type: integer
+        credential_test:
+          description: True when the request was an integration connection test and
+            no paired devices were available.
+          type: boolean
+        message:
+          type: string
+      required:
+      - success
+      - timestamp
+    PushNotificationReplaceRequest:
+      additionalProperties: {}
+      description: "Replacement content. title, subtitle, message, redirection, media,\
+        \ icon, actions, and payload fully replace the original values. Omit metadata\
+        \ or tags to keep the stored values; send {} or [] to clear them."
+      example:
+        badge: 0
+        metadata:
+          key: Metadata_value
+        payload: "{}"
+        subtitle: subtitle
+        icon: https://openapi-generator.tech
+        media: https://openapi-generator.tech
+        title: title
+        message: message
+        redirection: https://openapi-generator.tech
+        actions:
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        - method: POST
+          title: title
+          type: open_url
+          body: "{}"
+          url: https://openapi-generator.tech
+        tags:
+        - tags
+        - tags
+      properties:
+        metadata:
+          additionalProperties:
+            $ref: '#/components/schemas/Metadata_value'
+          description: "Additional information shown in notification and Live Activity\
+            \ details in ActivitySmith. Not displayed in the Push Notification or\
+            \ Live Activity on the device. Values must be strings, finite numbers,\
+            \ or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON.\
+            \ Omit on updates to preserve existing Metadata; send {} to clear it."
+          maxProperties: 50
+          x-max-json-bytes: 16384
+        title:
+          type: string
+        message:
+          type: string
+        subtitle:
+          type: string
+        icon:
+          description: "Optional HTTPS image URL without credentials for a custom\
+            \ notification icon. If the image cannot be loaded, the app icon is used.\
+            \ iOS may omit subtitle when displaying a custom icon."
+          format: uri
+          pattern: ^https://
+        media:
+          description: "Optional HTTPS URL for an image, audio file, or video that\
+            \ users can preview or play when they expand the notification. If `redirection`\
+            \ is omitted, tapping the notification opens this URL. Cannot be combined\
+            \ with `actions`."
+          format: uri
+          pattern: ^https://
+        redirection:
+          description: "Optional HTTP, HTTPS, Shortcuts, or installed app URL opened\
+            \ when the user taps the notification body. Custom schemes such as spotify://\
+            \ and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed\
+            \ handler; no web fallback is provided. Internal and executable schemes\
+            \ are blocked. Overrides the default tap target from media."
+          format: uri
+          maxLength: 2048
+          pattern: "^[A-Za-z][A-Za-z0-9+.-]*:"
+        actions:
+          description: Optional interactive actions shown when users expand the notification.
+            Cannot be combined with `media`.
+          items:
+            $ref: '#/components/schemas/PushNotificationAction'
+          maxItems: 4
+        payload:
+          additionalProperties: false
+        badge: {}
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            type: string
+          type: array
+      required:
+      - title
+    PushNotificationReplaceResponse:
+      additionalProperties: false
+      description: Apple APNs acceptance result for the replacement. Acceptance does
+        not confirm device delivery or presentation.
+      example:
         success: true
         users_notified: 6
         devices_notified: 0
+        notification_id: notification_id
         effective_channel_slugs:
         - effective_channel_slugs
         - effective_channel_slugs
@@ -3892,9 +4395,12 @@ components:
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
-          description: True when APNs accepts the notification for at least one targeted
-            device.
+          description: True when APNs accepts the replacement for at least one device.
           type: boolean
+        notification_id:
+          description: "ID of the replaced Push Notification. It stays the same, so\
+            \ you can replace it again."
+          type: string
         devices_notified:
           description: "Number of device tokens for which APNs accepted the notification,\
             \ without confirming on-device delivery."
@@ -3917,6 +4423,7 @@ components:
           format: date-time
           type: string
       required:
+      - notification_id
       - success
       - timestamp
     LiveActivityStartRequest:
@@ -4029,13 +4536,18 @@ components:
       description: Returned after a Live Activity starts. Save activity_id and use
         it for all later updates and for the final end call.
       example:
+        ended_activity_id: ended_activity_id
         success: true
         users_notified: 6
         activity_id: activity_id
         devices_notified: 0
+        message: message
         effective_channel_slugs:
         - effective_channel_slugs
         - effective_channel_slugs
+        errors:
+        - errors
+        - errors
         tags:
         - tags
         - tags
@@ -4064,6 +4576,17 @@ components:
         timestamp:
           format: date-time
           type: string
+        ended_activity_id:
+          description: Present when starting this Live Activity ended an older one
+            to stay within the device limit.
+          type: string
+        message:
+          type: string
+        errors:
+          description: Per-device delivery errors when some devices could not be reached.
+          items:
+            type: string
+          type: array
       required:
       - activity_id
       - success
@@ -4190,12 +4713,11 @@ components:
       description: Returned after a managed stream request is reconciled.
       example:
         devices_queued: 6
-        previous_activity_id: previous_activity_id
-        success: true
+        ignored: true
         users_notified: 1
-        activity_id: activity_id
         devices_notified: 0
-        operation: started
+        remote_push_sent: true
+        message: message
         stream_key: stream_key
         effective_channel_slugs:
         - effective_channel_slugs
@@ -4203,6 +4725,14 @@ components:
         tags:
         - tags
         - tags
+        previous_activity_id: previous_activity_id
+        success: true
+        activity_id: activity_id
+        warning: warning
+        operation: started
+        errors:
+        - errors
+        - errors
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
@@ -4240,9 +4770,27 @@ components:
             pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
             type: string
           type: array
+        warning:
+          description: "Present on `updated` responses when the current Live Activity\
+            \ has received more than 12 updates and has averaged more than one update\
+            \ every 2 minutes since it started. The update is still sent, but iOS\
+            \ may throttle Live Activities that update this often."
+          type: string
         timestamp:
           format: date-time
           type: string
+        ignored:
+          description: True when the request had no effect.
+          type: boolean
+        remote_push_sent:
+          type: boolean
+        message:
+          type: string
+        errors:
+          description: Per-device delivery errors when some devices could not be reached.
+          items:
+            type: string
+          type: array
       required:
       - operation
       - stream_key
@@ -4352,11 +4900,18 @@ components:
       description: Returned after a managed stream is ended and removed.
       example:
         devices_queued: 0
+        ignored: true
         success: true
         activity_id: activity_id
+        forced_completion: true
         devices_notified: 6
+        warning: warning
+        message: message
         operation: ended
         stream_key: stream_key
+        errors:
+        - errors
+        - errors
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
@@ -4377,6 +4932,21 @@ components:
         timestamp:
           format: date-time
           type: string
+        ignored:
+          description: True when the stream was already ended and the request had
+            no effect.
+          type: boolean
+        message:
+          type: string
+        forced_completion:
+          type: boolean
+        warning:
+          type: string
+        errors:
+          description: Per-device delivery errors when some devices could not be reached.
+          items:
+            type: string
+          type: array
       required:
       - operation
       - stream_key
@@ -4656,10 +5226,23 @@ components:
       description: Returned after a Live Activity update is sent or queued.
       example:
         devices_queued: 0
+        previous_activity_id: previous_activity_id
         success: true
+        users_notified: 1
         activity_id: activity_id
         devices_notified: 6
+        operation: operation
+        effective_channel_slugs:
+        - effective_channel_slugs
+        - effective_channel_slugs
+        stream_key: stream_key
+        errors:
+        - errors
+        - errors
         timestamp: 2000-01-23T04:56:07.000+00:00
+        tags:
+        - tags
+        - tags
       properties:
         success:
           type: boolean
@@ -4672,6 +5255,33 @@ components:
         timestamp:
           format: date-time
           type: string
+        users_notified:
+          type: integer
+        effective_channel_slugs:
+          items:
+            type: string
+          type: array
+        tags:
+          description: Optional tags to organize and filter notification history.
+          items:
+            maxLength: 64
+            minLength: 1
+            pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            type: string
+          type: array
+        operation:
+          description: Present when the update started a new Live Activity for a managed
+            stream.
+          type: string
+        stream_key:
+          type: string
+        previous_activity_id:
+          type: string
+        errors:
+          description: Per-device delivery errors when some devices could not be reached.
+          items:
+            type: string
+          type: array
       required:
       - activity_id
       - success
@@ -4783,9 +5393,17 @@ components:
       description: Returned after a Live Activity end event is sent or queued.
       example:
         devices_queued: 0
+        ignored: true
+        end_reason: end_reason
         success: true
         activity_id: activity_id
+        forced_completion: true
         devices_notified: 6
+        warning: warning
+        message: message
+        errors:
+        - errors
+        - errors
         timestamp: 2000-01-23T04:56:07.000+00:00
       properties:
         success:
@@ -4799,6 +5417,26 @@ components:
         timestamp:
           format: date-time
           type: string
+        ignored:
+          description: True when the Live Activity had already ended and the request
+            had no effect.
+          type: boolean
+        message:
+          type: string
+        end_reason:
+          nullable: true
+          type: string
+        forced_completion:
+          description: True when the Live Activity was marked complete without a confirmed
+            APNs end delivery.
+          type: boolean
+        warning:
+          type: string
+        errors:
+          description: Per-device delivery errors when some devices could not be reached.
+          items:
+            type: string
+          type: array
       required:
       - activity_id
       - success
@@ -4864,5 +5502,8 @@ components:
               tools.
             mcp:write: Create or change ActivitySmith account data through write-capable
               MCP tools.
+            api_keys:write: "List, create, rename, and delete ActivitySmith API keys\
+              \ through MCP tools. Granted only when the user ticks Manage API keys\
+              \ on the approval screen."
           tokenUrl: https://activitysmith.com/oauth/token
       type: oauth2

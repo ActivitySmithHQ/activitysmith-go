@@ -144,7 +144,6 @@ func (o *LiveActivityAlertBadge) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityAlertBadge := _LiveActivityAlertBadge{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityAlertBadge)
 
 	if err != nil {

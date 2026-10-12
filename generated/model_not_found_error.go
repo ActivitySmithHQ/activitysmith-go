@@ -135,7 +135,6 @@ func (o *NotFoundError) UnmarshalJSON(data []byte) (err error) {
 	varNotFoundError := _NotFoundError{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varNotFoundError)
 
 	if err != nil {

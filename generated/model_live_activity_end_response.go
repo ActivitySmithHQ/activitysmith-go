@@ -27,6 +27,15 @@ type LiveActivityEndResponse struct {
 	DevicesQueued *int32 `json:"devices_queued,omitempty"`
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	// True when the Live Activity had already ended and the request had no effect.
+	Ignored *bool `json:"ignored,omitempty"`
+	Message *string `json:"message,omitempty"`
+	EndReason NullableString `json:"end_reason,omitempty"`
+	// True when the Live Activity was marked complete without a confirmed APNs end delivery.
+	ForcedCompletion *bool `json:"forced_completion,omitempty"`
+	Warning *string `json:"warning,omitempty"`
+	// Per-device delivery errors when some devices could not be reached.
+	Errors []string `json:"errors,omitempty"`
 }
 
 type _LiveActivityEndResponse LiveActivityEndResponse
@@ -187,6 +196,208 @@ func (o *LiveActivityEndResponse) SetTimestamp(v time.Time) {
 	o.Timestamp = v
 }
 
+// GetIgnored returns the Ignored field value if set, zero value otherwise.
+func (o *LiveActivityEndResponse) GetIgnored() bool {
+	if o == nil || IsNil(o.Ignored) {
+		var ret bool
+		return ret
+	}
+	return *o.Ignored
+}
+
+// GetIgnoredOk returns a tuple with the Ignored field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityEndResponse) GetIgnoredOk() (*bool, bool) {
+	if o == nil || IsNil(o.Ignored) {
+		return nil, false
+	}
+	return o.Ignored, true
+}
+
+// HasIgnored returns a boolean if a field has been set.
+func (o *LiveActivityEndResponse) HasIgnored() bool {
+	if o != nil && !IsNil(o.Ignored) {
+		return true
+	}
+
+	return false
+}
+
+// SetIgnored gets a reference to the given bool and assigns it to the Ignored field.
+func (o *LiveActivityEndResponse) SetIgnored(v bool) {
+	o.Ignored = &v
+}
+
+// GetMessage returns the Message field value if set, zero value otherwise.
+func (o *LiveActivityEndResponse) GetMessage() string {
+	if o == nil || IsNil(o.Message) {
+		var ret string
+		return ret
+	}
+	return *o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityEndResponse) GetMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *LiveActivityEndResponse) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
+func (o *LiveActivityEndResponse) SetMessage(v string) {
+	o.Message = &v
+}
+
+// GetEndReason returns the EndReason field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *LiveActivityEndResponse) GetEndReason() string {
+	if o == nil || IsNil(o.EndReason.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.EndReason.Get()
+}
+
+// GetEndReasonOk returns a tuple with the EndReason field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *LiveActivityEndResponse) GetEndReasonOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.EndReason.Get(), o.EndReason.IsSet()
+}
+
+// HasEndReason returns a boolean if a field has been set.
+func (o *LiveActivityEndResponse) HasEndReason() bool {
+	if o != nil && o.EndReason.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetEndReason gets a reference to the given NullableString and assigns it to the EndReason field.
+func (o *LiveActivityEndResponse) SetEndReason(v string) {
+	o.EndReason.Set(&v)
+}
+// SetEndReasonNil sets the value for EndReason to be an explicit nil
+func (o *LiveActivityEndResponse) SetEndReasonNil() {
+	o.EndReason.Set(nil)
+}
+
+// UnsetEndReason ensures that no value is present for EndReason, not even an explicit nil
+func (o *LiveActivityEndResponse) UnsetEndReason() {
+	o.EndReason.Unset()
+}
+
+// GetForcedCompletion returns the ForcedCompletion field value if set, zero value otherwise.
+func (o *LiveActivityEndResponse) GetForcedCompletion() bool {
+	if o == nil || IsNil(o.ForcedCompletion) {
+		var ret bool
+		return ret
+	}
+	return *o.ForcedCompletion
+}
+
+// GetForcedCompletionOk returns a tuple with the ForcedCompletion field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityEndResponse) GetForcedCompletionOk() (*bool, bool) {
+	if o == nil || IsNil(o.ForcedCompletion) {
+		return nil, false
+	}
+	return o.ForcedCompletion, true
+}
+
+// HasForcedCompletion returns a boolean if a field has been set.
+func (o *LiveActivityEndResponse) HasForcedCompletion() bool {
+	if o != nil && !IsNil(o.ForcedCompletion) {
+		return true
+	}
+
+	return false
+}
+
+// SetForcedCompletion gets a reference to the given bool and assigns it to the ForcedCompletion field.
+func (o *LiveActivityEndResponse) SetForcedCompletion(v bool) {
+	o.ForcedCompletion = &v
+}
+
+// GetWarning returns the Warning field value if set, zero value otherwise.
+func (o *LiveActivityEndResponse) GetWarning() string {
+	if o == nil || IsNil(o.Warning) {
+		var ret string
+		return ret
+	}
+	return *o.Warning
+}
+
+// GetWarningOk returns a tuple with the Warning field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityEndResponse) GetWarningOk() (*string, bool) {
+	if o == nil || IsNil(o.Warning) {
+		return nil, false
+	}
+	return o.Warning, true
+}
+
+// HasWarning returns a boolean if a field has been set.
+func (o *LiveActivityEndResponse) HasWarning() bool {
+	if o != nil && !IsNil(o.Warning) {
+		return true
+	}
+
+	return false
+}
+
+// SetWarning gets a reference to the given string and assigns it to the Warning field.
+func (o *LiveActivityEndResponse) SetWarning(v string) {
+	o.Warning = &v
+}
+
+// GetErrors returns the Errors field value if set, zero value otherwise.
+func (o *LiveActivityEndResponse) GetErrors() []string {
+	if o == nil || IsNil(o.Errors) {
+		var ret []string
+		return ret
+	}
+	return o.Errors
+}
+
+// GetErrorsOk returns a tuple with the Errors field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityEndResponse) GetErrorsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Errors) {
+		return nil, false
+	}
+	return o.Errors, true
+}
+
+// HasErrors returns a boolean if a field has been set.
+func (o *LiveActivityEndResponse) HasErrors() bool {
+	if o != nil && !IsNil(o.Errors) {
+		return true
+	}
+
+	return false
+}
+
+// SetErrors gets a reference to the given []string and assigns it to the Errors field.
+func (o *LiveActivityEndResponse) SetErrors(v []string) {
+	o.Errors = v
+}
+
 func (o LiveActivityEndResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -206,6 +417,24 @@ func (o LiveActivityEndResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["devices_notified"] = o.DevicesNotified
 	}
 	toSerialize["timestamp"] = o.Timestamp
+	if !IsNil(o.Ignored) {
+		toSerialize["ignored"] = o.Ignored
+	}
+	if !IsNil(o.Message) {
+		toSerialize["message"] = o.Message
+	}
+	if o.EndReason.IsSet() {
+		toSerialize["end_reason"] = o.EndReason.Get()
+	}
+	if !IsNil(o.ForcedCompletion) {
+		toSerialize["forced_completion"] = o.ForcedCompletion
+	}
+	if !IsNil(o.Warning) {
+		toSerialize["warning"] = o.Warning
+	}
+	if !IsNil(o.Errors) {
+		toSerialize["errors"] = o.Errors
+	}
 	return toSerialize, nil
 }
 
@@ -236,7 +465,6 @@ func (o *LiveActivityEndResponse) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityEndResponse := _LiveActivityEndResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityEndResponse)
 
 	if err != nil {

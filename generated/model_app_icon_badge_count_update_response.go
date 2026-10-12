@@ -36,6 +36,12 @@ type AppIconBadgeCountUpdateResponse struct {
 	UsersNotified *int32 `json:"users_notified,omitempty"`
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs"`
 	Timestamp time.Time `json:"timestamp"`
+	// Number of device tokens targeted.
+	DevicesTargeted *int32 `json:"devices_targeted,omitempty"`
+	// Number of device tokens deactivated because APNs reported them unregistered.
+	DevicesDeactivated *int32 `json:"devices_deactivated,omitempty"`
+	// Number of targeted device tokens APNs reported as unregistered.
+	DevicesUnregistered *int32 `json:"devices_unregistered,omitempty"`
 }
 
 type _AppIconBadgeCountUpdateResponse AppIconBadgeCountUpdateResponse
@@ -277,6 +283,102 @@ func (o *AppIconBadgeCountUpdateResponse) SetTimestamp(v time.Time) {
 	o.Timestamp = v
 }
 
+// GetDevicesTargeted returns the DevicesTargeted field value if set, zero value otherwise.
+func (o *AppIconBadgeCountUpdateResponse) GetDevicesTargeted() int32 {
+	if o == nil || IsNil(o.DevicesTargeted) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesTargeted
+}
+
+// GetDevicesTargetedOk returns a tuple with the DevicesTargeted field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *AppIconBadgeCountUpdateResponse) GetDevicesTargetedOk() (*int32, bool) {
+	if o == nil || IsNil(o.DevicesTargeted) {
+		return nil, false
+	}
+	return o.DevicesTargeted, true
+}
+
+// HasDevicesTargeted returns a boolean if a field has been set.
+func (o *AppIconBadgeCountUpdateResponse) HasDevicesTargeted() bool {
+	if o != nil && !IsNil(o.DevicesTargeted) {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesTargeted gets a reference to the given int32 and assigns it to the DevicesTargeted field.
+func (o *AppIconBadgeCountUpdateResponse) SetDevicesTargeted(v int32) {
+	o.DevicesTargeted = &v
+}
+
+// GetDevicesDeactivated returns the DevicesDeactivated field value if set, zero value otherwise.
+func (o *AppIconBadgeCountUpdateResponse) GetDevicesDeactivated() int32 {
+	if o == nil || IsNil(o.DevicesDeactivated) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesDeactivated
+}
+
+// GetDevicesDeactivatedOk returns a tuple with the DevicesDeactivated field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *AppIconBadgeCountUpdateResponse) GetDevicesDeactivatedOk() (*int32, bool) {
+	if o == nil || IsNil(o.DevicesDeactivated) {
+		return nil, false
+	}
+	return o.DevicesDeactivated, true
+}
+
+// HasDevicesDeactivated returns a boolean if a field has been set.
+func (o *AppIconBadgeCountUpdateResponse) HasDevicesDeactivated() bool {
+	if o != nil && !IsNil(o.DevicesDeactivated) {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesDeactivated gets a reference to the given int32 and assigns it to the DevicesDeactivated field.
+func (o *AppIconBadgeCountUpdateResponse) SetDevicesDeactivated(v int32) {
+	o.DevicesDeactivated = &v
+}
+
+// GetDevicesUnregistered returns the DevicesUnregistered field value if set, zero value otherwise.
+func (o *AppIconBadgeCountUpdateResponse) GetDevicesUnregistered() int32 {
+	if o == nil || IsNil(o.DevicesUnregistered) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesUnregistered
+}
+
+// GetDevicesUnregisteredOk returns a tuple with the DevicesUnregistered field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *AppIconBadgeCountUpdateResponse) GetDevicesUnregisteredOk() (*int32, bool) {
+	if o == nil || IsNil(o.DevicesUnregistered) {
+		return nil, false
+	}
+	return o.DevicesUnregistered, true
+}
+
+// HasDevicesUnregistered returns a boolean if a field has been set.
+func (o *AppIconBadgeCountUpdateResponse) HasDevicesUnregistered() bool {
+	if o != nil && !IsNil(o.DevicesUnregistered) {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesUnregistered gets a reference to the given int32 and assigns it to the DevicesUnregistered field.
+func (o *AppIconBadgeCountUpdateResponse) SetDevicesUnregistered(v int32) {
+	o.DevicesUnregistered = &v
+}
+
 func (o AppIconBadgeCountUpdateResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -299,6 +401,15 @@ func (o AppIconBadgeCountUpdateResponse) ToMap() (map[string]interface{}, error)
 	}
 	toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
 	toSerialize["timestamp"] = o.Timestamp
+	if !IsNil(o.DevicesTargeted) {
+		toSerialize["devices_targeted"] = o.DevicesTargeted
+	}
+	if !IsNil(o.DevicesDeactivated) {
+		toSerialize["devices_deactivated"] = o.DevicesDeactivated
+	}
+	if !IsNil(o.DevicesUnregistered) {
+		toSerialize["devices_unregistered"] = o.DevicesUnregistered
+	}
 	return toSerialize, nil
 }
 
@@ -332,7 +443,6 @@ func (o *AppIconBadgeCountUpdateResponse) UnmarshalJSON(data []byte) (err error)
 	varAppIconBadgeCountUpdateResponse := _AppIconBadgeCountUpdateResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varAppIconBadgeCountUpdateResponse)
 
 	if err != nil {

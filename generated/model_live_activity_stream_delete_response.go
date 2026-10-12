@@ -29,6 +29,13 @@ type LiveActivityStreamDeleteResponse struct {
 	DevicesQueued *int32 `json:"devices_queued,omitempty"`
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	// True when the stream was already ended and the request had no effect.
+	Ignored *bool `json:"ignored,omitempty"`
+	Message *string `json:"message,omitempty"`
+	ForcedCompletion *bool `json:"forced_completion,omitempty"`
+	Warning *string `json:"warning,omitempty"`
+	// Per-device delivery errors when some devices could not be reached.
+	Errors []string `json:"errors,omitempty"`
 }
 
 type _LiveActivityStreamDeleteResponse LiveActivityStreamDeleteResponse
@@ -256,6 +263,166 @@ func (o *LiveActivityStreamDeleteResponse) SetTimestamp(v time.Time) {
 	o.Timestamp = v
 }
 
+// GetIgnored returns the Ignored field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteResponse) GetIgnored() bool {
+	if o == nil || IsNil(o.Ignored) {
+		var ret bool
+		return ret
+	}
+	return *o.Ignored
+}
+
+// GetIgnoredOk returns a tuple with the Ignored field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteResponse) GetIgnoredOk() (*bool, bool) {
+	if o == nil || IsNil(o.Ignored) {
+		return nil, false
+	}
+	return o.Ignored, true
+}
+
+// HasIgnored returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteResponse) HasIgnored() bool {
+	if o != nil && !IsNil(o.Ignored) {
+		return true
+	}
+
+	return false
+}
+
+// SetIgnored gets a reference to the given bool and assigns it to the Ignored field.
+func (o *LiveActivityStreamDeleteResponse) SetIgnored(v bool) {
+	o.Ignored = &v
+}
+
+// GetMessage returns the Message field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteResponse) GetMessage() string {
+	if o == nil || IsNil(o.Message) {
+		var ret string
+		return ret
+	}
+	return *o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteResponse) GetMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteResponse) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
+func (o *LiveActivityStreamDeleteResponse) SetMessage(v string) {
+	o.Message = &v
+}
+
+// GetForcedCompletion returns the ForcedCompletion field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteResponse) GetForcedCompletion() bool {
+	if o == nil || IsNil(o.ForcedCompletion) {
+		var ret bool
+		return ret
+	}
+	return *o.ForcedCompletion
+}
+
+// GetForcedCompletionOk returns a tuple with the ForcedCompletion field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteResponse) GetForcedCompletionOk() (*bool, bool) {
+	if o == nil || IsNil(o.ForcedCompletion) {
+		return nil, false
+	}
+	return o.ForcedCompletion, true
+}
+
+// HasForcedCompletion returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteResponse) HasForcedCompletion() bool {
+	if o != nil && !IsNil(o.ForcedCompletion) {
+		return true
+	}
+
+	return false
+}
+
+// SetForcedCompletion gets a reference to the given bool and assigns it to the ForcedCompletion field.
+func (o *LiveActivityStreamDeleteResponse) SetForcedCompletion(v bool) {
+	o.ForcedCompletion = &v
+}
+
+// GetWarning returns the Warning field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteResponse) GetWarning() string {
+	if o == nil || IsNil(o.Warning) {
+		var ret string
+		return ret
+	}
+	return *o.Warning
+}
+
+// GetWarningOk returns a tuple with the Warning field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteResponse) GetWarningOk() (*string, bool) {
+	if o == nil || IsNil(o.Warning) {
+		return nil, false
+	}
+	return o.Warning, true
+}
+
+// HasWarning returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteResponse) HasWarning() bool {
+	if o != nil && !IsNil(o.Warning) {
+		return true
+	}
+
+	return false
+}
+
+// SetWarning gets a reference to the given string and assigns it to the Warning field.
+func (o *LiveActivityStreamDeleteResponse) SetWarning(v string) {
+	o.Warning = &v
+}
+
+// GetErrors returns the Errors field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteResponse) GetErrors() []string {
+	if o == nil || IsNil(o.Errors) {
+		var ret []string
+		return ret
+	}
+	return o.Errors
+}
+
+// GetErrorsOk returns a tuple with the Errors field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteResponse) GetErrorsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Errors) {
+		return nil, false
+	}
+	return o.Errors, true
+}
+
+// HasErrors returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteResponse) HasErrors() bool {
+	if o != nil && !IsNil(o.Errors) {
+		return true
+	}
+
+	return false
+}
+
+// SetErrors gets a reference to the given []string and assigns it to the Errors field.
+func (o *LiveActivityStreamDeleteResponse) SetErrors(v []string) {
+	o.Errors = v
+}
+
 func (o LiveActivityStreamDeleteResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -279,6 +446,21 @@ func (o LiveActivityStreamDeleteResponse) ToMap() (map[string]interface{}, error
 		toSerialize["devices_notified"] = o.DevicesNotified
 	}
 	toSerialize["timestamp"] = o.Timestamp
+	if !IsNil(o.Ignored) {
+		toSerialize["ignored"] = o.Ignored
+	}
+	if !IsNil(o.Message) {
+		toSerialize["message"] = o.Message
+	}
+	if !IsNil(o.ForcedCompletion) {
+		toSerialize["forced_completion"] = o.ForcedCompletion
+	}
+	if !IsNil(o.Warning) {
+		toSerialize["warning"] = o.Warning
+	}
+	if !IsNil(o.Errors) {
+		toSerialize["errors"] = o.Errors
+	}
 	return toSerialize, nil
 }
 
@@ -310,7 +492,6 @@ func (o *LiveActivityStreamDeleteResponse) UnmarshalJSON(data []byte) (err error
 	varLiveActivityStreamDeleteResponse := _LiveActivityStreamDeleteResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityStreamDeleteResponse)
 
 	if err != nil {

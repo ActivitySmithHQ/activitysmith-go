@@ -817,7 +817,6 @@ func (o *StreamContentState) UnmarshalJSON(data []byte) (err error) {
 	varStreamContentState := _StreamContentState{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varStreamContentState)
 
 	if err != nil {

@@ -11,6 +11,11 @@ Name | Type | Description | Notes
 **DevicesQueued** | Pointer to **int32** |  | [optional] 
 **DevicesNotified** | Pointer to **int32** |  | [optional] 
 **Timestamp** | **time.Time** |  | 
+**Ignored** | Pointer to **bool** | True when the stream was already ended and the request had no effect. | [optional] 
+**Message** | Pointer to **string** |  | [optional] 
+**ForcedCompletion** | Pointer to **bool** |  | [optional] 
+**Warning** | Pointer to **string** |  | [optional] 
+**Errors** | Pointer to **[]string** | Per-device delivery errors when some devices could not be reached. | [optional] 
 
 ## Methods
 
@@ -195,6 +200,131 @@ and a boolean to check if the value has been set.
 
 SetTimestamp sets Timestamp field to given value.
 
+
+### GetIgnored
+
+`func (o *LiveActivityStreamDeleteResponse) GetIgnored() bool`
+
+GetIgnored returns the Ignored field if non-nil, zero value otherwise.
+
+### GetIgnoredOk
+
+`func (o *LiveActivityStreamDeleteResponse) GetIgnoredOk() (*bool, bool)`
+
+GetIgnoredOk returns a tuple with the Ignored field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIgnored
+
+`func (o *LiveActivityStreamDeleteResponse) SetIgnored(v bool)`
+
+SetIgnored sets Ignored field to given value.
+
+### HasIgnored
+
+`func (o *LiveActivityStreamDeleteResponse) HasIgnored() bool`
+
+HasIgnored returns a boolean if a field has been set.
+
+### GetMessage
+
+`func (o *LiveActivityStreamDeleteResponse) GetMessage() string`
+
+GetMessage returns the Message field if non-nil, zero value otherwise.
+
+### GetMessageOk
+
+`func (o *LiveActivityStreamDeleteResponse) GetMessageOk() (*string, bool)`
+
+GetMessageOk returns a tuple with the Message field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessage
+
+`func (o *LiveActivityStreamDeleteResponse) SetMessage(v string)`
+
+SetMessage sets Message field to given value.
+
+### HasMessage
+
+`func (o *LiveActivityStreamDeleteResponse) HasMessage() bool`
+
+HasMessage returns a boolean if a field has been set.
+
+### GetForcedCompletion
+
+`func (o *LiveActivityStreamDeleteResponse) GetForcedCompletion() bool`
+
+GetForcedCompletion returns the ForcedCompletion field if non-nil, zero value otherwise.
+
+### GetForcedCompletionOk
+
+`func (o *LiveActivityStreamDeleteResponse) GetForcedCompletionOk() (*bool, bool)`
+
+GetForcedCompletionOk returns a tuple with the ForcedCompletion field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetForcedCompletion
+
+`func (o *LiveActivityStreamDeleteResponse) SetForcedCompletion(v bool)`
+
+SetForcedCompletion sets ForcedCompletion field to given value.
+
+### HasForcedCompletion
+
+`func (o *LiveActivityStreamDeleteResponse) HasForcedCompletion() bool`
+
+HasForcedCompletion returns a boolean if a field has been set.
+
+### GetWarning
+
+`func (o *LiveActivityStreamDeleteResponse) GetWarning() string`
+
+GetWarning returns the Warning field if non-nil, zero value otherwise.
+
+### GetWarningOk
+
+`func (o *LiveActivityStreamDeleteResponse) GetWarningOk() (*string, bool)`
+
+GetWarningOk returns a tuple with the Warning field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetWarning
+
+`func (o *LiveActivityStreamDeleteResponse) SetWarning(v string)`
+
+SetWarning sets Warning field to given value.
+
+### HasWarning
+
+`func (o *LiveActivityStreamDeleteResponse) HasWarning() bool`
+
+HasWarning returns a boolean if a field has been set.
+
+### GetErrors
+
+`func (o *LiveActivityStreamDeleteResponse) GetErrors() []string`
+
+GetErrors returns the Errors field if non-nil, zero value otherwise.
+
+### GetErrorsOk
+
+`func (o *LiveActivityStreamDeleteResponse) GetErrorsOk() (*[]string, bool)`
+
+GetErrorsOk returns a tuple with the Errors field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetErrors
+
+`func (o *LiveActivityStreamDeleteResponse) SetErrors(v []string)`
+
+SetErrors sets Errors field to given value.
+
+### HasErrors
+
+`func (o *LiveActivityStreamDeleteResponse) HasErrors() bool`
+
+HasErrors returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
