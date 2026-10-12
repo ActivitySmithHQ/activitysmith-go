@@ -14,7 +14,12 @@ Name | Type | Description | Notes
 **UsersNotified** | Pointer to **int32** |  | [optional] 
 **EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
+**Warning** | Pointer to **string** | Present on &#x60;updated&#x60; responses when the current Live Activity has received more than 12 updates and has averaged more than one update every 2 minutes since it started. The update is still sent, but iOS may throttle Live Activities that update this often. | [optional] 
 **Timestamp** | **time.Time** |  | 
+**Ignored** | Pointer to **bool** | True when the request had no effect. | [optional] 
+**RemotePushSent** | Pointer to **bool** |  | [optional] 
+**Message** | Pointer to **string** |  | [optional] 
+**Errors** | Pointer to **[]string** | Per-device delivery errors when some devices could not be reached. | [optional] 
 
 ## Methods
 
@@ -280,6 +285,31 @@ SetTags sets Tags field to given value.
 
 HasTags returns a boolean if a field has been set.
 
+### GetWarning
+
+`func (o *LiveActivityStreamPutResponse) GetWarning() string`
+
+GetWarning returns the Warning field if non-nil, zero value otherwise.
+
+### GetWarningOk
+
+`func (o *LiveActivityStreamPutResponse) GetWarningOk() (*string, bool)`
+
+GetWarningOk returns a tuple with the Warning field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetWarning
+
+`func (o *LiveActivityStreamPutResponse) SetWarning(v string)`
+
+SetWarning sets Warning field to given value.
+
+### HasWarning
+
+`func (o *LiveActivityStreamPutResponse) HasWarning() bool`
+
+HasWarning returns a boolean if a field has been set.
+
 ### GetTimestamp
 
 `func (o *LiveActivityStreamPutResponse) GetTimestamp() time.Time`
@@ -299,6 +329,106 @@ and a boolean to check if the value has been set.
 
 SetTimestamp sets Timestamp field to given value.
 
+
+### GetIgnored
+
+`func (o *LiveActivityStreamPutResponse) GetIgnored() bool`
+
+GetIgnored returns the Ignored field if non-nil, zero value otherwise.
+
+### GetIgnoredOk
+
+`func (o *LiveActivityStreamPutResponse) GetIgnoredOk() (*bool, bool)`
+
+GetIgnoredOk returns a tuple with the Ignored field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIgnored
+
+`func (o *LiveActivityStreamPutResponse) SetIgnored(v bool)`
+
+SetIgnored sets Ignored field to given value.
+
+### HasIgnored
+
+`func (o *LiveActivityStreamPutResponse) HasIgnored() bool`
+
+HasIgnored returns a boolean if a field has been set.
+
+### GetRemotePushSent
+
+`func (o *LiveActivityStreamPutResponse) GetRemotePushSent() bool`
+
+GetRemotePushSent returns the RemotePushSent field if non-nil, zero value otherwise.
+
+### GetRemotePushSentOk
+
+`func (o *LiveActivityStreamPutResponse) GetRemotePushSentOk() (*bool, bool)`
+
+GetRemotePushSentOk returns a tuple with the RemotePushSent field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetRemotePushSent
+
+`func (o *LiveActivityStreamPutResponse) SetRemotePushSent(v bool)`
+
+SetRemotePushSent sets RemotePushSent field to given value.
+
+### HasRemotePushSent
+
+`func (o *LiveActivityStreamPutResponse) HasRemotePushSent() bool`
+
+HasRemotePushSent returns a boolean if a field has been set.
+
+### GetMessage
+
+`func (o *LiveActivityStreamPutResponse) GetMessage() string`
+
+GetMessage returns the Message field if non-nil, zero value otherwise.
+
+### GetMessageOk
+
+`func (o *LiveActivityStreamPutResponse) GetMessageOk() (*string, bool)`
+
+GetMessageOk returns a tuple with the Message field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessage
+
+`func (o *LiveActivityStreamPutResponse) SetMessage(v string)`
+
+SetMessage sets Message field to given value.
+
+### HasMessage
+
+`func (o *LiveActivityStreamPutResponse) HasMessage() bool`
+
+HasMessage returns a boolean if a field has been set.
+
+### GetErrors
+
+`func (o *LiveActivityStreamPutResponse) GetErrors() []string`
+
+GetErrors returns the Errors field if non-nil, zero value otherwise.
+
+### GetErrorsOk
+
+`func (o *LiveActivityStreamPutResponse) GetErrorsOk() (*[]string, bool)`
+
+GetErrorsOk returns a tuple with the Errors field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetErrors
+
+`func (o *LiveActivityStreamPutResponse) SetErrors(v []string)`
+
+SetErrors sets Errors field to given value.
+
+### HasErrors
+
+`func (o *LiveActivityStreamPutResponse) HasErrors() bool`
+
+HasErrors returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

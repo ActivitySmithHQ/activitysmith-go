@@ -108,7 +108,6 @@ func (o *ChannelTarget) UnmarshalJSON(data []byte) (err error) {
 	varChannelTarget := _ChannelTarget{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varChannelTarget)
 
 	if err != nil {

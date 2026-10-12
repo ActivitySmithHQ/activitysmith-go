@@ -282,7 +282,6 @@ func (o *LiveActivityEndRequest) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityEndRequest := _LiveActivityEndRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityEndRequest)
 
 	if err != nil {

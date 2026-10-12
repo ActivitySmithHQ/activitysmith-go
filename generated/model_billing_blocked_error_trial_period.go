@@ -136,7 +136,6 @@ func (o *BillingBlockedErrorTrialPeriod) UnmarshalJSON(data []byte) (err error) 
 	varBillingBlockedErrorTrialPeriod := _BillingBlockedErrorTrialPeriod{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varBillingBlockedErrorTrialPeriod)
 
 	if err != nil {

@@ -199,7 +199,6 @@ func (o *BillingBlockedError) UnmarshalJSON(data []byte) (err error) {
 	varBillingBlockedError := _BillingBlockedError{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varBillingBlockedError)
 
 	if err != nil {

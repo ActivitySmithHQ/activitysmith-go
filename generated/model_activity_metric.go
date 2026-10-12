@@ -208,7 +208,6 @@ func (o *ActivityMetric) UnmarshalJSON(data []byte) (err error) {
 	varActivityMetric := _ActivityMetric{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varActivityMetric)
 
 	if err != nil {

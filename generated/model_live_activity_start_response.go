@@ -30,6 +30,11 @@ type LiveActivityStartResponse struct {
 	// Optional tags to organize and filter notification history.
 	Tags []string `json:"tags,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	// Present when starting this Live Activity ended an older one to stay within the device limit.
+	EndedActivityId *string `json:"ended_activity_id,omitempty"`
+	Message *string `json:"message,omitempty"`
+	// Per-device delivery errors when some devices could not be reached.
+	Errors []string `json:"errors,omitempty"`
 }
 
 type _LiveActivityStartResponse LiveActivityStartResponse
@@ -254,6 +259,102 @@ func (o *LiveActivityStartResponse) SetTimestamp(v time.Time) {
 	o.Timestamp = v
 }
 
+// GetEndedActivityId returns the EndedActivityId field value if set, zero value otherwise.
+func (o *LiveActivityStartResponse) GetEndedActivityId() string {
+	if o == nil || IsNil(o.EndedActivityId) {
+		var ret string
+		return ret
+	}
+	return *o.EndedActivityId
+}
+
+// GetEndedActivityIdOk returns a tuple with the EndedActivityId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartResponse) GetEndedActivityIdOk() (*string, bool) {
+	if o == nil || IsNil(o.EndedActivityId) {
+		return nil, false
+	}
+	return o.EndedActivityId, true
+}
+
+// HasEndedActivityId returns a boolean if a field has been set.
+func (o *LiveActivityStartResponse) HasEndedActivityId() bool {
+	if o != nil && !IsNil(o.EndedActivityId) {
+		return true
+	}
+
+	return false
+}
+
+// SetEndedActivityId gets a reference to the given string and assigns it to the EndedActivityId field.
+func (o *LiveActivityStartResponse) SetEndedActivityId(v string) {
+	o.EndedActivityId = &v
+}
+
+// GetMessage returns the Message field value if set, zero value otherwise.
+func (o *LiveActivityStartResponse) GetMessage() string {
+	if o == nil || IsNil(o.Message) {
+		var ret string
+		return ret
+	}
+	return *o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartResponse) GetMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *LiveActivityStartResponse) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
+func (o *LiveActivityStartResponse) SetMessage(v string) {
+	o.Message = &v
+}
+
+// GetErrors returns the Errors field value if set, zero value otherwise.
+func (o *LiveActivityStartResponse) GetErrors() []string {
+	if o == nil || IsNil(o.Errors) {
+		var ret []string
+		return ret
+	}
+	return o.Errors
+}
+
+// GetErrorsOk returns a tuple with the Errors field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStartResponse) GetErrorsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Errors) {
+		return nil, false
+	}
+	return o.Errors, true
+}
+
+// HasErrors returns a boolean if a field has been set.
+func (o *LiveActivityStartResponse) HasErrors() bool {
+	if o != nil && !IsNil(o.Errors) {
+		return true
+	}
+
+	return false
+}
+
+// SetErrors gets a reference to the given []string and assigns it to the Errors field.
+func (o *LiveActivityStartResponse) SetErrors(v []string) {
+	o.Errors = v
+}
+
 func (o LiveActivityStartResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -279,6 +380,15 @@ func (o LiveActivityStartResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["tags"] = o.Tags
 	}
 	toSerialize["timestamp"] = o.Timestamp
+	if !IsNil(o.EndedActivityId) {
+		toSerialize["ended_activity_id"] = o.EndedActivityId
+	}
+	if !IsNil(o.Message) {
+		toSerialize["message"] = o.Message
+	}
+	if !IsNil(o.Errors) {
+		toSerialize["errors"] = o.Errors
+	}
 	return toSerialize, nil
 }
 
@@ -309,7 +419,6 @@ func (o *LiveActivityStartResponse) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityStartResponse := _LiveActivityStartResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityStartResponse)
 
 	if err != nil {

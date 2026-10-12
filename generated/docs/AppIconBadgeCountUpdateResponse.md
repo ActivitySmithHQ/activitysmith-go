@@ -12,6 +12,9 @@ Name | Type | Description | Notes
 **UsersNotified** | Pointer to **int32** | Deprecated compatibility alias for users_updated. | [optional] 
 **EffectiveChannelSlugs** | **[]string** |  | 
 **Timestamp** | **time.Time** |  | 
+**DevicesTargeted** | Pointer to **int32** | Number of device tokens targeted. | [optional] 
+**DevicesDeactivated** | Pointer to **int32** | Number of device tokens deactivated because APNs reported them unregistered. | [optional] 
+**DevicesUnregistered** | Pointer to **int32** | Number of targeted device tokens APNs reported as unregistered. | [optional] 
 
 ## Methods
 
@@ -201,6 +204,81 @@ and a boolean to check if the value has been set.
 
 SetTimestamp sets Timestamp field to given value.
 
+
+### GetDevicesTargeted
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesTargeted() int32`
+
+GetDevicesTargeted returns the DevicesTargeted field if non-nil, zero value otherwise.
+
+### GetDevicesTargetedOk
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesTargetedOk() (*int32, bool)`
+
+GetDevicesTargetedOk returns a tuple with the DevicesTargeted field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDevicesTargeted
+
+`func (o *AppIconBadgeCountUpdateResponse) SetDevicesTargeted(v int32)`
+
+SetDevicesTargeted sets DevicesTargeted field to given value.
+
+### HasDevicesTargeted
+
+`func (o *AppIconBadgeCountUpdateResponse) HasDevicesTargeted() bool`
+
+HasDevicesTargeted returns a boolean if a field has been set.
+
+### GetDevicesDeactivated
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesDeactivated() int32`
+
+GetDevicesDeactivated returns the DevicesDeactivated field if non-nil, zero value otherwise.
+
+### GetDevicesDeactivatedOk
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesDeactivatedOk() (*int32, bool)`
+
+GetDevicesDeactivatedOk returns a tuple with the DevicesDeactivated field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDevicesDeactivated
+
+`func (o *AppIconBadgeCountUpdateResponse) SetDevicesDeactivated(v int32)`
+
+SetDevicesDeactivated sets DevicesDeactivated field to given value.
+
+### HasDevicesDeactivated
+
+`func (o *AppIconBadgeCountUpdateResponse) HasDevicesDeactivated() bool`
+
+HasDevicesDeactivated returns a boolean if a field has been set.
+
+### GetDevicesUnregistered
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesUnregistered() int32`
+
+GetDevicesUnregistered returns the DevicesUnregistered field if non-nil, zero value otherwise.
+
+### GetDevicesUnregisteredOk
+
+`func (o *AppIconBadgeCountUpdateResponse) GetDevicesUnregisteredOk() (*int32, bool)`
+
+GetDevicesUnregisteredOk returns a tuple with the DevicesUnregistered field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDevicesUnregistered
+
+`func (o *AppIconBadgeCountUpdateResponse) SetDevicesUnregistered(v int32)`
+
+SetDevicesUnregistered sets DevicesUnregistered field to given value.
+
+### HasDevicesUnregistered
+
+`func (o *AppIconBadgeCountUpdateResponse) HasDevicesUnregistered() bool`
+
+HasDevicesUnregistered returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

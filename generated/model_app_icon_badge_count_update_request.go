@@ -144,7 +144,6 @@ func (o *AppIconBadgeCountUpdateRequest) UnmarshalJSON(data []byte) (err error) 
 	varAppIconBadgeCountUpdateRequest := _AppIconBadgeCountUpdateRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varAppIconBadgeCountUpdateRequest)
 
 	if err != nil {

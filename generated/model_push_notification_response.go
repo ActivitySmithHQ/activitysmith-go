@@ -24,6 +24,8 @@ var _ MappedNullable = &PushNotificationResponse{}
 type PushNotificationResponse struct {
 	// True when APNs accepts the notification for at least one targeted device.
 	Success bool `json:"success"`
+	// ID of this Push Notification. Pass it to `PUT /push-notification/{notification_id}` to replace the notification later.
+	NotificationId *string `json:"notification_id,omitempty"`
 	// Number of device tokens for which APNs accepted the notification, without confirming on-device delivery.
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	UsersNotified *int32 `json:"users_notified,omitempty"`
@@ -31,6 +33,15 @@ type PushNotificationResponse struct {
 	// Optional tags to organize and filter notification history.
 	Tags []string `json:"tags,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	// Number of device tokens targeted.
+	DevicesTargeted *int32 `json:"devices_targeted,omitempty"`
+	// Number of device tokens deactivated because APNs reported them unregistered.
+	DevicesDeactivated *int32 `json:"devices_deactivated,omitempty"`
+	// Number of targeted device tokens APNs reported as unregistered.
+	DevicesUnregistered *int32 `json:"devices_unregistered,omitempty"`
+	// True when the request was an integration connection test and no paired devices were available.
+	CredentialTest *bool `json:"credential_test,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 type _PushNotificationResponse PushNotificationResponse
@@ -76,6 +87,38 @@ func (o *PushNotificationResponse) GetSuccessOk() (*bool, bool) {
 // SetSuccess sets field value
 func (o *PushNotificationResponse) SetSuccess(v bool) {
 	o.Success = v
+}
+
+// GetNotificationId returns the NotificationId field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetNotificationId() string {
+	if o == nil || IsNil(o.NotificationId) {
+		var ret string
+		return ret
+	}
+	return *o.NotificationId
+}
+
+// GetNotificationIdOk returns a tuple with the NotificationId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetNotificationIdOk() (*string, bool) {
+	if o == nil || IsNil(o.NotificationId) {
+		return nil, false
+	}
+	return o.NotificationId, true
+}
+
+// HasNotificationId returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasNotificationId() bool {
+	if o != nil && !IsNil(o.NotificationId) {
+		return true
+	}
+
+	return false
+}
+
+// SetNotificationId gets a reference to the given string and assigns it to the NotificationId field.
+func (o *PushNotificationResponse) SetNotificationId(v string) {
+	o.NotificationId = &v
 }
 
 // GetDevicesNotified returns the DevicesNotified field value if set, zero value otherwise.
@@ -230,6 +273,166 @@ func (o *PushNotificationResponse) SetTimestamp(v time.Time) {
 	o.Timestamp = v
 }
 
+// GetDevicesTargeted returns the DevicesTargeted field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetDevicesTargeted() int32 {
+	if o == nil || IsNil(o.DevicesTargeted) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesTargeted
+}
+
+// GetDevicesTargetedOk returns a tuple with the DevicesTargeted field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetDevicesTargetedOk() (*int32, bool) {
+	if o == nil || IsNil(o.DevicesTargeted) {
+		return nil, false
+	}
+	return o.DevicesTargeted, true
+}
+
+// HasDevicesTargeted returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasDevicesTargeted() bool {
+	if o != nil && !IsNil(o.DevicesTargeted) {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesTargeted gets a reference to the given int32 and assigns it to the DevicesTargeted field.
+func (o *PushNotificationResponse) SetDevicesTargeted(v int32) {
+	o.DevicesTargeted = &v
+}
+
+// GetDevicesDeactivated returns the DevicesDeactivated field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetDevicesDeactivated() int32 {
+	if o == nil || IsNil(o.DevicesDeactivated) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesDeactivated
+}
+
+// GetDevicesDeactivatedOk returns a tuple with the DevicesDeactivated field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetDevicesDeactivatedOk() (*int32, bool) {
+	if o == nil || IsNil(o.DevicesDeactivated) {
+		return nil, false
+	}
+	return o.DevicesDeactivated, true
+}
+
+// HasDevicesDeactivated returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasDevicesDeactivated() bool {
+	if o != nil && !IsNil(o.DevicesDeactivated) {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesDeactivated gets a reference to the given int32 and assigns it to the DevicesDeactivated field.
+func (o *PushNotificationResponse) SetDevicesDeactivated(v int32) {
+	o.DevicesDeactivated = &v
+}
+
+// GetDevicesUnregistered returns the DevicesUnregistered field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetDevicesUnregistered() int32 {
+	if o == nil || IsNil(o.DevicesUnregistered) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesUnregistered
+}
+
+// GetDevicesUnregisteredOk returns a tuple with the DevicesUnregistered field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetDevicesUnregisteredOk() (*int32, bool) {
+	if o == nil || IsNil(o.DevicesUnregistered) {
+		return nil, false
+	}
+	return o.DevicesUnregistered, true
+}
+
+// HasDevicesUnregistered returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasDevicesUnregistered() bool {
+	if o != nil && !IsNil(o.DevicesUnregistered) {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesUnregistered gets a reference to the given int32 and assigns it to the DevicesUnregistered field.
+func (o *PushNotificationResponse) SetDevicesUnregistered(v int32) {
+	o.DevicesUnregistered = &v
+}
+
+// GetCredentialTest returns the CredentialTest field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetCredentialTest() bool {
+	if o == nil || IsNil(o.CredentialTest) {
+		var ret bool
+		return ret
+	}
+	return *o.CredentialTest
+}
+
+// GetCredentialTestOk returns a tuple with the CredentialTest field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetCredentialTestOk() (*bool, bool) {
+	if o == nil || IsNil(o.CredentialTest) {
+		return nil, false
+	}
+	return o.CredentialTest, true
+}
+
+// HasCredentialTest returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasCredentialTest() bool {
+	if o != nil && !IsNil(o.CredentialTest) {
+		return true
+	}
+
+	return false
+}
+
+// SetCredentialTest gets a reference to the given bool and assigns it to the CredentialTest field.
+func (o *PushNotificationResponse) SetCredentialTest(v bool) {
+	o.CredentialTest = &v
+}
+
+// GetMessage returns the Message field value if set, zero value otherwise.
+func (o *PushNotificationResponse) GetMessage() string {
+	if o == nil || IsNil(o.Message) {
+		var ret string
+		return ret
+	}
+	return *o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PushNotificationResponse) GetMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *PushNotificationResponse) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
+func (o *PushNotificationResponse) SetMessage(v string) {
+	o.Message = &v
+}
+
 func (o PushNotificationResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -241,6 +444,9 @@ func (o PushNotificationResponse) MarshalJSON() ([]byte, error) {
 func (o PushNotificationResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["success"] = o.Success
+	if !IsNil(o.NotificationId) {
+		toSerialize["notification_id"] = o.NotificationId
+	}
 	if !IsNil(o.DevicesNotified) {
 		toSerialize["devices_notified"] = o.DevicesNotified
 	}
@@ -254,6 +460,21 @@ func (o PushNotificationResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["tags"] = o.Tags
 	}
 	toSerialize["timestamp"] = o.Timestamp
+	if !IsNil(o.DevicesTargeted) {
+		toSerialize["devices_targeted"] = o.DevicesTargeted
+	}
+	if !IsNil(o.DevicesDeactivated) {
+		toSerialize["devices_deactivated"] = o.DevicesDeactivated
+	}
+	if !IsNil(o.DevicesUnregistered) {
+		toSerialize["devices_unregistered"] = o.DevicesUnregistered
+	}
+	if !IsNil(o.CredentialTest) {
+		toSerialize["credential_test"] = o.CredentialTest
+	}
+	if !IsNil(o.Message) {
+		toSerialize["message"] = o.Message
+	}
 	return toSerialize, nil
 }
 
@@ -283,7 +504,6 @@ func (o *PushNotificationResponse) UnmarshalJSON(data []byte) (err error) {
 	varPushNotificationResponse := _PushNotificationResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varPushNotificationResponse)
 
 	if err != nil {
