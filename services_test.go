@@ -40,7 +40,10 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 		w.Header().Set("Content-Type", "application/json")
 		switch r.URL.Path {
 		case "/push-notification":
-			_, _ = w.Write([]byte(`{"success":true,"devices_notified":1,"timestamp":"2026-02-07T00:00:00Z"}`))
+			// Mirror the production response, including fields older specs omitted.
+			_, _ = w.Write([]byte(`{"success":true,"notification_id":"pn-1","devices_targeted":1,"devices_notified":1,"devices_deactivated":0,"devices_unregistered":0,"users_notified":1,"effective_channel_slugs":null,"tags":[],"timestamp":"2026-02-07T00:00:00Z"}`))
+		case "/push-notification/pn-1":
+			_, _ = w.Write([]byte(`{"success":true,"notification_id":"pn-1","devices_notified":1,"users_notified":1,"effective_channel_slugs":null,"future_field":true,"timestamp":"2026-02-07T00:00:00Z"}`))
 		case "/live-activity/start":
 			_, _ = w.Write([]byte(`{"success":true,"activity_id":"act-1","devices_notified":1,"timestamp":"2026-02-07T00:00:00Z"}`))
 		case "/live-activity/update":
@@ -115,6 +118,59 @@ func TestNotificationsShortAndLegacyMethods(t *testing.T) {
 		if !strings.Contains(req.Body, `"title":"Build Failed"`) {
 			t.Fatalf("request %d body missing title: %s", i, req.Body)
 		}
+	}
+}
+
+func TestNotificationsReplace(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	sent, err := client.Notifications.Send(PushNotificationInput{Title: "Agent needs input"})
+	if err != nil {
+		t.Fatalf("Send returned error: %v", err)
+	}
+	if sent.GetNotificationId() != "pn-1" || sent.GetDevicesTargeted() != 1 {
+		t.Fatalf("unexpected send response: %+v", sent)
+	}
+
+	replaced, err := client.Notifications.Replace(sent.GetNotificationId(), PushNotificationReplaceInput{
+		Title:    "Answered from desk",
+		Metadata: map[string]any{"attempts": 0},
+		Tags:     []string{},
+	})
+	if err != nil {
+		t.Fatalf("Replace returned error: %v", err)
+	}
+	if replaced.GetNotificationId() != "pn-1" {
+		t.Fatalf("unexpected replace response: %+v", replaced)
+	}
+	if _, err := client.Notifications.ReplacePushNotification("pn-1", generated.PushNotificationReplaceRequest{Title: "Again"}); err != nil {
+		t.Fatalf("ReplacePushNotification returned error: %v", err)
+	}
+
+	last := (*requests)[1]
+	if last.Path != "/push-notification/pn-1" {
+		t.Fatalf("replace path mismatch: %s", last.Path)
+	}
+	for _, want := range []string{`"title":"Answered from desk"`, `"metadata":{"attempts":0}`, `"tags":[]`} {
+		if !strings.Contains(last.Body, want) {
+			t.Fatalf("replace body missing %s: %s", want, last.Body)
+		}
+	}
+
+	_, err = client.Notifications.Replace("pn-1", PushNotificationReplaceInput{
+		Title:   "Done",
+		Media:   "https://cdn.activitysmith.com/voice_over.mp3",
+		Actions: []PushNotificationAction{{Title: "Open", Type: "open_url", Url: "https://example.com"}},
+	})
+	if err != ErrPushNotificationMediaActionsConflict {
+		t.Fatalf("expected media/actions conflict, got %v", err)
 	}
 }
 

@@ -30,6 +30,68 @@ func (s *NotificationsService) SendPushNotification(request generated.PushNotifi
 	return s.Send(request)
 }
 
+// Replace silently replaces a sent Push Notification, using the notification ID returned by Send.
+// The replacement takes the original's place on the Lock Screen and in history.
+func (s *NotificationsService) Replace(notificationID string, input any) (*generated.PushNotificationReplaceResponse, error) {
+	request, err := normalizePushNotificationReplaceRequest(input)
+	if err != nil {
+		return nil, err
+	}
+
+	response, _, err := s.client.apiClient.PushNotificationsAPI.
+		ReplacePushNotification(s.client.ctx, notificationID).
+		PushNotificationReplaceRequest(request).
+		Execute()
+
+	return response, err
+}
+
+// Generated-style alias.
+func (s *NotificationsService) ReplacePushNotification(notificationID string, request generated.PushNotificationReplaceRequest) (*generated.PushNotificationReplaceResponse, error) {
+	return s.Replace(notificationID, request)
+}
+
+func normalizePushNotificationReplaceRequest(input any) (generated.PushNotificationReplaceRequest, error) {
+	var request generated.PushNotificationReplaceRequest
+	var metadata map[string]any
+
+	switch v := input.(type) {
+	case PushNotificationReplaceInput:
+		request, metadata = v.toGenerated(), v.Metadata
+	case *PushNotificationReplaceInput:
+		if v == nil {
+			return generated.PushNotificationReplaceRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
+		}
+		request, metadata = v.toGenerated(), v.Metadata
+	case generated.PushNotificationReplaceRequest:
+		request = v
+	case *generated.PushNotificationReplaceRequest:
+		if v == nil {
+			return generated.PushNotificationReplaceRequest{}, fmt.Errorf("activitysmith: input cannot be nil")
+		}
+		request = *v
+	default:
+		return generated.PushNotificationReplaceRequest{}, fmt.Errorf(
+			"activitysmith: unsupported push notification replace input type %T",
+			input,
+		)
+	}
+
+	if metadata != nil {
+		values, err := metadataValues(metadata)
+		if err != nil {
+			return request, err
+		}
+		request.Metadata = values
+	}
+
+	if request.Media != nil && strings.TrimSpace(*request.Media) != "" && len(request.Actions) > 0 {
+		return generated.PushNotificationReplaceRequest{}, ErrPushNotificationMediaActionsConflict
+	}
+
+	return request, nil
+}
+
 func normalizePushNotificationRequest(input any) (generated.PushNotificationRequest, error) {
 	var request generated.PushNotificationRequest
 
