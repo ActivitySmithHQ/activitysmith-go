@@ -212,6 +212,27 @@ input := activitysmithsdk.PushNotificationInput{
 activitysmith.Notifications.Send(input)
 ```
 
+### Replace a Push Notification
+
+Every send returns a `notification_id`. Pass it to `replace` to update a Push Notification you already sent, for example when an incident you alerted on is resolved. The replacement takes the old notification's place on the Lock Screen and in history instead of stacking a second one. It arrives silently, without sound or waking the screen, and goes to the same recipients as the original.
+
+Omit `metadata` or `tags` to keep their stored values.
+
+```go
+sent, err := activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+	Title:   "🚨 checkout-api is down",
+	Message: "500 errors on 62% of requests.",
+})
+if err != nil {
+	log.Fatal(err)
+}
+
+_, err = activitysmith.Notifications.Replace(sent.GetNotificationId(), activitysmithsdk.PushNotificationReplaceInput{
+	Title:   "✅ checkout-api recovered",
+	Message: "Error rate is back to normal. Incident resolved.",
+})
+```
+
 ## Live Activities
 
 Choose the Live Activity type that matches what you want to show:
