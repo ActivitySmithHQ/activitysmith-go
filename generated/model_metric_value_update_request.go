@@ -145,7 +145,6 @@ func (o *MetricValueUpdateRequest) UnmarshalJSON(data []byte) (err error) {
 	varMetricValueUpdateRequest := _MetricValueUpdateRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varMetricValueUpdateRequest)
 
 	if err != nil {

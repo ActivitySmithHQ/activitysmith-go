@@ -237,6 +237,48 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	return req
 }
 
+// PushNotificationReplaceInput is the replacement content for a sent Push Notification.
+// Nil Metadata or Tags keep the stored values; empty non-nil values clear them.
+type PushNotificationReplaceInput struct {
+	Metadata    map[string]any
+	Title       string
+	Message     string
+	Subtitle    string
+	Media       string
+	Icon        string
+	Redirection string
+	Actions     []PushNotificationAction
+	Tags        []string
+}
+
+func (in PushNotificationReplaceInput) toGenerated() generated.PushNotificationReplaceRequest {
+	req := generated.PushNotificationReplaceRequest{
+		Title: in.Title,
+	}
+	if in.Message != "" {
+		req.SetMessage(in.Message)
+	}
+	if in.Subtitle != "" {
+		req.SetSubtitle(in.Subtitle)
+	}
+	if in.Media != "" {
+		req.SetMedia(in.Media)
+	}
+	if in.Icon != "" {
+		req.SetIcon(in.Icon)
+	}
+	if in.Redirection != "" {
+		req.SetRedirection(in.Redirection)
+	}
+	if len(in.Actions) > 0 {
+		req.SetActions(append([]generated.PushNotificationAction{}, in.Actions...))
+	}
+	if in.Tags != nil {
+		req.SetTags(append([]string{}, in.Tags...))
+	}
+	return req
+}
+
 // LiveActivityActionInput is a handwritten DX input for the optional Live Activity button.
 type LiveActivityActionInput struct {
 	Title  string

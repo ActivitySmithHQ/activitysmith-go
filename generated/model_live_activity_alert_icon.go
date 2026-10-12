@@ -145,7 +145,6 @@ func (o *LiveActivityAlertIcon) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityAlertIcon := _LiveActivityAlertIcon{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityAlertIcon)
 
 	if err != nil {

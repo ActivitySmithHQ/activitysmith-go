@@ -5,11 +5,17 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Success** | **bool** | True when APNs accepts the notification for at least one targeted device. | 
+**NotificationId** | Pointer to **string** | ID of this Push Notification. Pass it to &#x60;PUT /push-notification/{notification_id}&#x60; to replace the notification later. | [optional] 
 **DevicesNotified** | Pointer to **int32** | Number of device tokens for which APNs accepted the notification, without confirming on-device delivery. | [optional] 
 **UsersNotified** | Pointer to **int32** |  | [optional] 
 **EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
 **Timestamp** | **time.Time** |  | 
+**DevicesTargeted** | Pointer to **int32** | Number of device tokens targeted. | [optional] 
+**DevicesDeactivated** | Pointer to **int32** | Number of device tokens deactivated because APNs reported them unregistered. | [optional] 
+**DevicesUnregistered** | Pointer to **int32** | Number of targeted device tokens APNs reported as unregistered. | [optional] 
+**CredentialTest** | Pointer to **bool** | True when the request was an integration connection test and no paired devices were available. | [optional] 
+**Message** | Pointer to **string** |  | [optional] 
 
 ## Methods
 
@@ -49,6 +55,31 @@ and a boolean to check if the value has been set.
 
 SetSuccess sets Success field to given value.
 
+
+### GetNotificationId
+
+`func (o *PushNotificationResponse) GetNotificationId() string`
+
+GetNotificationId returns the NotificationId field if non-nil, zero value otherwise.
+
+### GetNotificationIdOk
+
+`func (o *PushNotificationResponse) GetNotificationIdOk() (*string, bool)`
+
+GetNotificationIdOk returns a tuple with the NotificationId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetNotificationId
+
+`func (o *PushNotificationResponse) SetNotificationId(v string)`
+
+SetNotificationId sets NotificationId field to given value.
+
+### HasNotificationId
+
+`func (o *PushNotificationResponse) HasNotificationId() bool`
+
+HasNotificationId returns a boolean if a field has been set.
 
 ### GetDevicesNotified
 
@@ -169,6 +200,131 @@ and a boolean to check if the value has been set.
 
 SetTimestamp sets Timestamp field to given value.
 
+
+### GetDevicesTargeted
+
+`func (o *PushNotificationResponse) GetDevicesTargeted() int32`
+
+GetDevicesTargeted returns the DevicesTargeted field if non-nil, zero value otherwise.
+
+### GetDevicesTargetedOk
+
+`func (o *PushNotificationResponse) GetDevicesTargetedOk() (*int32, bool)`
+
+GetDevicesTargetedOk returns a tuple with the DevicesTargeted field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDevicesTargeted
+
+`func (o *PushNotificationResponse) SetDevicesTargeted(v int32)`
+
+SetDevicesTargeted sets DevicesTargeted field to given value.
+
+### HasDevicesTargeted
+
+`func (o *PushNotificationResponse) HasDevicesTargeted() bool`
+
+HasDevicesTargeted returns a boolean if a field has been set.
+
+### GetDevicesDeactivated
+
+`func (o *PushNotificationResponse) GetDevicesDeactivated() int32`
+
+GetDevicesDeactivated returns the DevicesDeactivated field if non-nil, zero value otherwise.
+
+### GetDevicesDeactivatedOk
+
+`func (o *PushNotificationResponse) GetDevicesDeactivatedOk() (*int32, bool)`
+
+GetDevicesDeactivatedOk returns a tuple with the DevicesDeactivated field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDevicesDeactivated
+
+`func (o *PushNotificationResponse) SetDevicesDeactivated(v int32)`
+
+SetDevicesDeactivated sets DevicesDeactivated field to given value.
+
+### HasDevicesDeactivated
+
+`func (o *PushNotificationResponse) HasDevicesDeactivated() bool`
+
+HasDevicesDeactivated returns a boolean if a field has been set.
+
+### GetDevicesUnregistered
+
+`func (o *PushNotificationResponse) GetDevicesUnregistered() int32`
+
+GetDevicesUnregistered returns the DevicesUnregistered field if non-nil, zero value otherwise.
+
+### GetDevicesUnregisteredOk
+
+`func (o *PushNotificationResponse) GetDevicesUnregisteredOk() (*int32, bool)`
+
+GetDevicesUnregisteredOk returns a tuple with the DevicesUnregistered field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDevicesUnregistered
+
+`func (o *PushNotificationResponse) SetDevicesUnregistered(v int32)`
+
+SetDevicesUnregistered sets DevicesUnregistered field to given value.
+
+### HasDevicesUnregistered
+
+`func (o *PushNotificationResponse) HasDevicesUnregistered() bool`
+
+HasDevicesUnregistered returns a boolean if a field has been set.
+
+### GetCredentialTest
+
+`func (o *PushNotificationResponse) GetCredentialTest() bool`
+
+GetCredentialTest returns the CredentialTest field if non-nil, zero value otherwise.
+
+### GetCredentialTestOk
+
+`func (o *PushNotificationResponse) GetCredentialTestOk() (*bool, bool)`
+
+GetCredentialTestOk returns a tuple with the CredentialTest field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCredentialTest
+
+`func (o *PushNotificationResponse) SetCredentialTest(v bool)`
+
+SetCredentialTest sets CredentialTest field to given value.
+
+### HasCredentialTest
+
+`func (o *PushNotificationResponse) HasCredentialTest() bool`
+
+HasCredentialTest returns a boolean if a field has been set.
+
+### GetMessage
+
+`func (o *PushNotificationResponse) GetMessage() string`
+
+GetMessage returns the Message field if non-nil, zero value otherwise.
+
+### GetMessageOk
+
+`func (o *PushNotificationResponse) GetMessageOk() (*string, bool)`
+
+GetMessageOk returns a tuple with the Message field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessage
+
+`func (o *PushNotificationResponse) SetMessage(v string)`
+
+SetMessage sets Message field to given value.
+
+### HasMessage
+
+`func (o *PushNotificationResponse) HasMessage() bool`
+
+HasMessage returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

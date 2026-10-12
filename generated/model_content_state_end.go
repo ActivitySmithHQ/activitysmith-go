@@ -784,7 +784,6 @@ func (o *ContentStateEnd) UnmarshalJSON(data []byte) (err error) {
 	varContentStateEnd := _ContentStateEnd{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varContentStateEnd)
 
 	if err != nil {

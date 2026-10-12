@@ -27,6 +27,16 @@ type LiveActivityUpdateResponse struct {
 	DevicesQueued *int32 `json:"devices_queued,omitempty"`
 	DevicesNotified *int32 `json:"devices_notified,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
+	UsersNotified *int32 `json:"users_notified,omitempty"`
+	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
+	// Optional tags to organize and filter notification history.
+	Tags []string `json:"tags,omitempty"`
+	// Present when the update started a new Live Activity for a managed stream.
+	Operation *string `json:"operation,omitempty"`
+	StreamKey *string `json:"stream_key,omitempty"`
+	PreviousActivityId *string `json:"previous_activity_id,omitempty"`
+	// Per-device delivery errors when some devices could not be reached.
+	Errors []string `json:"errors,omitempty"`
 }
 
 type _LiveActivityUpdateResponse LiveActivityUpdateResponse
@@ -187,6 +197,230 @@ func (o *LiveActivityUpdateResponse) SetTimestamp(v time.Time) {
 	o.Timestamp = v
 }
 
+// GetUsersNotified returns the UsersNotified field value if set, zero value otherwise.
+func (o *LiveActivityUpdateResponse) GetUsersNotified() int32 {
+	if o == nil || IsNil(o.UsersNotified) {
+		var ret int32
+		return ret
+	}
+	return *o.UsersNotified
+}
+
+// GetUsersNotifiedOk returns a tuple with the UsersNotified field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityUpdateResponse) GetUsersNotifiedOk() (*int32, bool) {
+	if o == nil || IsNil(o.UsersNotified) {
+		return nil, false
+	}
+	return o.UsersNotified, true
+}
+
+// HasUsersNotified returns a boolean if a field has been set.
+func (o *LiveActivityUpdateResponse) HasUsersNotified() bool {
+	if o != nil && !IsNil(o.UsersNotified) {
+		return true
+	}
+
+	return false
+}
+
+// SetUsersNotified gets a reference to the given int32 and assigns it to the UsersNotified field.
+func (o *LiveActivityUpdateResponse) SetUsersNotified(v int32) {
+	o.UsersNotified = &v
+}
+
+// GetEffectiveChannelSlugs returns the EffectiveChannelSlugs field value if set, zero value otherwise.
+func (o *LiveActivityUpdateResponse) GetEffectiveChannelSlugs() []string {
+	if o == nil || IsNil(o.EffectiveChannelSlugs) {
+		var ret []string
+		return ret
+	}
+	return o.EffectiveChannelSlugs
+}
+
+// GetEffectiveChannelSlugsOk returns a tuple with the EffectiveChannelSlugs field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityUpdateResponse) GetEffectiveChannelSlugsOk() ([]string, bool) {
+	if o == nil || IsNil(o.EffectiveChannelSlugs) {
+		return nil, false
+	}
+	return o.EffectiveChannelSlugs, true
+}
+
+// HasEffectiveChannelSlugs returns a boolean if a field has been set.
+func (o *LiveActivityUpdateResponse) HasEffectiveChannelSlugs() bool {
+	if o != nil && !IsNil(o.EffectiveChannelSlugs) {
+		return true
+	}
+
+	return false
+}
+
+// SetEffectiveChannelSlugs gets a reference to the given []string and assigns it to the EffectiveChannelSlugs field.
+func (o *LiveActivityUpdateResponse) SetEffectiveChannelSlugs(v []string) {
+	o.EffectiveChannelSlugs = v
+}
+
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *LiveActivityUpdateResponse) GetTags() []string {
+	if o == nil || IsNil(o.Tags) {
+		var ret []string
+		return ret
+	}
+	return o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityUpdateResponse) GetTagsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Tags) {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *LiveActivityUpdateResponse) HasTags() bool {
+	if o != nil && !IsNil(o.Tags) {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given []string and assigns it to the Tags field.
+func (o *LiveActivityUpdateResponse) SetTags(v []string) {
+	o.Tags = v
+}
+
+// GetOperation returns the Operation field value if set, zero value otherwise.
+func (o *LiveActivityUpdateResponse) GetOperation() string {
+	if o == nil || IsNil(o.Operation) {
+		var ret string
+		return ret
+	}
+	return *o.Operation
+}
+
+// GetOperationOk returns a tuple with the Operation field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityUpdateResponse) GetOperationOk() (*string, bool) {
+	if o == nil || IsNil(o.Operation) {
+		return nil, false
+	}
+	return o.Operation, true
+}
+
+// HasOperation returns a boolean if a field has been set.
+func (o *LiveActivityUpdateResponse) HasOperation() bool {
+	if o != nil && !IsNil(o.Operation) {
+		return true
+	}
+
+	return false
+}
+
+// SetOperation gets a reference to the given string and assigns it to the Operation field.
+func (o *LiveActivityUpdateResponse) SetOperation(v string) {
+	o.Operation = &v
+}
+
+// GetStreamKey returns the StreamKey field value if set, zero value otherwise.
+func (o *LiveActivityUpdateResponse) GetStreamKey() string {
+	if o == nil || IsNil(o.StreamKey) {
+		var ret string
+		return ret
+	}
+	return *o.StreamKey
+}
+
+// GetStreamKeyOk returns a tuple with the StreamKey field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityUpdateResponse) GetStreamKeyOk() (*string, bool) {
+	if o == nil || IsNil(o.StreamKey) {
+		return nil, false
+	}
+	return o.StreamKey, true
+}
+
+// HasStreamKey returns a boolean if a field has been set.
+func (o *LiveActivityUpdateResponse) HasStreamKey() bool {
+	if o != nil && !IsNil(o.StreamKey) {
+		return true
+	}
+
+	return false
+}
+
+// SetStreamKey gets a reference to the given string and assigns it to the StreamKey field.
+func (o *LiveActivityUpdateResponse) SetStreamKey(v string) {
+	o.StreamKey = &v
+}
+
+// GetPreviousActivityId returns the PreviousActivityId field value if set, zero value otherwise.
+func (o *LiveActivityUpdateResponse) GetPreviousActivityId() string {
+	if o == nil || IsNil(o.PreviousActivityId) {
+		var ret string
+		return ret
+	}
+	return *o.PreviousActivityId
+}
+
+// GetPreviousActivityIdOk returns a tuple with the PreviousActivityId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityUpdateResponse) GetPreviousActivityIdOk() (*string, bool) {
+	if o == nil || IsNil(o.PreviousActivityId) {
+		return nil, false
+	}
+	return o.PreviousActivityId, true
+}
+
+// HasPreviousActivityId returns a boolean if a field has been set.
+func (o *LiveActivityUpdateResponse) HasPreviousActivityId() bool {
+	if o != nil && !IsNil(o.PreviousActivityId) {
+		return true
+	}
+
+	return false
+}
+
+// SetPreviousActivityId gets a reference to the given string and assigns it to the PreviousActivityId field.
+func (o *LiveActivityUpdateResponse) SetPreviousActivityId(v string) {
+	o.PreviousActivityId = &v
+}
+
+// GetErrors returns the Errors field value if set, zero value otherwise.
+func (o *LiveActivityUpdateResponse) GetErrors() []string {
+	if o == nil || IsNil(o.Errors) {
+		var ret []string
+		return ret
+	}
+	return o.Errors
+}
+
+// GetErrorsOk returns a tuple with the Errors field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityUpdateResponse) GetErrorsOk() ([]string, bool) {
+	if o == nil || IsNil(o.Errors) {
+		return nil, false
+	}
+	return o.Errors, true
+}
+
+// HasErrors returns a boolean if a field has been set.
+func (o *LiveActivityUpdateResponse) HasErrors() bool {
+	if o != nil && !IsNil(o.Errors) {
+		return true
+	}
+
+	return false
+}
+
+// SetErrors gets a reference to the given []string and assigns it to the Errors field.
+func (o *LiveActivityUpdateResponse) SetErrors(v []string) {
+	o.Errors = v
+}
+
 func (o LiveActivityUpdateResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -206,6 +440,27 @@ func (o LiveActivityUpdateResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["devices_notified"] = o.DevicesNotified
 	}
 	toSerialize["timestamp"] = o.Timestamp
+	if !IsNil(o.UsersNotified) {
+		toSerialize["users_notified"] = o.UsersNotified
+	}
+	if !IsNil(o.EffectiveChannelSlugs) {
+		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
+	}
+	if !IsNil(o.Tags) {
+		toSerialize["tags"] = o.Tags
+	}
+	if !IsNil(o.Operation) {
+		toSerialize["operation"] = o.Operation
+	}
+	if !IsNil(o.StreamKey) {
+		toSerialize["stream_key"] = o.StreamKey
+	}
+	if !IsNil(o.PreviousActivityId) {
+		toSerialize["previous_activity_id"] = o.PreviousActivityId
+	}
+	if !IsNil(o.Errors) {
+		toSerialize["errors"] = o.Errors
+	}
 	return toSerialize, nil
 }
 
@@ -236,7 +491,6 @@ func (o *LiveActivityUpdateResponse) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityUpdateResponse := _LiveActivityUpdateResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityUpdateResponse)
 
 	if err != nil {

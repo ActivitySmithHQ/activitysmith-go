@@ -11,6 +11,9 @@ Name | Type | Description | Notes
 **EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Tags** | Pointer to **[]string** | Optional tags to organize and filter notification history. | [optional] 
 **Timestamp** | **time.Time** |  | 
+**EndedActivityId** | Pointer to **string** | Present when starting this Live Activity ended an older one to stay within the device limit. | [optional] 
+**Message** | Pointer to **string** |  | [optional] 
+**Errors** | Pointer to **[]string** | Per-device delivery errors when some devices could not be reached. | [optional] 
 
 ## Methods
 
@@ -190,6 +193,81 @@ and a boolean to check if the value has been set.
 
 SetTimestamp sets Timestamp field to given value.
 
+
+### GetEndedActivityId
+
+`func (o *LiveActivityStartResponse) GetEndedActivityId() string`
+
+GetEndedActivityId returns the EndedActivityId field if non-nil, zero value otherwise.
+
+### GetEndedActivityIdOk
+
+`func (o *LiveActivityStartResponse) GetEndedActivityIdOk() (*string, bool)`
+
+GetEndedActivityIdOk returns a tuple with the EndedActivityId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEndedActivityId
+
+`func (o *LiveActivityStartResponse) SetEndedActivityId(v string)`
+
+SetEndedActivityId sets EndedActivityId field to given value.
+
+### HasEndedActivityId
+
+`func (o *LiveActivityStartResponse) HasEndedActivityId() bool`
+
+HasEndedActivityId returns a boolean if a field has been set.
+
+### GetMessage
+
+`func (o *LiveActivityStartResponse) GetMessage() string`
+
+GetMessage returns the Message field if non-nil, zero value otherwise.
+
+### GetMessageOk
+
+`func (o *LiveActivityStartResponse) GetMessageOk() (*string, bool)`
+
+GetMessageOk returns a tuple with the Message field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessage
+
+`func (o *LiveActivityStartResponse) SetMessage(v string)`
+
+SetMessage sets Message field to given value.
+
+### HasMessage
+
+`func (o *LiveActivityStartResponse) HasMessage() bool`
+
+HasMessage returns a boolean if a field has been set.
+
+### GetErrors
+
+`func (o *LiveActivityStartResponse) GetErrors() []string`
+
+GetErrors returns the Errors field if non-nil, zero value otherwise.
+
+### GetErrorsOk
+
+`func (o *LiveActivityStartResponse) GetErrorsOk() (*[]string, bool)`
+
+GetErrorsOk returns a tuple with the Errors field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetErrors
+
+`func (o *LiveActivityStartResponse) SetErrors(v []string)`
+
+SetErrors sets Errors field to given value.
+
+### HasErrors
+
+`func (o *LiveActivityStartResponse) HasErrors() bool`
+
+HasErrors returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

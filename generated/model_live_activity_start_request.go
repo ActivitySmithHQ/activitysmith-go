@@ -326,7 +326,6 @@ func (o *LiveActivityStartRequest) UnmarshalJSON(data []byte) (err error) {
 	varLiveActivityStartRequest := _LiveActivityStartRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLiveActivityStartRequest)
 
 	if err != nil {
