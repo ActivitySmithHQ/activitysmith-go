@@ -5,7 +5,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Error** | **string** |  | 
+**Code** | Pointer to **string** | no_paired_devices: the account has no active paired iOS devices; pair an iPhone with the ActivitySmith app. no_recipients_found: devices are paired, but none matched the targeted channels. | [optional] 
 **Message** | **string** |  | 
+**AppStoreUrl** | Pointer to **string** | ActivitySmith App Store link. Present when code is no_paired_devices. | [optional] 
 **EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 
 ## Methods
@@ -47,6 +49,31 @@ and a boolean to check if the value has been set.
 SetError sets Error field to given value.
 
 
+### GetCode
+
+`func (o *NoRecipientsError) GetCode() string`
+
+GetCode returns the Code field if non-nil, zero value otherwise.
+
+### GetCodeOk
+
+`func (o *NoRecipientsError) GetCodeOk() (*string, bool)`
+
+GetCodeOk returns a tuple with the Code field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCode
+
+`func (o *NoRecipientsError) SetCode(v string)`
+
+SetCode sets Code field to given value.
+
+### HasCode
+
+`func (o *NoRecipientsError) HasCode() bool`
+
+HasCode returns a boolean if a field has been set.
+
 ### GetMessage
 
 `func (o *NoRecipientsError) GetMessage() string`
@@ -66,6 +93,31 @@ and a boolean to check if the value has been set.
 
 SetMessage sets Message field to given value.
 
+
+### GetAppStoreUrl
+
+`func (o *NoRecipientsError) GetAppStoreUrl() string`
+
+GetAppStoreUrl returns the AppStoreUrl field if non-nil, zero value otherwise.
+
+### GetAppStoreUrlOk
+
+`func (o *NoRecipientsError) GetAppStoreUrlOk() (*string, bool)`
+
+GetAppStoreUrlOk returns a tuple with the AppStoreUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAppStoreUrl
+
+`func (o *NoRecipientsError) SetAppStoreUrl(v string)`
+
+SetAppStoreUrl sets AppStoreUrl field to given value.
+
+### HasAppStoreUrl
+
+`func (o *NoRecipientsError) HasAppStoreUrl() bool`
+
+HasAppStoreUrl returns a boolean if a field has been set.
 
 ### GetEffectiveChannelSlugs
 

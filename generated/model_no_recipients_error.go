@@ -22,7 +22,11 @@ var _ MappedNullable = &NoRecipientsError{}
 // NoRecipientsError struct for NoRecipientsError
 type NoRecipientsError struct {
 	Error string `json:"error"`
+	// no_paired_devices: the account has no active paired iOS devices; pair an iPhone with the ActivitySmith app. no_recipients_found: devices are paired, but none matched the targeted channels.
+	Code *string `json:"code,omitempty"`
 	Message string `json:"message"`
+	// ActivitySmith App Store link. Present when code is no_paired_devices.
+	AppStoreUrl *string `json:"app_store_url,omitempty"`
 	EffectiveChannelSlugs []string `json:"effective_channel_slugs,omitempty"`
 }
 
@@ -71,6 +75,38 @@ func (o *NoRecipientsError) SetError(v string) {
 	o.Error = v
 }
 
+// GetCode returns the Code field value if set, zero value otherwise.
+func (o *NoRecipientsError) GetCode() string {
+	if o == nil || IsNil(o.Code) {
+		var ret string
+		return ret
+	}
+	return *o.Code
+}
+
+// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *NoRecipientsError) GetCodeOk() (*string, bool) {
+	if o == nil || IsNil(o.Code) {
+		return nil, false
+	}
+	return o.Code, true
+}
+
+// HasCode returns a boolean if a field has been set.
+func (o *NoRecipientsError) HasCode() bool {
+	if o != nil && !IsNil(o.Code) {
+		return true
+	}
+
+	return false
+}
+
+// SetCode gets a reference to the given string and assigns it to the Code field.
+func (o *NoRecipientsError) SetCode(v string) {
+	o.Code = &v
+}
+
 // GetMessage returns the Message field value
 func (o *NoRecipientsError) GetMessage() string {
 	if o == nil {
@@ -93,6 +129,38 @@ func (o *NoRecipientsError) GetMessageOk() (*string, bool) {
 // SetMessage sets field value
 func (o *NoRecipientsError) SetMessage(v string) {
 	o.Message = v
+}
+
+// GetAppStoreUrl returns the AppStoreUrl field value if set, zero value otherwise.
+func (o *NoRecipientsError) GetAppStoreUrl() string {
+	if o == nil || IsNil(o.AppStoreUrl) {
+		var ret string
+		return ret
+	}
+	return *o.AppStoreUrl
+}
+
+// GetAppStoreUrlOk returns a tuple with the AppStoreUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *NoRecipientsError) GetAppStoreUrlOk() (*string, bool) {
+	if o == nil || IsNil(o.AppStoreUrl) {
+		return nil, false
+	}
+	return o.AppStoreUrl, true
+}
+
+// HasAppStoreUrl returns a boolean if a field has been set.
+func (o *NoRecipientsError) HasAppStoreUrl() bool {
+	if o != nil && !IsNil(o.AppStoreUrl) {
+		return true
+	}
+
+	return false
+}
+
+// SetAppStoreUrl gets a reference to the given string and assigns it to the AppStoreUrl field.
+func (o *NoRecipientsError) SetAppStoreUrl(v string) {
+	o.AppStoreUrl = &v
 }
 
 // GetEffectiveChannelSlugs returns the EffectiveChannelSlugs field value if set, zero value otherwise.
@@ -138,7 +206,13 @@ func (o NoRecipientsError) MarshalJSON() ([]byte, error) {
 func (o NoRecipientsError) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["error"] = o.Error
+	if !IsNil(o.Code) {
+		toSerialize["code"] = o.Code
+	}
 	toSerialize["message"] = o.Message
+	if !IsNil(o.AppStoreUrl) {
+		toSerialize["app_store_url"] = o.AppStoreUrl
+	}
 	if !IsNil(o.EffectiveChannelSlugs) {
 		toSerialize["effective_channel_slugs"] = o.EffectiveChannelSlugs
 	}
