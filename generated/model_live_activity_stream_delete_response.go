@@ -33,6 +33,9 @@ type LiveActivityStreamDeleteResponse struct {
 	Ignored *bool `json:"ignored,omitempty"`
 	Message *string `json:"message,omitempty"`
 	ForcedCompletion *bool `json:"forced_completion,omitempty"`
+	// Present when the stream had a current Live Activity. True when the end was sent to at least one device, or queued for a device that has not registered yet. False when no device received it, so the Live Activity may stay on the Lock Screen until iOS removes it or someone dismisses it.
+	Delivered *bool `json:"delivered,omitempty"`
+	// Explains why the end may not have removed the Live Activity, for example because iOS had already ended a Live Activity that started more than 8 hours ago.
 	Warning *string `json:"warning,omitempty"`
 	// Per-device delivery errors when some devices could not be reached.
 	Errors []string `json:"errors,omitempty"`
@@ -359,6 +362,38 @@ func (o *LiveActivityStreamDeleteResponse) SetForcedCompletion(v bool) {
 	o.ForcedCompletion = &v
 }
 
+// GetDelivered returns the Delivered field value if set, zero value otherwise.
+func (o *LiveActivityStreamDeleteResponse) GetDelivered() bool {
+	if o == nil || IsNil(o.Delivered) {
+		var ret bool
+		return ret
+	}
+	return *o.Delivered
+}
+
+// GetDeliveredOk returns a tuple with the Delivered field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamDeleteResponse) GetDeliveredOk() (*bool, bool) {
+	if o == nil || IsNil(o.Delivered) {
+		return nil, false
+	}
+	return o.Delivered, true
+}
+
+// HasDelivered returns a boolean if a field has been set.
+func (o *LiveActivityStreamDeleteResponse) HasDelivered() bool {
+	if o != nil && !IsNil(o.Delivered) {
+		return true
+	}
+
+	return false
+}
+
+// SetDelivered gets a reference to the given bool and assigns it to the Delivered field.
+func (o *LiveActivityStreamDeleteResponse) SetDelivered(v bool) {
+	o.Delivered = &v
+}
+
 // GetWarning returns the Warning field value if set, zero value otherwise.
 func (o *LiveActivityStreamDeleteResponse) GetWarning() string {
 	if o == nil || IsNil(o.Warning) {
@@ -454,6 +489,9 @@ func (o LiveActivityStreamDeleteResponse) ToMap() (map[string]interface{}, error
 	}
 	if !IsNil(o.ForcedCompletion) {
 		toSerialize["forced_completion"] = o.ForcedCompletion
+	}
+	if !IsNil(o.Delivered) {
+		toSerialize["delivered"] = o.Delivered
 	}
 	if !IsNil(o.Warning) {
 		toSerialize["warning"] = o.Warning

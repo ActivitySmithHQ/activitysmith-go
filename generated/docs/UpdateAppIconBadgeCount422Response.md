@@ -5,9 +5,10 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Error** | **string** |  | 
-**Message** | **string** |  | 
-**EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Code** | **string** |  | 
+**Message** | **string** |  | 
+**AppStoreUrl** | Pointer to **string** | ActivitySmith App Store link. Present when code is no_paired_devices. | [optional] 
+**EffectiveChannelSlugs** | Pointer to **[]string** |  | [optional] 
 **Badge** | **int32** |  | 
 **DevicesTargeted** | Pointer to **int32** |  | [optional] 
 **DevicesUpdated** | **int32** |  | 
@@ -18,7 +19,7 @@ Name | Type | Description | Notes
 
 ### NewUpdateAppIconBadgeCount422Response
 
-`func NewUpdateAppIconBadgeCount422Response(error_ string, message string, code string, badge int32, devicesUpdated int32, ) *UpdateAppIconBadgeCount422Response`
+`func NewUpdateAppIconBadgeCount422Response(error_ string, code string, message string, badge int32, devicesUpdated int32, ) *UpdateAppIconBadgeCount422Response`
 
 NewUpdateAppIconBadgeCount422Response instantiates a new UpdateAppIconBadgeCount422Response object
 This constructor will assign default values to properties that have it defined,
@@ -53,6 +54,26 @@ and a boolean to check if the value has been set.
 SetError sets Error field to given value.
 
 
+### GetCode
+
+`func (o *UpdateAppIconBadgeCount422Response) GetCode() string`
+
+GetCode returns the Code field if non-nil, zero value otherwise.
+
+### GetCodeOk
+
+`func (o *UpdateAppIconBadgeCount422Response) GetCodeOk() (*string, bool)`
+
+GetCodeOk returns a tuple with the Code field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCode
+
+`func (o *UpdateAppIconBadgeCount422Response) SetCode(v string)`
+
+SetCode sets Code field to given value.
+
+
 ### GetMessage
 
 `func (o *UpdateAppIconBadgeCount422Response) GetMessage() string`
@@ -72,6 +93,31 @@ and a boolean to check if the value has been set.
 
 SetMessage sets Message field to given value.
 
+
+### GetAppStoreUrl
+
+`func (o *UpdateAppIconBadgeCount422Response) GetAppStoreUrl() string`
+
+GetAppStoreUrl returns the AppStoreUrl field if non-nil, zero value otherwise.
+
+### GetAppStoreUrlOk
+
+`func (o *UpdateAppIconBadgeCount422Response) GetAppStoreUrlOk() (*string, bool)`
+
+GetAppStoreUrlOk returns a tuple with the AppStoreUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAppStoreUrl
+
+`func (o *UpdateAppIconBadgeCount422Response) SetAppStoreUrl(v string)`
+
+SetAppStoreUrl sets AppStoreUrl field to given value.
+
+### HasAppStoreUrl
+
+`func (o *UpdateAppIconBadgeCount422Response) HasAppStoreUrl() bool`
+
+HasAppStoreUrl returns a boolean if a field has been set.
 
 ### GetEffectiveChannelSlugs
 
@@ -97,26 +143,6 @@ SetEffectiveChannelSlugs sets EffectiveChannelSlugs field to given value.
 `func (o *UpdateAppIconBadgeCount422Response) HasEffectiveChannelSlugs() bool`
 
 HasEffectiveChannelSlugs returns a boolean if a field has been set.
-
-### GetCode
-
-`func (o *UpdateAppIconBadgeCount422Response) GetCode() string`
-
-GetCode returns the Code field if non-nil, zero value otherwise.
-
-### GetCodeOk
-
-`func (o *UpdateAppIconBadgeCount422Response) GetCodeOk() (*string, bool)`
-
-GetCodeOk returns a tuple with the Code field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetCode
-
-`func (o *UpdateAppIconBadgeCount422Response) SetCode(v string)`
-
-SetCode sets Code field to given value.
-
 
 ### GetBadge
 

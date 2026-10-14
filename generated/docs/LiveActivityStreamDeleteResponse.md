@@ -14,7 +14,8 @@ Name | Type | Description | Notes
 **Ignored** | Pointer to **bool** | True when the stream was already ended and the request had no effect. | [optional] 
 **Message** | Pointer to **string** |  | [optional] 
 **ForcedCompletion** | Pointer to **bool** |  | [optional] 
-**Warning** | Pointer to **string** |  | [optional] 
+**Delivered** | Pointer to **bool** | Present when the stream had a current Live Activity. True when the end was sent to at least one device, or queued for a device that has not registered yet. False when no device received it, so the Live Activity may stay on the Lock Screen until iOS removes it or someone dismisses it. | [optional] 
+**Warning** | Pointer to **string** | Explains why the end may not have removed the Live Activity, for example because iOS had already ended a Live Activity that started more than 8 hours ago. | [optional] 
 **Errors** | Pointer to **[]string** | Per-device delivery errors when some devices could not be reached. | [optional] 
 
 ## Methods
@@ -275,6 +276,31 @@ SetForcedCompletion sets ForcedCompletion field to given value.
 `func (o *LiveActivityStreamDeleteResponse) HasForcedCompletion() bool`
 
 HasForcedCompletion returns a boolean if a field has been set.
+
+### GetDelivered
+
+`func (o *LiveActivityStreamDeleteResponse) GetDelivered() bool`
+
+GetDelivered returns the Delivered field if non-nil, zero value otherwise.
+
+### GetDeliveredOk
+
+`func (o *LiveActivityStreamDeleteResponse) GetDeliveredOk() (*bool, bool)`
+
+GetDeliveredOk returns a tuple with the Delivered field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDelivered
+
+`func (o *LiveActivityStreamDeleteResponse) SetDelivered(v bool)`
+
+SetDelivered sets Delivered field to given value.
+
+### HasDelivered
+
+`func (o *LiveActivityStreamDeleteResponse) HasDelivered() bool`
+
+HasDelivered returns a boolean if a field has been set.
 
 ### GetWarning
 
