@@ -517,15 +517,25 @@ paths:
           content:
             application/json:
               examples:
-                no_devices:
+                no_paired_devices:
+                  value:
+                    error: No paired devices
+                    code: no_paired_devices
+                    message: No active iOS devices are paired yet. Download ActivitySmith
+                      from the App Store and pair your device.
+                    effective_channel_slugs: null
+                    app_store_url: https://apps.apple.com/us/app/activitysmith/id6752254835
+                no_channel_recipients:
                   value:
                     error: No recipients found
-                    message: No devices matched the effective channel target
+                    code: no_recipients_found
+                    message: No active iOS devices matched the targeted channels.
                     effective_channel_slugs:
                     - marketing
               schema:
                 $ref: '#/components/schemas/NoRecipientsError'
-          description: No recipients found for effective channel target
+          description: "No paired devices on the account, or no devices matched the\
+            \ effective channel target"
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -891,10 +901,19 @@ paths:
           content:
             application/json:
               examples:
-                no_devices:
+                no_paired_devices:
+                  value:
+                    error: No paired devices
+                    code: no_paired_devices
+                    message: No active iOS devices are paired yet. Download ActivitySmith
+                      from the App Store and pair your device.
+                    effective_channel_slugs: null
+                    app_store_url: https://apps.apple.com/us/app/activitysmith/id6752254835
+                no_channel_recipients:
                   value:
                     error: No recipients found
-                    message: No devices matched the effective channel target
+                    code: no_recipients_found
+                    message: No active iOS devices matched the targeted channels.
                     effective_channel_slugs:
                     - marketing
               schema:
@@ -1037,6 +1056,20 @@ paths:
                     stream_key: prod-web-1
                     activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
                     devices_queued: 1
+                    delivered: true
+                    timestamp: 2025-08-12T12:10:00.000Z
+                not_delivered_after_ios_limit:
+                  value:
+                    success: true
+                    operation: ended
+                    stream_key: prod-web-1
+                    activity_id: h8QmSyYFTuwOIF6Wh3YcZlzHLhUcr034
+                    forced_completion: true
+                    delivered: false
+                    warning: "This Live Activity started more than 8 hours ago, so\
+                      \ iOS had already ended it and no device received the end. It\
+                      \ stays on the Lock Screen until iOS removes it (up to 4 hours\
+                      \ later) or someone dismisses it."
                     timestamp: 2025-08-12T12:10:00.000Z
                 already_inactive:
                   value:
@@ -1564,16 +1597,25 @@ paths:
           content:
             application/json:
               examples:
-                no_devices:
+                no_paired_devices:
+                  value:
+                    error: No paired devices
+                    code: no_paired_devices
+                    message: No active iOS devices are paired yet. Download ActivitySmith
+                      from the App Store and pair your device.
+                    effective_channel_slugs: null
+                    app_store_url: https://apps.apple.com/us/app/activitysmith/id6752254835
+                no_channel_recipients:
                   value:
                     error: No recipients found
-                    message: No Live Activity devices matched the effective channel
-                      target
+                    code: no_recipients_found
+                    message: No active iOS devices matched the targeted channels.
                     effective_channel_slugs:
                     - ops
               schema:
                 $ref: '#/components/schemas/NoRecipientsError'
-          description: No recipients found for effective channel target
+          description: "No paired devices on the account, or no devices matched the\
+            \ effective channel target"
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -2022,16 +2064,25 @@ paths:
           content:
             application/json:
               examples:
-                no_devices:
+                no_paired_devices:
+                  value:
+                    error: No paired devices
+                    code: no_paired_devices
+                    message: No active iOS devices are paired yet. Download ActivitySmith
+                      from the App Store and pair your device.
+                    effective_channel_slugs: null
+                    app_store_url: https://apps.apple.com/us/app/activitysmith/id6752254835
+                no_channel_recipients:
                   value:
                     error: No recipients found
-                    message: No Live Activity devices matched the effective channel
-                      target
+                    code: no_recipients_found
+                    message: No active iOS devices matched the targeted channels.
                     effective_channel_slugs:
                     - marketing
               schema:
                 $ref: '#/components/schemas/NoRecipientsError'
-          description: No recipients found for effective channel target
+          description: "No paired devices on the account, or no devices matched the\
+            \ effective channel target"
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -4901,14 +4952,15 @@ components:
       example:
         devices_queued: 0
         ignored: true
+        devices_notified: 6
+        delivered: true
+        message: message
+        stream_key: stream_key
         success: true
         activity_id: activity_id
         forced_completion: true
-        devices_notified: 6
         warning: warning
-        message: message
         operation: ended
-        stream_key: stream_key
         errors:
         - errors
         - errors
@@ -4940,7 +4992,17 @@ components:
           type: string
         forced_completion:
           type: boolean
+        delivered:
+          description: "Present when the stream had a current Live Activity. True\
+            \ when the end was sent to at least one device, or queued for a device\
+            \ that has not registered yet. False when no device received it, so the\
+            \ Live Activity may stay on the Lock Screen until iOS removes it or someone\
+            \ dismisses it."
+          type: boolean
         warning:
+          description: "Explains why the end may not have removed the Live Activity,\
+            \ for example because iOS had already ended a Live Activity that started\
+            \ more than 8 hours ago."
           type: string
         errors:
           description: Per-device delivery errors when some devices could not be reached.
@@ -5045,6 +5107,8 @@ components:
     NoRecipientsError:
       additionalProperties: false
       example:
+        code: code
+        app_store_url: https://openapi-generator.tech
         error: error
         message: message
         effective_channel_slugs:
@@ -5053,7 +5117,17 @@ components:
       properties:
         error:
           type: string
+        code:
+          description: "Machine-readable reason. no_paired_devices: the account has\
+            \ no active paired iOS devices; pair an iPhone with the ActivitySmith\
+            \ app. no_recipients_found: devices are paired, but none matched the targeted\
+            \ channels. Treat unknown values as a generic no-delivery error."
+          type: string
         message:
+          type: string
+        app_store_url:
+          description: ActivitySmith App Store link. Present when code is no_paired_devices.
+          format: uri
           type: string
         effective_channel_slugs:
           items:
