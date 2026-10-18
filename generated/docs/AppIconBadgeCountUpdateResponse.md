@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Success** | **bool** |  | 
 **Badge** | **int32** |  | 
-**DevicesUpdated** | **int32** | Number of devices whose App Icon Badge Count was updated. | 
+**DevicesUpdated** | **int32** | Number of devices whose App Icon Badge was updated. | 
 **UsersUpdated** | **int32** | Number of account users with at least one updated device. | 
 **DevicesNotified** | Pointer to **int32** | Deprecated compatibility alias for devices_updated. | [optional] 
 **UsersNotified** | Pointer to **int32** | Deprecated compatibility alias for users_updated. | [optional] 
