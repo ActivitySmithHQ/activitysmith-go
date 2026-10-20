@@ -11,7 +11,7 @@ security:
 tags:
 - description: Send push notifications to paired devices.
   name: PushNotifications
-- description: Update App Icon Badge Counts on paired devices.
+- description: Update the App Icon Badge on paired devices.
   name: AppIconBadges
 - description: "Start, update, stream, and end Live Activities."
   name: LiveActivities
@@ -20,7 +20,8 @@ tags:
 paths:
   /badge:
     post:
-      description: Shows a number on the ActivitySmith app icon.
+      description: Shows a number on the ActivitySmith app icon. Requires Push Notifications
+        enabled for ActivitySmith on the device.
       operationId: updateAppIconBadgeCount
       requestBody:
         content:
@@ -67,7 +68,7 @@ paths:
                     timestamp: 2026-07-10T12:00:00.000Z
               schema:
                 $ref: '#/components/schemas/AppIconBadgeCountUpdateResponse'
-          description: App Icon Badge Count updated
+          description: App Icon Badge updated
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -228,7 +229,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppIconBadgeCountUpdateError'
-          description: App Icon Badge Count could not be updated
+          description: App Icon Badge could not be updated
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -252,7 +253,7 @@ paths:
               schema:
                 type: string
               style: simple
-      summary: Set App Icon Badge Count
+      summary: Set App Icon Badge
       tags:
       - AppIconBadges
       x-codeSamples:
@@ -362,7 +363,7 @@ paths:
                 value:
                   title: "MRR just crossed $10,000 🎉"
                   message: Up 18% this month from 31 new subscriptions.
-                  icon: https://cdn.activitysmith.com/integrations/icons/stripe.png
+                  icon: https://example.com/icons/stripe.png
               time_sensitive:
                 summary: Deliver as Time Sensitive
                 value:
@@ -4038,7 +4039,7 @@ components:
           minimum: 0
           type: integer
         devices_updated:
-          description: Number of devices whose App Icon Badge Count was updated.
+          description: Number of devices whose App Icon Badge was updated.
           type: integer
         users_updated:
           description: Number of account users with at least one updated device.
