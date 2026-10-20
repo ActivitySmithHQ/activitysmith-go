@@ -24,7 +24,7 @@ var _ MappedNullable = &AppIconBadgeCountUpdateResponse{}
 type AppIconBadgeCountUpdateResponse struct {
 	Success bool `json:"success"`
 	Badge int32 `json:"badge"`
-	// Number of devices whose App Icon Badge Count was updated.
+	// Number of devices whose App Icon Badge was updated.
 	DevicesUpdated int32 `json:"devices_updated"`
 	// Number of account users with at least one updated device.
 	UsersUpdated int32 `json:"users_updated"`
