@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Success** | **bool** |  | 
+**Created** | Pointer to **bool** | true when this request created the metric because no metric used the key yet. | [optional] 
 
 ## Methods
 
@@ -44,6 +45,31 @@ and a boolean to check if the value has been set.
 
 SetSuccess sets Success field to given value.
 
+
+### GetCreated
+
+`func (o *MetricValueUpdateResponse) GetCreated() bool`
+
+GetCreated returns the Created field if non-nil, zero value otherwise.
+
+### GetCreatedOk
+
+`func (o *MetricValueUpdateResponse) GetCreatedOk() (*bool, bool)`
+
+GetCreatedOk returns a tuple with the Created field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCreated
+
+`func (o *MetricValueUpdateResponse) SetCreated(v bool)`
+
+SetCreated sets Created field to given value.
+
+### HasCreated
+
+`func (o *MetricValueUpdateResponse) HasCreated() bool`
+
+HasCreated returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

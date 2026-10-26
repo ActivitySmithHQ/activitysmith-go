@@ -22,6 +22,8 @@ var _ MappedNullable = &MetricValueUpdateResponse{}
 // MetricValueUpdateResponse struct for MetricValueUpdateResponse
 type MetricValueUpdateResponse struct {
 	Success bool `json:"success"`
+	// true when this request created the metric because no metric used the key yet.
+	Created *bool `json:"created,omitempty"`
 }
 
 type _MetricValueUpdateResponse MetricValueUpdateResponse
@@ -68,6 +70,38 @@ func (o *MetricValueUpdateResponse) SetSuccess(v bool) {
 	o.Success = v
 }
 
+// GetCreated returns the Created field value if set, zero value otherwise.
+func (o *MetricValueUpdateResponse) GetCreated() bool {
+	if o == nil || IsNil(o.Created) {
+		var ret bool
+		return ret
+	}
+	return *o.Created
+}
+
+// GetCreatedOk returns a tuple with the Created field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *MetricValueUpdateResponse) GetCreatedOk() (*bool, bool) {
+	if o == nil || IsNil(o.Created) {
+		return nil, false
+	}
+	return o.Created, true
+}
+
+// HasCreated returns a boolean if a field has been set.
+func (o *MetricValueUpdateResponse) HasCreated() bool {
+	if o != nil && !IsNil(o.Created) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreated gets a reference to the given bool and assigns it to the Created field.
+func (o *MetricValueUpdateResponse) SetCreated(v bool) {
+	o.Created = &v
+}
+
 func (o MetricValueUpdateResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -79,6 +113,9 @@ func (o MetricValueUpdateResponse) MarshalJSON() ([]byte, error) {
 func (o MetricValueUpdateResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["success"] = o.Success
+	if !IsNil(o.Created) {
+		toSerialize["created"] = o.Created
+	}
 	return toSerialize, nil
 }
 
