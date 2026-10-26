@@ -13,6 +13,7 @@ import (
 )
 
 type capturedRequest struct {
+	Method        string
 	Path          string
 	Authorization string
 	SDK           string
@@ -31,6 +32,7 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 		defer r.Body.Close()
 
 		requests = append(requests, capturedRequest{
+			Method:        r.Method,
 			Path:          r.URL.Path,
 			Authorization: r.Header.Get("Authorization"),
 			SDK:           r.Header.Get("X-ActivitySmith-SDK"),
@@ -68,6 +70,13 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 			_, _ = w.Write([]byte(`{"success":true}`))
 		case "/metrics/prod.status/value":
 			_, _ = w.Write([]byte(`{"success":true}`))
+		case "/metrics/mrr", "/metrics/deploy.success_rate":
+			if r.Method != http.MethodPut {
+				http.NotFound(w, r)
+				return
+			}
+			w.WriteHeader(http.StatusCreated)
+			_, _ = w.Write([]byte(`{"metric":{"public_id":"m-1","key":"mrr","label":"MRR","format":"currency","currency_code":"USD","unit":null,"unit_spacing":"none","latest_value":null,"latest_value_at":null,"created_at":"2026-10-26T09:00:00Z","updated_at":"2026-10-26T09:00:00Z"}}`))
 		case "/badge":
 			_, _ = w.Write([]byte(`{"success":true,"badge":3,"devices_updated":1,"devices_notified":1,"users_updated":1,"effective_channel_slugs":["sales","customer-success"],"timestamp":"2026-02-07T00:00:00Z"}`))
 		default:
@@ -426,6 +435,49 @@ func TestMetricsShortAndLegacyMethods(t *testing.T) {
 	}
 	if !strings.Contains((*requests)[1].Body, `"value":"healthy"`) {
 		t.Fatalf("metric string body mismatch: %s", (*requests)[1].Body)
+	}
+}
+
+func TestMetricsCreate(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	response, err := client.Metrics.Create("mrr", MetricInput{
+		Label:        "MRR",
+		Format:       "currency",
+		CurrencyCode: "USD",
+	})
+	if err != nil {
+		t.Fatalf("Metrics.Create returned error: %v", err)
+	}
+	if response.Metric.Key != "mrr" || response.Metric.CurrencyCode.Get() == nil || *response.Metric.CurrencyCode.Get() != "USD" {
+		t.Fatalf("unexpected metric response: %+v", response.Metric)
+	}
+	if response.Metric.Unit.Get() != nil || response.Metric.LatestValue != nil {
+		t.Fatalf("expected null unit and latest value: %+v", response.Metric)
+	}
+
+	if _, err := client.Metrics.Create("deploy.success_rate", MetricInput{}); err != nil {
+		t.Fatalf("Metrics.Create with defaults returned error: %v", err)
+	}
+
+	if len(*requests) != 2 {
+		t.Fatalf("expected 2 requests, got %d", len(*requests))
+	}
+	if (*requests)[0].Method != http.MethodPut || (*requests)[0].Path != "/metrics/mrr" {
+		t.Fatalf("unexpected request: %s %s", (*requests)[0].Method, (*requests)[0].Path)
+	}
+	if strings.TrimSpace((*requests)[0].Body) != `{"currency_code":"USD","format":"currency","label":"MRR"}` {
+		t.Fatalf("metric definition body mismatch: %s", (*requests)[0].Body)
+	}
+	if body := strings.TrimSpace((*requests)[1].Body); body != "{}" {
+		t.Fatalf("expected empty definition body, got %q", body)
 	}
 }
 
