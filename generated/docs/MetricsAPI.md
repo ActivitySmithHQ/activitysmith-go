@@ -5,6 +5,7 @@ All URIs are relative to *https://activitysmith.com/api*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**UpdateMetricValue**](MetricsAPI.md#UpdateMetricValue) | **Post** /metrics/{key}/value | Update a widget metric value
+[**UpsertMetric**](MetricsAPI.md#UpsertMetric) | **Put** /metrics/{key} | Create or update a widget metric
 
 
 
@@ -29,7 +30,7 @@ import (
 )
 
 func main() {
-	key := "key_example" // string | Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+	key := "key_example" // string | Metric key. A key that has never been used creates the metric. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
 	metricValueUpdateRequest := *openapiclient.NewMetricValueUpdateRequest(openapiclient.MetricValueUpdateRequest_value{Float32: new(float32)}) // MetricValueUpdateRequest | 
 
 	configuration := openapiclient.NewConfiguration()
@@ -50,7 +51,7 @@ func main() {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**key** | **string** | Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed. | 
+**key** | **string** | Metric key. A key that has never been used creates the metric. Lowercase letters, numbers, dots, underscores, and dashes are allowed. | 
 
 ### Other Parameters
 
@@ -65,6 +66,78 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**MetricValueUpdateResponse**](MetricValueUpdateResponse.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## UpsertMetric
+
+> MetricResponse UpsertMetric(ctx, key).MetricUpsertRequest(metricUpsertRequest).Execute()
+
+Create or update a widget metric
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/GIT_USER_ID/GIT_REPO_ID"
+)
+
+func main() {
+	key := "key_example" // string | Metric key. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+	metricUpsertRequest := *openapiclient.NewMetricUpsertRequest() // MetricUpsertRequest |  (optional)
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.MetricsAPI.UpsertMetric(context.Background(), key).MetricUpsertRequest(metricUpsertRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `MetricsAPI.UpsertMetric``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `UpsertMetric`: MetricResponse
+	fmt.Fprintf(os.Stdout, "Response from `MetricsAPI.UpsertMetric`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**key** | **string** | Metric key. Lowercase letters, numbers, dots, underscores, and dashes are allowed. | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiUpsertMetricRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **metricUpsertRequest** | [**MetricUpsertRequest**](MetricUpsertRequest.md) |  | 
+
+### Return type
+
+[**MetricResponse**](MetricResponse.md)
 
 ### Authorization
 

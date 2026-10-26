@@ -11,16 +11,17 @@ security:
 tags:
 - description: Send push notifications to paired devices.
   name: PushNotifications
-- description: Update App Icon Badge Counts on paired devices.
+- description: Update the App Icon Badge on paired devices.
   name: AppIconBadges
 - description: "Start, update, stream, and end Live Activities."
   name: LiveActivities
-- description: Update metric values shown in ActivitySmith widgets.
+- description: Create metrics and update the values shown in ActivitySmith widgets.
   name: Metrics
 paths:
   /badge:
     post:
-      description: Shows a number on the ActivitySmith app icon.
+      description: Shows a number on the ActivitySmith app icon. Requires Push Notifications
+        enabled for ActivitySmith on the device.
       operationId: updateAppIconBadgeCount
       requestBody:
         content:
@@ -67,7 +68,7 @@ paths:
                     timestamp: 2026-07-10T12:00:00.000Z
               schema:
                 $ref: '#/components/schemas/AppIconBadgeCountUpdateResponse'
-          description: App Icon Badge Count updated
+          description: App Icon Badge updated
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -228,7 +229,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppIconBadgeCountUpdateError'
-          description: App Icon Badge Count could not be updated
+          description: App Icon Badge could not be updated
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -252,7 +253,7 @@ paths:
               schema:
                 type: string
               style: simple
-      summary: Set App Icon Badge Count
+      summary: Set App Icon Badge
       tags:
       - AppIconBadges
       x-codeSamples:
@@ -362,7 +363,7 @@ paths:
                 value:
                   title: "MRR just crossed $10,000 🎉"
                   message: Up 18% this month from 31 new subscriptions.
-                  icon: https://cdn.activitysmith.com/integrations/icons/stripe.png
+                  icon: https://example.com/icons/stripe.png
               time_sensitive:
                 summary: Deliver as Time Sensitive
                 value:
@@ -1548,8 +1549,8 @@ paths:
                 trial_expired:
                   value:
                     error: trial_expired
-                    message: Your free trial has ended. Start a subscription or lifetime
-                      membership to resume using ActivitySmith.
+                    message: "Your free trial has ended. Start a subscription or lifetime\
+                      \ membership to resume using ActivitySmith: https://activitysmith.com/app/account?billing=upgrade"
                     trial_period:
                       started_at: 2026-09-01T00:00:00.000Z
                       ends_at: 2026-09-08T00:00:00.000Z
@@ -2859,17 +2860,270 @@ paths:
                 "auto_dismiss_minutes": 2
               }
             }'
+  /metrics/{key}:
+    put:
+      description: "Creates a metric for widgets, or updates the fields sent for an\
+        \ existing metric. Omitted fields keep their current values, so repeating\
+        \ the same request does not change the metric. Changing between the string\
+        \ format and a numeric format clears the latest value. Shares the metric account\
+        \ allowance of 300 requests per minute and is not a billable metric update."
+      operationId: upsertMetric
+      parameters:
+      - description: "Metric key. Lowercase letters, numbers, dots, underscores, and\
+          \ dashes are allowed."
+        explode: false
+        in: path
+        name: key
+        required: true
+        schema:
+          maxLength: 64
+          minLength: 1
+          pattern: "^[a-z0-9][a-z0-9_.-]{0,63}$"
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              label: MRR
+              format: currency
+              currency_code: USD
+            schema:
+              $ref: '#/components/schemas/MetricUpsertRequest'
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                updated:
+                  value:
+                    metric:
+                      public_id: x8Kq2mVn4pLr7sTw9yZa
+                      key: mrr
+                      label: MRR
+                      format: currency
+                      currency_code: USD
+                      unit: null
+                      unit_spacing: none
+                      latest_value: null
+                      latest_value_at: null
+                      created_at: 2026-10-26T09:00:00.000Z
+                      updated_at: 2026-10-26T09:00:00.000Z
+              schema:
+                $ref: '#/components/schemas/MetricResponse'
+          description: Metric updated
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "201":
+          content:
+            application/json:
+              examples:
+                created:
+                  value:
+                    metric:
+                      public_id: x8Kq2mVn4pLr7sTw9yZa
+                      key: mrr
+                      label: MRR
+                      format: currency
+                      currency_code: USD
+                      unit: null
+                      unit_spacing: none
+                      latest_value: null
+                      latest_value_at: null
+                      created_at: 2026-10-26T09:00:00.000Z
+                      updated_at: 2026-10-26T09:00:00.000Z
+              schema:
+                $ref: '#/components/schemas/MetricResponse'
+          description: Metric created
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              examples:
+                missing_currency:
+                  value:
+                    error: currency_code is required for currency metrics
+              schema:
+                $ref: '#/components/schemas/MetricError'
+          description: Bad request (invalid key or definition)
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "409":
+          content:
+            application/json:
+              examples:
+                limit_reached:
+                  value:
+                    error: Metric limit reached
+                    code: metric_limit_reached
+                    message: This account already has 100 metrics. Delete unused metrics
+                      before adding more.
+              schema:
+                $ref: '#/components/schemas/MetricError'
+          description: Metric limit reached
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "429":
+          content:
+            application/json:
+              examples:
+                rate_limited:
+                  value:
+                    error: Rate limit exceeded
+                    message: "Too many requests, please try again later."
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            Retry-After:
+              description: Seconds to wait before retrying after a request-rate 429.
+                Live Activity capacity errors are separate and require freeing device
+                capacity; they do not provide a timed retry guarantee.
+              example: 30
+              explode: false
+              schema:
+                minimum: 0
+                type: integer
+              style: simple
+      summary: Create or update a widget metric
+      tags:
+      - Metrics
+      x-codeSamples:
+      - lang: bash
+        label: cURL
+        source: |-
+          curl -X PUT "https://activitysmith.com/api/metrics/mrr" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "label": "MRR",
+              "format": "currency",
+              "currency_code": "USD"
+            }'
   /metrics/{key}/value:
     post:
       description: "Updates the latest value for a metric displayed in ActivitySmith\
-        \ widgets. Create the metric in the web app first, then update its value using\
-        \ the key. Metric updates have an independent 300-requests-per-minute account\
+        \ widgets. If no metric uses the key yet, the first value creates one: the\
+        \ label comes from the key, numeric values get the number format, and text\
+        \ values get the string format. To choose a currency, percent, or unit format,\
+        \ create the metric first with PUT /metrics/{key} or in the web app. A deleted\
+        \ metric is not recreated by new values; the request returns 404 with code\
+        \ metric_deleted. Each account can have up to 100 metrics created through\
+        \ the API. Metric updates have an independent 300-requests-per-minute account\
         \ allowance. They do not consume the Push Notification, badge, or Live Activity\
         \ allowances."
       operationId: updateMetricValue
       parameters:
-      - description: "Metric key configured in the web app. Lowercase letters, numbers,\
-          \ dots, underscores, and dashes are allowed."
+      - description: "Metric key. A key that has never been used creates the metric.\
+          \ Lowercase letters, numbers, dots, underscores, and dashes are allowed."
         explode: false
         in: path
         name: key
@@ -2896,6 +3150,10 @@ paths:
                 success:
                   value:
                     success: true
+                created:
+                  value:
+                    success: true
+                    created: true
               schema:
                 $ref: '#/components/schemas/MetricValueUpdateResponse'
           description: Metric value updated
@@ -2962,9 +3220,52 @@ paths:
                 not_found:
                   value:
                     error: Metric not found
+                deleted:
+                  value:
+                    error: Metric deleted
+                    code: metric_deleted
+                    message: The metric with this key was deleted. Create it again
+                      before sending new values.
+                    key: deploy.success_rate
               schema:
                 $ref: '#/components/schemas/MetricError'
-          description: Metric not found
+          description: Metric deleted or not found
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:metrics\"; r=599; t=60, \"account:metrics\"\
+                ; r=299; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: "Each named policy includes q (request quota) and w (window\
+                \ in seconds). Each feature has an independent IP limit of 600 requests\
+                \ per 60 seconds. Independent account limits per 60 seconds are: Push\
+                \ Notifications 60, badges 60, Live Activities 300, and metric updates\
+                \ 300."
+              example: "\"public-api-ip:metrics\"; q=600; w=60, \"account:metrics\"\
+                ; q=300; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "409":
+          content:
+            application/json:
+              examples:
+                limit_reached:
+                  value:
+                    error: Metric limit reached
+                    code: metric_limit_reached
+                    message: This account already has 100 metrics. Delete unused metrics
+                      before adding more.
+              schema:
+                $ref: '#/components/schemas/MetricError'
+          description: Metric limit reached
           headers:
             RateLimit:
               description: Current request quotas using IETF draft-8 structured fields.
@@ -4038,7 +4339,7 @@ components:
           minimum: 0
           type: integer
         devices_updated:
-          description: Number of devices whose App Icon Badge Count was updated.
+          description: Number of devices whose App Icon Badge was updated.
           type: integer
         users_updated:
           description: Number of account users with at least one updated device.
@@ -5030,12 +5331,144 @@ components:
           type: string
       required:
       - value
+    MetricUpsertRequest:
+      additionalProperties: false
+      description: "Metric definition. Omitted fields keep their current values, or\
+        \ use defaults for a new metric: a label made from the key and the number\
+        \ format."
+      example:
+        unit: unit
+        format: number
+        label: label
+        currency_code: currency_code
+        unit_spacing: none
+      properties:
+        label:
+          description: Name shown on the widget.
+          maxLength: 80
+          minLength: 1
+          type: string
+        format:
+          description: "How widgets display the value: number (1,234), currency (requires\
+            \ currency_code), percent (send 99.9 to show 99.9%), unit (a number with\
+            \ a unit suffix, such as 120 ms), or string (text up to 64 characters).\
+            \ Defaults to number for a new metric."
+          enum:
+          - number
+          - currency
+          - percent
+          - unit
+          - string
+          type: string
+        currency_code:
+          description: "3-letter ISO 4217 currency code, such as USD. Required for\
+            \ the currency format."
+          pattern: "^[A-Za-z]{3}$"
+          type: string
+        unit:
+          description: "Unit suffix for the unit format, such as ms or GB."
+          maxLength: 16
+          type: string
+        unit_spacing:
+          description: "For the unit format: none shows 120ms, space shows 120 ms."
+          enum:
+          - none
+          - space
+          type: string
+    Metric:
+      additionalProperties: false
+      example:
+        unit: unit
+        latest_value_at: 2000-01-23T04:56:07.000+00:00
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        format: number
+        created_at: 2000-01-23T04:56:07.000+00:00
+        latest_value: ""
+        label: label
+        key: key
+        currency_code: currency_code
+        public_id: public_id
+        unit_spacing: none
+      properties:
+        public_id:
+          type: string
+        key:
+          type: string
+        label:
+          type: string
+        format:
+          enum:
+          - number
+          - currency
+          - percent
+          - unit
+          - string
+          type: string
+        currency_code:
+          nullable: true
+          type: string
+        unit:
+          nullable: true
+          type: string
+        unit_spacing:
+          enum:
+          - none
+          - space
+          type: string
+        latest_value: {}
+        latest_value_at:
+          format: date-time
+          nullable: true
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+      - created_at
+      - currency_code
+      - format
+      - key
+      - label
+      - latest_value
+      - latest_value_at
+      - public_id
+      - unit
+      - unit_spacing
+      - updated_at
+    MetricResponse:
+      additionalProperties: false
+      example:
+        metric:
+          unit: unit
+          latest_value_at: 2000-01-23T04:56:07.000+00:00
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          format: number
+          created_at: 2000-01-23T04:56:07.000+00:00
+          latest_value: ""
+          label: label
+          key: key
+          currency_code: currency_code
+          public_id: public_id
+          unit_spacing: none
+      properties:
+        metric:
+          $ref: '#/components/schemas/Metric'
+      required:
+      - metric
     MetricValueUpdateResponse:
       additionalProperties: false
       example:
         success: true
+        created: true
       properties:
         success:
+          type: boolean
+        created:
+          description: true when this request created the metric because no metric
+            used the key yet.
           type: boolean
       required:
       - success

@@ -30,6 +30,52 @@ func (s *MetricsService) Update(key string, input any) (*generated.MetricValueUp
 	return response, err
 }
 
+// MetricInput defines a widget metric. Empty fields are omitted: an existing metric keeps
+// its current values, and a new metric gets a label made from the key and the number format.
+type MetricInput struct {
+	Label        string
+	Format       string
+	CurrencyCode string
+	Unit         string
+	UnitSpacing  string
+}
+
+// Create creates the metric, or updates the fields sent for an existing one.
+// Omitted fields keep their current values, so it is safe to call on every start.
+func (s *MetricsService) Create(key string, input MetricInput) (*generated.MetricResponse, error) {
+	return s.UpsertMetric(key, input.toGenerated())
+}
+
+// Backward-compatible alias.
+func (s *MetricsService) UpsertMetric(key string, request generated.MetricUpsertRequest) (*generated.MetricResponse, error) {
+	response, _, err := s.client.apiClient.MetricsAPI.
+		UpsertMetric(s.client.ctx, key).
+		MetricUpsertRequest(request).
+		Execute()
+
+	return response, err
+}
+
+func (in MetricInput) toGenerated() generated.MetricUpsertRequest {
+	request := generated.MetricUpsertRequest{}
+	if in.Label != "" {
+		request.SetLabel(in.Label)
+	}
+	if in.Format != "" {
+		request.SetFormat(in.Format)
+	}
+	if in.CurrencyCode != "" {
+		request.SetCurrencyCode(in.CurrencyCode)
+	}
+	if in.Unit != "" {
+		request.SetUnit(in.Unit)
+	}
+	if in.UnitSpacing != "" {
+		request.SetUnitSpacing(in.UnitSpacing)
+	}
+	return request
+}
+
 // Backward-compatible alias.
 func (s *MetricsService) UpdateMetricValue(key string, request generated.MetricValueUpdateRequest) (*generated.MetricValueUpdateResponse, error) {
 	return s.Update(key, request)

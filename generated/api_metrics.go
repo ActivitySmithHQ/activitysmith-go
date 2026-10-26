@@ -42,10 +42,10 @@ func (r ApiUpdateMetricValueRequest) Execute() (*MetricValueUpdateResponse, *htt
 /*
 UpdateMetricValue Update a widget metric value
 
-Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
+Updates the latest value for a metric displayed in ActivitySmith widgets. If no metric uses the key yet, the first value creates one: the label comes from the key, numeric values get the number format, and text values get the string format. To choose a currency, percent, or unit format, create the metric first with PUT /metrics/{key} or in the web app. A deleted metric is not recreated by new values; the request returns 404 with code metric_deleted. Each account can have up to 100 metrics created through the API. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param key Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+ @param key Metric key. A key that has never been used creates the metric. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
  @return ApiUpdateMetricValueRequest
 */
 func (a *MetricsAPIService) UpdateMetricValue(ctx context.Context, key string) ApiUpdateMetricValueRequest {
@@ -140,6 +140,166 @@ func (a *MetricsAPIService) UpdateMetricValueExecute(r ApiUpdateMetricValueReque
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
+			var v MetricError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
+			var v MetricError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v RateLimitError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiUpsertMetricRequest struct {
+	ctx context.Context
+	ApiService *MetricsAPIService
+	key string
+	metricUpsertRequest *MetricUpsertRequest
+}
+
+func (r ApiUpsertMetricRequest) MetricUpsertRequest(metricUpsertRequest MetricUpsertRequest) ApiUpsertMetricRequest {
+	r.metricUpsertRequest = &metricUpsertRequest
+	return r
+}
+
+func (r ApiUpsertMetricRequest) Execute() (*MetricResponse, *http.Response, error) {
+	return r.ApiService.UpsertMetricExecute(r)
+}
+
+/*
+UpsertMetric Create or update a widget metric
+
+Creates a metric for widgets, or updates the fields sent for an existing metric. Omitted fields keep their current values, so repeating the same request does not change the metric. Changing between the string format and a numeric format clears the latest value. Shares the metric account allowance of 300 requests per minute and is not a billable metric update.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param key Metric key. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+ @return ApiUpsertMetricRequest
+*/
+func (a *MetricsAPIService) UpsertMetric(ctx context.Context, key string) ApiUpsertMetricRequest {
+	return ApiUpsertMetricRequest{
+		ApiService: a,
+		ctx: ctx,
+		key: key,
+	}
+}
+
+// Execute executes the request
+//  @return MetricResponse
+func (a *MetricsAPIService) UpsertMetricExecute(r ApiUpsertMetricRequest) (*MetricResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPut
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *MetricResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MetricsAPIService.UpsertMetric")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/metrics/{key}"
+	localVarPath = strings.Replace(localVarPath, "{"+"key"+"}", url.PathEscape(parameterValueToString(r.key, "key")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if strlen(r.key) < 1 {
+		return localVarReturnValue, nil, reportError("key must have at least 1 elements")
+	}
+	if strlen(r.key) > 64 {
+		return localVarReturnValue, nil, reportError("key must have less than 64 elements")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.metricUpsertRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v MetricError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
 			var v MetricError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
