@@ -17,6 +17,8 @@ tags:
   name: LiveActivities
 - description: Create metrics and update the values shown in ActivitySmith widgets.
   name: Metrics
+- description: List the iPhones and iPads paired to your account.
+  name: Devices
 paths:
   /badge:
     post:
@@ -3388,8 +3390,250 @@ paths:
             -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{ "value": 99.9 }'
+  /account/devices:
+    get:
+      description: "Lists the iPhones and iPads paired to the account, active devices\
+        \ first. Use it to check that a device is paired before you send, or to find\
+        \ device IDs for Channels. An empty list means no device is paired yet: install\
+        \ the ActivitySmith app from the App Store and sign in. Channel-scoped API\
+        \ keys cannot list devices."
+      operationId: listAccountDevices
+      parameters:
+      - description: "Maximum devices to return, 1 to 100. Defaults to 100."
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 100
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Devices to skip. Use meta.next_offset from the previous page.
+        explode: true
+        in: query
+        name: offset
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+        style: form
+      - description: "Include devices that can no longer receive deliveries, such\
+          \ as unpaired phones."
+        explode: true
+        in: query
+        name: include_inactive
+        required: false
+        schema:
+          default: false
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    devices:
+                    - user_email: you@example.com
+                      device_id: 4F1C2A8E-7B3D-4E21-9A6C-1D2E3F4A5B6C
+                      device_type: ios
+                      is_active: true
+                      token_status:
+                        push: true
+                        start_live_activity: true
+                      app_version: 1.17.0
+                      device_name: iPhone
+                      system_name: iOS
+                      system_version: "27.0"
+                      created_at: 2026-10-01T09:00:00.000Z
+                      updated_at: 2026-10-26T12:00:00.000Z
+                    meta:
+                      total: 1
+                      limit: 100
+                      offset: 0
+                      has_more: false
+                      next_offset: null
+                      include_inactive: false
+                no_devices:
+                  value:
+                    devices: []
+                    meta:
+                      total: 0
+                      limit: 100
+                      offset: 0
+                      has_more: false
+                      next_offset: null
+                      include_inactive: false
+              schema:
+                $ref: '#/components/schemas/AccountDeviceListResponse'
+          description: Paired devices
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:account\"; r=599; t=60, \"account:account-devices\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: Each named policy includes q (request quota) and w (window
+                in seconds). Listing devices has an IP limit of 600 requests and an
+                account limit of 60 requests per 60 seconds.
+              example: "\"public-api-ip:account\"; q=600; w=60, \"account:account-devices\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+          description: The API key is limited to Channels
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: List paired devices
+      tags:
+      - Devices
+      x-codeSamples:
+      - lang: bash
+        label: cURL
+        source: |-
+          curl "https://activitysmith.com/api/account/devices" \
+            -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY"
 components:
   schemas:
+    AccountDevice:
+      description: "An iPhone or iPad paired to the account, one entry per device\
+        \ and owner."
+      example:
+        token_status:
+          key: true
+        user_email: user_email
+        device_name: device_name
+        is_active: true
+        device_id: device_id
+        app_version: app_version
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        system_name: system_name
+        system_version: system_version
+        created_at: 2000-01-23T04:56:07.000+00:00
+        device_type: device_type
+      properties:
+        user_email:
+          description: Email of the account member who paired the device.
+          type: string
+        device_id:
+          description: Device ID. Use it to assign the device to Channels.
+          type: string
+        device_type:
+          description: "Device platform, such as ios. iPhones and iPads both report\
+            \ ios; use system_name to tell them apart."
+          nullable: true
+          type: string
+        is_active:
+          description: True when the device can receive Push Notifications or Live
+            Activities.
+          type: boolean
+        token_status:
+          additionalProperties:
+            type: boolean
+          description: "Whether each delivery token is active, keyed by token type\
+            \ (push, start_live_activity)."
+        app_version:
+          description: ActivitySmith app version on the device.
+          nullable: true
+          type: string
+        device_name:
+          description: Device name set on the device.
+          nullable: true
+          type: string
+        system_name:
+          description: "Operating system name, such as iOS or iPadOS."
+          nullable: true
+          type: string
+        system_version:
+          description: Operating system version.
+          nullable: true
+          type: string
+        created_at:
+          description: When the device was first paired.
+          format: date-time
+          nullable: true
+          type: string
+        updated_at:
+          description: When the device last updated its pairing.
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - app_version
+      - created_at
+      - device_id
+      - device_name
+      - device_type
+      - is_active
+      - system_name
+      - system_version
+      - token_status
+      - updated_at
+      - user_email
+    AccountDeviceListResponse:
+      example:
+        devices:
+        - token_status:
+            key: true
+          user_email: user_email
+          device_name: device_name
+          is_active: true
+          device_id: device_id
+          app_version: app_version
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          system_name: system_name
+          system_version: system_version
+          created_at: 2000-01-23T04:56:07.000+00:00
+          device_type: device_type
+        - token_status:
+            key: true
+          user_email: user_email
+          device_name: device_name
+          is_active: true
+          device_id: device_id
+          app_version: app_version
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          system_name: system_name
+          system_version: system_version
+          created_at: 2000-01-23T04:56:07.000+00:00
+          device_type: device_type
+        meta:
+          total: 0
+          offset: 1
+          include_inactive: true
+          limit: 6
+          has_more: true
+          next_offset: 5
+      properties:
+        devices:
+          items:
+            $ref: '#/components/schemas/AccountDevice'
+          type: array
+        meta:
+          $ref: '#/components/schemas/AccountDeviceListResponse_meta'
+      required:
+      - devices
+      - meta
     ContentStateStart:
       additionalProperties: false
       description: "Start payload requires title and type. For segmented_progress\
@@ -5956,6 +6200,37 @@ components:
       oneOf:
       - $ref: '#/components/schemas/RateLimitError'
       - $ref: '#/components/schemas/LiveActivityLimitError'
+    AccountDeviceListResponse_meta:
+      example:
+        total: 0
+        offset: 1
+        include_inactive: true
+        limit: 6
+        has_more: true
+        next_offset: 5
+      properties:
+        total:
+          description: Devices matching the filter.
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+        has_more:
+          type: boolean
+        next_offset:
+          description: "Offset for the next page, or null on the last page."
+          nullable: true
+          type: integer
+        include_inactive:
+          type: boolean
+      required:
+      - has_more
+      - include_inactive
+      - limit
+      - next_offset
+      - offset
+      - total
     ActivityMetric_value:
       oneOf:
       - minimum: 0
