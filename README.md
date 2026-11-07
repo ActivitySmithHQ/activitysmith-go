@@ -29,31 +29,6 @@ func main() {
 }
 ```
 
-## Paired Devices
-
-List the iPhones and iPads paired to your account, for example to check that a device is paired before you send. Active devices come first:
-
-```go
-result, err := activitysmith.Devices.List(activitysmithsdk.DeviceListInput{})
-if err != nil {
-	log.Fatal(err)
-}
-
-for _, device := range result.GetDevices() {
-	fmt.Println(device.GetDeviceName(), device.GetSystemName(), device.GetIsActive())
-}
-```
-
-An empty list means no device is paired. Install ActivitySmith on your iPhone, sign in with the same account, and allow notifications. Channel-scoped API keys cannot list devices.
-
-Pass `IncludeInactive` to also list devices that can no longer receive deliveries:
-
-```go
-result, err := activitysmith.Devices.List(activitysmithsdk.DeviceListInput{
-	IncludeInactive: true,
-})
-```
-
 ## Push Notifications
 
 ### Send a Push Notification
@@ -260,7 +235,9 @@ _, err = activitysmith.Notifications.Replace(sent.GetNotificationId(), activitys
 
 ### Dismiss a Push Notification
 
-Pass the `notification_id` to `dismiss` when a Push Notification no longer needs attention, for example after you answered an agent's question somewhere else. Dismissing clears it from the Lock Screen and Notification Center on every device it was sent to. History keeps it.
+Pass the `notification_id` to `dismiss` when a Push Notification no longer needs attention, for example after you answered an agent's question somewhere else.
+
+Dismissing clears it from the Lock Screen and Notification Center on every device it was sent to. History keeps it.
 
 Devices clear the notification in the background, so it can take a moment.
 
@@ -789,6 +766,31 @@ activitysmith.LiveActivities.Stream(
 )
 
 activitysmith.BadgeCount(3, "sales", "customer-success")
+```
+
+## Paired Devices
+
+List the iPhones and iPads paired to your account, for example to check that a device is paired before you send. Active devices come first:
+
+```go
+result, err := activitysmith.Devices.List(activitysmithsdk.DeviceListInput{})
+if err != nil {
+	log.Fatal(err)
+}
+
+for _, device := range result.GetDevices() {
+	fmt.Println(device.GetDeviceName(), device.GetSystemName(), device.GetIsActive())
+}
+```
+
+An empty list means no device is paired. Install ActivitySmith on your iPhone, sign in with the same account, and allow notifications. Channel-scoped API keys cannot list devices.
+
+Pass `IncludeInactive` to also list devices that can no longer receive deliveries:
+
+```go
+result, err := activitysmith.Devices.List(activitysmithsdk.DeviceListInput{
+	IncludeInactive: true,
+})
 ```
 
 ## Error Handling
