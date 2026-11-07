@@ -1000,6 +1000,76 @@ paths:
       tags:
       - PushNotifications
       x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.notifications.replace("Xk3pQ8mV2nR7tL9wB4yZ", {
+            title: "✅ checkout-api recovered",
+            message: "Error rate is back to normal. Incident resolved.",
+          });
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.notifications.replace(
+              "Xk3pQ8mV2nR7tL9wB4yZ",
+              title="✅ checkout-api recovered",
+              message="Error rate is back to normal. Incident resolved.",
+          )
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.Notifications.Replace(\"\
+          Xk3pQ8mV2nR7tL9wB4yZ\", activitysmithsdk.PushNotificationReplaceInput{\n\
+          \t\tTitle:   \"✅ checkout-api recovered\",\n\t\tMessage: \"Error rate is\
+          \ back to normal. Incident resolved.\",\n\t})\n\tif err != nil {\n\t\tlog.Fatal(err)\n\
+          \t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->notifications->replace(
+              'Xk3pQ8mV2nR7tL9wB4yZ',
+              title: '✅ checkout-api recovered',
+              message: 'Error rate is back to normal. Incident resolved.',
+          );
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.notifications.replace(
+            "Xk3pQ8mV2nR7tL9wB4yZ",
+            {
+              title: "✅ checkout-api recovered",
+              message: "Error rate is back to normal. Incident resolved."
+            }
+          )
+      - lang: bash
+        label: CLI
+        source: |-
+          activitysmith push \
+            --replace "Xk3pQ8mV2nR7tL9wB4yZ" \
+            --title "✅ checkout-api recovered" \
+            --message "Error rate is back to normal. Incident resolved."
       - lang: bash
         label: cURL
         source: |-
@@ -1226,6 +1296,52 @@ paths:
       tags:
       - PushNotifications
       x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.notifications.dismiss("Xk3pQ8mV2nR7tL9wB4yZ");
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.notifications.dismiss("Xk3pQ8mV2nR7tL9wB4yZ")
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.Notifications.Dismiss(\"\
+          Xk3pQ8mV2nR7tL9wB4yZ\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->notifications->dismiss('Xk3pQ8mV2nR7tL9wB4yZ');
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.notifications.dismiss("Xk3pQ8mV2nR7tL9wB4yZ")
+      - lang: bash
+        label: CLI
+        source: activitysmith push dismiss "Xk3pQ8mV2nR7tL9wB4yZ"
       - lang: bash
         label: cURL
         source: |-
@@ -3329,6 +3445,77 @@ paths:
       tags:
       - Metrics
       x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          await activitysmith.metrics.create("mrr", {
+            label: "MRR",
+            format: "currency",
+            currency_code: "USD",
+          });
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          activitysmith.metrics.create(
+              "mrr",
+              label="MRR",
+              format="currency",
+              currency_code="USD",
+          )
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"log\"\n\n\tactivitysmithsdk \"github.com/ActivitySmithHQ/activitysmith-go\"\
+          \n)\n\nfunc main() {\n\tactivitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\"\
+          )\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\t_, err = activitysmith.Metrics.Create(\"\
+          mrr\", activitysmithsdk.MetricInput{\n\t\tLabel:        \"MRR\",\n\t\tFormat:\
+          \       \"currency\",\n\t\tCurrencyCode: \"USD\",\n\t})\n\tif err != nil\
+          \ {\n\t\tlog.Fatal(err)\n\t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $activitysmith->metrics->create(
+              'mrr',
+              label: 'MRR',
+              format: 'currency',
+              currencyCode: 'USD',
+          );
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          activitysmith.metrics.create(
+            "mrr",
+            label: "MRR",
+            format: "currency",
+            currency_code: "USD"
+          )
+      - lang: bash
+        label: CLI
+        source: |-
+          activitysmith metrics create mrr \
+            --label MRR \
+            --format currency \
+            --currency-code USD
       - lang: bash
         label: cURL
         source: |-
@@ -3738,6 +3925,70 @@ paths:
       tags:
       - Devices
       x-codeSamples:
+      - lang: javascript
+        label: Node
+        source: |-
+          import ActivitySmith from "activitysmith";
+
+          const activitysmith = new ActivitySmith({
+            apiKey: process.env.ACTIVITYSMITH_API_KEY,
+          });
+
+          const { devices } = await activitysmith.devices.list();
+
+          for (const device of devices) {
+            console.log(device.device_name, device.system_name, device.is_active);
+          }
+      - lang: python
+        label: Python
+        source: |-
+          import os
+          from activitysmith import ActivitySmith
+
+          activitysmith = ActivitySmith(api_key=os.environ["ACTIVITYSMITH_API_KEY"])
+
+          result = activitysmith.devices.list()
+
+          for device in result.devices:
+              print(device.device_name, device.system_name, device.is_active)
+      - lang: go
+        label: Go
+        source: "package main\n\nimport (\n\t\"fmt\"\n\t\"log\"\n\n\tactivitysmithsdk\
+          \ \"github.com/ActivitySmithHQ/activitysmith-go\"\n)\n\nfunc main() {\n\t\
+          activitysmith, err := activitysmithsdk.New(\"YOUR-API-KEY\")\n\tif err !=\
+          \ nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tresult, err := activitysmith.Devices.List(activitysmithsdk.DeviceListInput{})\n\
+          \tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tfor _, device := range result.GetDevices()\
+          \ {\n\t\tfmt.Println(device.GetDeviceName(), device.GetSystemName(), device.GetIsActive())\n\
+          \t}\n}"
+      - lang: php
+        label: PHP
+        source: |-
+          <?php
+
+          use ActivitySmith\ActivitySmith;
+
+          $activitysmith = new ActivitySmith($_ENV['ACTIVITYSMITH_API_KEY']);
+
+          $result = $activitysmith->devices->list();
+
+          foreach ($result->getDevices() as $device) {
+              echo $device->getDeviceName() . ' ' . $device->getSystemName() . PHP_EOL;
+          }
+      - lang: ruby
+        label: Ruby
+        source: |-
+          require "activitysmith"
+
+          activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
+
+          result = activitysmith.devices.list
+
+          result.devices.each do |device|
+            puts [device.device_name, device.system_name, device.is_active].join(" ")
+          end
+      - lang: bash
+        label: CLI
+        source: activitysmith devices list
       - lang: bash
         label: cURL
         source: |-
