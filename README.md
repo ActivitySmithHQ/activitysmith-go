@@ -29,6 +29,31 @@ func main() {
 }
 ```
 
+## Paired Devices
+
+List the iPhones and iPads paired to your account, for example to check that a device is paired before you send. Active devices come first:
+
+```go
+result, err := activitysmith.Devices.List(activitysmithsdk.DeviceListInput{})
+if err != nil {
+	log.Fatal(err)
+}
+
+for _, device := range result.GetDevices() {
+	fmt.Println(device.GetDeviceName(), device.GetSystemName(), device.GetIsActive())
+}
+```
+
+An empty list means no device is paired. Install ActivitySmith on your iPhone, sign in with the same account, and allow notifications. Channel-scoped API keys cannot list devices.
+
+Pass `IncludeInactive` to also list devices that can no longer receive deliveries:
+
+```go
+result, err := activitysmith.Devices.List(activitysmithsdk.DeviceListInput{
+	IncludeInactive: true,
+})
+```
+
 ## Push Notifications
 
 ### Send a Push Notification
@@ -231,6 +256,24 @@ _, err = activitysmith.Notifications.Replace(sent.GetNotificationId(), activitys
 	Title:   "✅ checkout-api recovered",
 	Message: "Error rate is back to normal. Incident resolved.",
 })
+```
+
+### Dismiss a Push Notification
+
+Pass the `notification_id` to `dismiss` when a Push Notification no longer needs attention, for example after you answered an agent's question somewhere else. Dismissing clears it from the Lock Screen and Notification Center on every device it was sent to. History keeps it.
+
+Devices clear the notification in the background, so it can take a moment.
+
+```go
+sent, err := activitysmith.Notifications.Send(activitysmithsdk.PushNotificationInput{
+	Title:   "🙋 Agent needs your input",
+	Message: "Approve the database migration?",
+})
+if err != nil {
+	log.Fatal(err)
+}
+
+_, err = activitysmith.Notifications.Dismiss(sent.GetNotificationId())
 ```
 
 ## Live Activities
@@ -613,11 +656,9 @@ activitysmith.LiveActivities.Stream(
 
 ![Lock screen widgets](https://cdn.activitysmith.com/features/lock-screen-widgets.png)
 
-ActivitySmith lets you display any value on your Lock Screen with widgets - SaaS metrics, revenue, signups, uptime, habits, or anything else you want to track. Create a metric in the [web app](https://activitysmith.com/app/widgets), then update the metric value using our API, add a widget to your lock screen and it will fetch the latest update automatically.
+ActivitySmith lets you display any value on your Lock Screen with widgets - SaaS metrics, revenue, signups, uptime, habits, or anything else you want to track. Send a value to a metric key, add a widget to your Lock Screen, and it fetches the latest value automatically.
 
-![Create widget metric](https://cdn.activitysmith.com/features/create-widget-metric.png)
-
-Use the metric key to update its value.
+Use the metric key to update its value. The first value creates the metric.
 
 ```go
 activitysmith.Metrics.Update("deploy.success_rate", 99.9)
@@ -628,6 +669,24 @@ String metric values work too.
 ```go
 activitysmith.Metrics.Update("prod.status", "healthy")
 ```
+
+### Create a metric
+
+Use `create` to set the label and how widgets show the value, such as currency, percent, or a unit. Omitted fields keep their current values, so you can call it every time your app starts.
+
+```go
+activitysmith.Metrics.Create("mrr", activitysmithsdk.MetricInput{
+	Label:        "MRR",
+	Format:       "currency",
+	CurrencyCode: "USD",
+})
+
+activitysmith.Metrics.Update("mrr", 12450)
+```
+
+You can also create and edit metrics in the [web app](https://activitysmith.com/app/widgets).
+
+![Create widget metric](https://cdn.activitysmith.com/features/create-widget-metric.png)
 
 ## App Icon Badge
 
