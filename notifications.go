@@ -51,6 +51,21 @@ func (s *NotificationsService) ReplacePushNotification(notificationID string, re
 	return s.Replace(notificationID, request)
 }
 
+// Dismiss clears a sent Push Notification from the Lock Screen and Notification Center,
+// using the notification ID returned by Send. Notification history keeps it.
+func (s *NotificationsService) Dismiss(notificationID string) (*generated.PushNotificationDismissResponse, error) {
+	response, _, err := s.client.apiClient.PushNotificationsAPI.
+		DismissPushNotification(s.client.ctx, notificationID).
+		Execute()
+
+	return response, err
+}
+
+// Generated-style alias.
+func (s *NotificationsService) DismissPushNotification(notificationID string) (*generated.PushNotificationDismissResponse, error) {
+	return s.Dismiss(notificationID)
+}
+
 func normalizePushNotificationReplaceRequest(input any) (generated.PushNotificationReplaceRequest, error) {
 	var request generated.PushNotificationReplaceRequest
 	var metadata map[string]any

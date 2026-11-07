@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -15,6 +16,7 @@ import (
 type capturedRequest struct {
 	Method        string
 	Path          string
+	Query         string
 	Authorization string
 	SDK           string
 	Body          string
@@ -34,6 +36,7 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 		requests = append(requests, capturedRequest{
 			Method:        r.Method,
 			Path:          r.URL.Path,
+			Query:         r.URL.RawQuery,
 			Authorization: r.Header.Get("Authorization"),
 			SDK:           r.Header.Get("X-ActivitySmith-SDK"),
 			Body:          string(body),
@@ -46,6 +49,18 @@ func newAPITestServer(t *testing.T) (*httptest.Server, *[]capturedRequest) {
 			_, _ = w.Write([]byte(`{"success":true,"notification_id":"pn-1","devices_targeted":1,"devices_notified":1,"devices_deactivated":0,"devices_unregistered":0,"users_notified":1,"effective_channel_slugs":null,"tags":[],"timestamp":"2026-02-07T00:00:00Z"}`))
 		case "/push-notification/pn-1":
 			_, _ = w.Write([]byte(`{"success":true,"notification_id":"pn-1","devices_notified":1,"users_notified":1,"effective_channel_slugs":null,"future_field":true,"timestamp":"2026-02-07T00:00:00Z"}`))
+		case "/push-notification/pn-1/dismiss":
+			if r.Method != http.MethodPost {
+				http.NotFound(w, r)
+				return
+			}
+			_, _ = w.Write([]byte(`{"success":true,"notification_id":"pn-1","dismissed_at":"2026-02-07T00:05:00Z","future_field":true}`))
+		case "/account/devices":
+			if r.Method != http.MethodGet {
+				http.NotFound(w, r)
+				return
+			}
+			_, _ = w.Write([]byte(`{"devices":[{"user_email":"owner@example.com","device_id":"dev-1","device_type":"ios","is_active":true,"token_status":{"push_notifications":true},"app_version":"1.17.0","device_name":"iPhone","system_name":"iOS","system_version":"27.0","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-02-07T00:00:00Z","future_field":1}],"meta":{"total":1,"limit":100,"offset":0,"has_more":false,"next_offset":null,"include_inactive":false}}`))
 		case "/live-activity/start":
 			_, _ = w.Write([]byte(`{"success":true,"activity_id":"act-1","devices_notified":1,"timestamp":"2026-02-07T00:00:00Z"}`))
 		case "/live-activity/update":
@@ -180,6 +195,102 @@ func TestNotificationsReplace(t *testing.T) {
 	})
 	if err != ErrPushNotificationMediaActionsConflict {
 		t.Fatalf("expected media/actions conflict, got %v", err)
+	}
+}
+
+func TestNotificationsDismiss(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	dismissed, err := client.Notifications.Dismiss("pn-1")
+	if err != nil {
+		t.Fatalf("Dismiss returned error: %v", err)
+	}
+	if !dismissed.GetSuccess() || dismissed.GetNotificationId() != "pn-1" {
+		t.Fatalf("unexpected dismiss response: %+v", dismissed)
+	}
+	if !dismissed.GetDismissedAt().Equal(time.Date(2026, 2, 7, 0, 5, 0, 0, time.UTC)) {
+		t.Fatalf("unexpected dismissed_at: %v", dismissed.GetDismissedAt())
+	}
+	if _, err := client.Notifications.DismissPushNotification("pn-1"); err != nil {
+		t.Fatalf("DismissPushNotification returned error: %v", err)
+	}
+
+	if len(*requests) != 2 {
+		t.Fatalf("expected 2 requests, got %d", len(*requests))
+	}
+	for i, req := range *requests {
+		if req.Method != http.MethodPost || req.Path != "/push-notification/pn-1/dismiss" {
+			t.Fatalf("request %d mismatch: %s %s", i, req.Method, req.Path)
+		}
+		if req.Authorization != "Bearer test-api-key" {
+			t.Fatalf("request %d auth mismatch: %s", i, req.Authorization)
+		}
+		if strings.TrimSpace(req.Body) != "" {
+			t.Fatalf("request %d expected empty body, got %q", i, req.Body)
+		}
+	}
+}
+
+func TestDevicesList(t *testing.T) {
+	server, requests := newAPITestServer(t)
+	defer server.Close()
+
+	client, err := New("test-api-key")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	overrideHostForTests(client, server.URL)
+
+	result, err := client.Devices.List(DeviceListInput{})
+	if err != nil {
+		t.Fatalf("Devices.List returned error: %v", err)
+	}
+	devices := result.GetDevices()
+	if len(devices) != 1 {
+		t.Fatalf("expected 1 device, got %d", len(devices))
+	}
+	if devices[0].GetDeviceName() != "iPhone" || devices[0].GetSystemName() != "iOS" || !devices[0].GetIsActive() {
+		t.Fatalf("unexpected device: %+v", devices[0])
+	}
+	meta := result.GetMeta()
+	if meta.GetTotal() != 1 || meta.GetHasMore() {
+		t.Fatalf("unexpected meta: %+v", meta)
+	}
+
+	if _, err := client.Devices.List(DeviceListInput{IncludeInactive: true, Limit: 10}); err != nil {
+		t.Fatalf("Devices.List with filters returned error: %v", err)
+	}
+	if _, err := client.Devices.ListAccountDevices(DeviceListInput{Offset: 5}); err != nil {
+		t.Fatalf("ListAccountDevices returned error: %v", err)
+	}
+
+	if len(*requests) != 3 {
+		t.Fatalf("expected 3 requests, got %d", len(*requests))
+	}
+	for i, req := range *requests {
+		if req.Method != http.MethodGet || req.Path != "/account/devices" {
+			t.Fatalf("request %d mismatch: %s %s", i, req.Method, req.Path)
+		}
+	}
+	if q := (*requests)[0].Query; q != "" {
+		t.Fatalf("expected no query, got %q", q)
+	}
+	filtered, err := url.ParseQuery((*requests)[1].Query)
+	if err != nil {
+		t.Fatalf("failed to parse query: %v", err)
+	}
+	if filtered.Get("include_inactive") != "true" || filtered.Get("limit") != "10" || filtered.Has("offset") || len(filtered) != 2 {
+		t.Fatalf("unexpected filtered query: %q", (*requests)[1].Query)
+	}
+	if q := (*requests)[2].Query; q != "offset=5" {
+		t.Fatalf("unexpected offset query: %q", q)
 	}
 }
 

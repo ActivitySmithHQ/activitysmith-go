@@ -41,7 +41,7 @@ func (r ApiEndLiveActivityRequest) Execute() (*LiveActivityEndResponse, *http.Re
 /*
 EndLiveActivity End a Live Activity (legacy manual lifecycle)
 
-Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, timer, and value activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start. Use secondary_action for a second button on alert, progress, segmented_progress, and value Live Activities.
+Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, timer, and value activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start. Use secondary_action for a second button on alert, progress, segmented_progress, and value Live Activities. Ending a Live Activity that already ended returns 200 with ignored: true and sends nothing to devices, so retries are safe.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiEndLiveActivityRequest
