@@ -158,7 +158,7 @@ input := activitysmithsdk.PushNotificationInput{
 activitysmith.Notifications.Send(input)
 ```
 
-### Push Notification Interruption Levels
+### Interruption Levels
 
 ![Time Sensitive Push Notification](https://cdn.activitysmith.com/features/time-sensitive-push-notifications.png)
 
@@ -498,13 +498,13 @@ activitysmith.LiveActivities.Stream(
 )
 ```
 
-### Live Activity Colors
+### Colors
 
 Choose from these colors for the Live Activity accent, including progress bars and action buttons, or apply them to an individual icon or badge:
 
 `lime`, `green`, `cyan`, `blue`, `purple`, `magenta`, `red`, `orange`, `yellow`, `gray`
 
-### Live Activity Action
+### Actions
 
 ![Metrics Live Activity with action](https://cdn.activitysmith.com/features/metrics-live-activity-action.png)
 
