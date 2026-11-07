@@ -23,6 +23,7 @@ type Client struct {
 	Notifications  *NotificationsService
 	LiveActivities *LiveActivitiesService
 	Metrics        *MetricsService
+	Devices        *DevicesService
 }
 
 func New(apiKey string, opts ...*Options) (*Client, error) {
@@ -46,6 +47,7 @@ func New(apiKey string, opts ...*Options) (*Client, error) {
 	client.Notifications = &NotificationsService{client: client}
 	client.LiveActivities = &LiveActivitiesService{client: client}
 	client.Metrics = &MetricsService{client: client}
+	client.Devices = &DevicesService{client: client}
 
 	return client, nil
 }
