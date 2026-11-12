@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Title** | **string** |  | 
+**Title** | **string** | Title shown on the Live Activity. Send an empty string to show no title. | 
 **Subtitle** | Pointer to **string** |  | [optional] 
 **NumberOfSteps** | Pointer to **int32** | Use for segmented_progress. | [optional] 
 **CurrentStep** | Pointer to **int32** | Use for segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided. | [optional] 

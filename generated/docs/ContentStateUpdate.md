@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Title** | **string** |  | 
+**Title** | **string** | Title shown on the Live Activity. Send an empty string to show no title. | 
 **Subtitle** | Pointer to **string** |  | [optional] 
 **NumberOfSteps** | Pointer to **int32** | Total number of steps. Use for type&#x3D;segmented_progress. Optional on update, and safe to change if the workflow gains or loses steps. | [optional] 
 **CurrentStep** | Pointer to **int32** | Current completed step count. Use for type&#x3D;segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided. | [optional] 
