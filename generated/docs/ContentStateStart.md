@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Title** | **string** |  | 
+**Title** | **string** | Title shown on the Live Activity. Send an empty string to show no title. | 
 **Subtitle** | Pointer to **string** |  | [optional] 
 **NumberOfSteps** | Pointer to **int32** | Total number of steps. Use for type&#x3D;segmented_progress. This value can be increased or decreased later when updating or ending the same activity. | [optional] 
 **CurrentStep** | Pointer to **int32** | Current completed step count. Use for type&#x3D;segmented_progress. Set 0 when the activity has started but no segment is complete yet. Must be less than or equal to number_of_steps. | [optional] 
