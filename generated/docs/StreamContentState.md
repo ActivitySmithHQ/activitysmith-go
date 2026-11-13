@@ -4,14 +4,16 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Title** | **string** |  | 
+**Title** | **string** | Title shown on the Live Activity. Send an empty string to show no title. | 
 **Subtitle** | Pointer to **string** |  | [optional] 
 **NumberOfSteps** | Pointer to **int32** | Use for segmented_progress. | [optional] 
 **CurrentStep** | Pointer to **int32** | Use for segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided. | [optional] 
 **Percentage** | Pointer to **float32** | Use for progress. Takes precedence over value/upper_limit if both are provided. | [optional] 
 **Value** | Pointer to [**LiveActivityValue**](LiveActivityValue.md) | For type&#x3D;value, the required prominent readout (string or finite number); strings preserve exact formatting. For progress, a numeric progress value used with upper_limit. | [optional] 
 **UpperLimit** | Pointer to **float32** | Maximum progress value. Use with value for progress. | [optional] 
-**DurationSeconds** | Pointer to **float32** | Timer duration in seconds. For type&#x3D;timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window. | [optional] 
+**DurationSeconds** | Pointer to **float32** | Timer duration in seconds. For type&#x3D;timer, send duration_seconds to start or reset the timer window, counted from timer_start_at when you send it. Omit it on later stream updates to preserve the existing timer window. | [optional] 
+**TimerStartAt** | Pointer to **time.Time** | Use with type&#x3D;timer. ISO 8601 date and time when the timer started. It can be in the past, so a countdown that started earlier shows the time already gone in its progress bar. Defaults to the request time. Must not be in the future. | [optional] 
+**TimerEndAt** | Pointer to **time.Time** | Use with type&#x3D;timer. ISO 8601 date and time when the countdown ends. Must be after timer_start_at, or in the future when timer_start_at is omitted. Send duration_seconds or timer_end_at, not both. On later stream updates, send timer_end_at alone to move the end and keep the current start. | [optional] 
 **CountsDown** | Pointer to **bool** | Use with type&#x3D;timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer. | [optional] [default to true]
 **IsRunning** | Pointer to **bool** | Use with type&#x3D;timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume. | [optional] [default to true]
 **Type** | Pointer to **string** | Required on the first PUT or whenever the stream cannot infer the current activity type. | [optional] 
@@ -238,6 +240,56 @@ SetDurationSeconds sets DurationSeconds field to given value.
 `func (o *StreamContentState) HasDurationSeconds() bool`
 
 HasDurationSeconds returns a boolean if a field has been set.
+
+### GetTimerStartAt
+
+`func (o *StreamContentState) GetTimerStartAt() time.Time`
+
+GetTimerStartAt returns the TimerStartAt field if non-nil, zero value otherwise.
+
+### GetTimerStartAtOk
+
+`func (o *StreamContentState) GetTimerStartAtOk() (*time.Time, bool)`
+
+GetTimerStartAtOk returns a tuple with the TimerStartAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTimerStartAt
+
+`func (o *StreamContentState) SetTimerStartAt(v time.Time)`
+
+SetTimerStartAt sets TimerStartAt field to given value.
+
+### HasTimerStartAt
+
+`func (o *StreamContentState) HasTimerStartAt() bool`
+
+HasTimerStartAt returns a boolean if a field has been set.
+
+### GetTimerEndAt
+
+`func (o *StreamContentState) GetTimerEndAt() time.Time`
+
+GetTimerEndAt returns the TimerEndAt field if non-nil, zero value otherwise.
+
+### GetTimerEndAtOk
+
+`func (o *StreamContentState) GetTimerEndAtOk() (*time.Time, bool)`
+
+GetTimerEndAtOk returns a tuple with the TimerEndAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTimerEndAt
+
+`func (o *StreamContentState) SetTimerEndAt(v time.Time)`
+
+SetTimerEndAt sets TimerEndAt field to given value.
+
+### HasTimerEndAt
+
+`func (o *StreamContentState) HasTimerEndAt() bool`
+
+HasTimerEndAt returns a boolean if a field has been set.
 
 ### GetCountsDown
 

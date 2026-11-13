@@ -1685,12 +1685,13 @@ paths:
       description: "Use a stable stream_key for each ongoing thing you want to show\
         \ as a Live Activity. Send the latest content_state whenever it changes, and\
         \ ActivitySmith will keep the Live Activity in sync. For timer streams, send\
-        \ duration_seconds to start or reset the timer; omit duration_seconds on later\
-        \ updates to preserve the existing timer window. Use secondary_action for\
-        \ a second button on alert, progress, segmented_progress, and value Live Activities.\
-        \ Optional tags to organize and filter notification history. On later stream\
-        \ updates, omit tags to keep the current tags, send tags again to replace\
-        \ them, or send an empty array to clear them."
+        \ duration_seconds to start or reset the timer, and timer_start_at when the\
+        \ timer started earlier, for example to show time already gone in the progress\
+        \ bar. Omit them on later updates to preserve the existing timer window. Use\
+        \ secondary_action for a second button on alert, progress, segmented_progress,\
+        \ and value Live Activities. Optional tags to organize and filter notification\
+        \ history. On later stream updates, omit tags to keep the current tags, send\
+        \ tags again to replace them, or send an empty array to clear them."
       operationId: reconcileLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -4122,11 +4123,12 @@ components:
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
         \ array. For value include a string or number in value; strings preserve currency,\
         \ units, and other formatting. For alert include message. For timer include\
-        \ duration_seconds for countdowns, or set counts_down false without duration_seconds\
-        \ for an open-ended elapsed timer. Optional icon is supported by all Live\
-        \ Activity types. Optional badge is supported by alert, progress, segmented_progress,\
-        \ and value. For segmented_progress, number_of_steps is not locked and can\
-        \ be changed in later update or end calls."
+        \ duration_seconds or timer_end_at for countdowns, or set counts_down false\
+        \ without them for an open-ended elapsed timer. Add timer_start_at for a timer\
+        \ that started earlier. Optional icon is supported by all Live Activity types.\
+        \ Optional badge is supported by alert, progress, segmented_progress, and\
+        \ value. For segmented_progress, number_of_steps is not locked and can be\
+        \ changed in later update or end calls."
       example:
         duration_seconds: 5.637376656633329
         color: lime
@@ -4136,6 +4138,7 @@ components:
           color: lime
         upper_limit: 5.962133916683182
         title: title
+        timer_end_at: 2000-01-23T04:56:07.000+00:00
         message: message
         type: segmented_progress
         is_running: true
@@ -4148,6 +4151,7 @@ components:
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
+        timer_start_at: 2000-01-23T04:56:07.000+00:00
         metrics:
         - unit: unit
           color: lime
@@ -4174,6 +4178,8 @@ components:
         current_step: 0
       properties:
         title:
+          description: Title shown on the Live Activity. Send an empty string to show
+            no title.
           type: string
         subtitle:
           type: string
@@ -4202,8 +4208,22 @@ components:
           type: number
         duration_seconds:
           description: "Timer duration in seconds. For type=timer countdowns, required\
-            \ on start when counts_down is true or omitted."
+            \ on start when counts_down is true or omitted, unless you send timer_end_at.\
+            \ Counts from timer_start_at when you send it."
           type: number
+        timer_start_at:
+          description: "Use with type=timer. ISO 8601 date and time when the timer\
+            \ started. It can be in the past, so a countdown that started earlier\
+            \ shows the time already gone in its progress bar. Defaults to the request\
+            \ time. Must not be in the future."
+          format: date-time
+          type: string
+        timer_end_at:
+          description: "Use with type=timer. ISO 8601 date and time when the countdown\
+            \ ends. Must be after timer_start_at, or in the future when timer_start_at\
+            \ is omitted. Send duration_seconds or timer_end_at, not both."
+          format: date-time
+          type: string
         counts_down:
           default: true
           description: "Use with type=timer. When true or omitted, the timer counts\
@@ -4312,6 +4332,7 @@ components:
           color: lime
         upper_limit: 5.962133916683182
         title: title
+        timer_end_at: 2000-01-23T04:56:07.000+00:00
         message: message
         type: segmented_progress
         is_running: true
@@ -4324,6 +4345,7 @@ components:
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
+        timer_start_at: 2000-01-23T04:56:07.000+00:00
         metrics:
         - unit: unit
           color: lime
@@ -4350,6 +4372,8 @@ components:
         current_step: 0
       properties:
         title:
+          description: Title shown on the Live Activity. Send an empty string to show
+            no title.
           type: string
         subtitle:
           type: string
@@ -4377,9 +4401,23 @@ components:
           type: number
         duration_seconds:
           description: "Timer duration in seconds. For type=timer, sending duration_seconds\
-            \ resets the timer window from the update request time; omit it to preserve\
-            \ the existing timer window."
+            \ resets the timer window from the update request time, or from timer_start_at\
+            \ when you send it. Omit it to preserve the existing timer window."
           type: number
+        timer_start_at:
+          description: "Use with type=timer. ISO 8601 date and time when the timer\
+            \ started. It can be in the past, so a countdown that started earlier\
+            \ shows the time already gone in its progress bar. Defaults to the request\
+            \ time. Must not be in the future."
+          format: date-time
+          type: string
+        timer_end_at:
+          description: "Use with type=timer. ISO 8601 date and time when the countdown\
+            \ ends. Must be after timer_start_at, or in the future when timer_start_at\
+            \ is omitted. Send duration_seconds or timer_end_at, not both. Send timer_end_at\
+            \ alone to move the end and keep the current start."
+          format: date-time
+          type: string
         counts_down:
           default: true
           description: "Use with type=timer. When true or omitted, the timer counts\
@@ -4658,9 +4696,9 @@ components:
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
         \ Supports segmented_progress, progress, metrics, stats, alert, timer, and\
-        \ value types. For timer, send duration_seconds to start or reset a bounded\
-        \ timer; omit duration_seconds on later updates to preserve the existing timer\
-        \ window."
+        \ value types. For timer, send duration_seconds or timer_end_at to start or\
+        \ reset a bounded timer, and timer_start_at for a timer that started earlier.\
+        \ Omit them on later updates to preserve the existing timer window."
       example:
         duration_seconds: 5.637376656633329
         color: lime
@@ -4671,6 +4709,7 @@ components:
         auto_dismiss_minutes: 0
         upper_limit: 5.962133916683182
         title: title
+        timer_end_at: 2000-01-23T04:56:07.000+00:00
         type: segmented_progress
         message: message
         is_running: true
@@ -4683,6 +4722,7 @@ components:
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
+        timer_start_at: 2000-01-23T04:56:07.000+00:00
         metrics:
         - unit: unit
           color: lime
@@ -4710,6 +4750,8 @@ components:
         current_step: 0
       properties:
         title:
+          description: Title shown on the Live Activity. Send an empty string to show
+            no title.
           type: string
         subtitle:
           type: string
@@ -4736,9 +4778,25 @@ components:
           type: number
         duration_seconds:
           description: "Timer duration in seconds. For type=timer, send duration_seconds\
-            \ to start or reset the timer window; omit it on later stream updates\
-            \ to preserve the existing timer window."
+            \ to start or reset the timer window, counted from timer_start_at when\
+            \ you send it. Omit it on later stream updates to preserve the existing\
+            \ timer window."
           type: number
+        timer_start_at:
+          description: "Use with type=timer. ISO 8601 date and time when the timer\
+            \ started. It can be in the past, so a countdown that started earlier\
+            \ shows the time already gone in its progress bar. Defaults to the request\
+            \ time. Must not be in the future."
+          format: date-time
+          type: string
+        timer_end_at:
+          description: "Use with type=timer. ISO 8601 date and time when the countdown\
+            \ ends. Must be after timer_start_at, or in the future when timer_start_at\
+            \ is omitted. Send duration_seconds or timer_end_at, not both. On later\
+            \ stream updates, send timer_end_at alone to move the end and keep the\
+            \ current start."
+          format: date-time
+          type: string
         counts_down:
           default: true
           description: "Use with type=timer. When true or omitted, the timer counts\
@@ -5543,6 +5601,7 @@ components:
             color: lime
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           message: message
           type: segmented_progress
           is_running: true
@@ -5555,6 +5614,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
@@ -5710,6 +5770,7 @@ components:
           auto_dismiss_minutes: 0
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           type: segmented_progress
           message: message
           is_running: true
@@ -5722,6 +5783,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
@@ -5914,6 +5976,7 @@ components:
           auto_dismiss_minutes: 0
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           type: segmented_progress
           message: message
           is_running: true
@@ -5926,6 +5989,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
@@ -6391,6 +6455,7 @@ components:
             color: lime
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           message: message
           type: segmented_progress
           is_running: true
@@ -6403,6 +6468,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
