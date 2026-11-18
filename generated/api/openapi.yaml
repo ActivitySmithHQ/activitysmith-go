@@ -17,6 +17,8 @@ tags:
   name: LiveActivities
 - description: Create metrics and update the values shown in ActivitySmith widgets.
   name: Metrics
+- description: "Read the plan, the trial, and whether sends go through."
+  name: Account
 - description: List the iPhones and iPads paired to your account.
   name: Devices
 paths:
@@ -1685,12 +1687,13 @@ paths:
       description: "Use a stable stream_key for each ongoing thing you want to show\
         \ as a Live Activity. Send the latest content_state whenever it changes, and\
         \ ActivitySmith will keep the Live Activity in sync. For timer streams, send\
-        \ duration_seconds to start or reset the timer; omit duration_seconds on later\
-        \ updates to preserve the existing timer window. Use secondary_action for\
-        \ a second button on alert, progress, segmented_progress, and value Live Activities.\
-        \ Optional tags to organize and filter notification history. On later stream\
-        \ updates, omit tags to keep the current tags, send tags again to replace\
-        \ them, or send an empty array to clear them."
+        \ duration_seconds to start or reset the timer, and timer_start_at when the\
+        \ timer started earlier, for example to show time already gone in the progress\
+        \ bar. Omit them on later updates to preserve the existing timer window. Use\
+        \ secondary_action for a second button on alert, progress, segmented_progress,\
+        \ and value Live Activities. Optional tags to organize and filter notification\
+        \ history. On later stream updates, omit tags to keep the current tags, send\
+        \ tags again to replace them, or send an empty array to clear them."
       operationId: reconcileLiveActivityStream
       parameters:
       - description: "Stable identifier for one ongoing thing. Allowed characters:\
@@ -3807,6 +3810,107 @@ paths:
             -H "Authorization: Bearer $ACTIVITYSMITH_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{ "value": 99.9 }'
+  /account:
+    get:
+      description: "Returns the plan, the trial, and whether sends go through. Use\
+        \ it to check the trial before you send, or to explain a trial_expired or\
+        \ trial_exhausted error. API keys get no email or account owner flag. Channel-scoped\
+        \ API keys can read the account."
+      operationId: getAccount
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                trial:
+                  value:
+                    email: null
+                    is_account_owner: null
+                    plan:
+                      status: trial
+                      plan_id: null
+                      billing_interval: null
+                      renews_at: null
+                      cancel_at_period_end: false
+                    trial:
+                      type: time
+                      ends_at: 2026-11-25T09:00:00.000Z
+                      days_left: 7
+                      ended: false
+                    can_send: true
+                    when_trial_ends: "Push Notifications, Live Activities, App Icon\
+                      \ Badge updates, and Lock Screen Widget values stop until the\
+                      \ account upgrades."
+                    upgrade_url: https://activitysmith.com/app/account?billing=upgrade
+                trial_ended:
+                  value:
+                    email: null
+                    is_account_owner: null
+                    plan:
+                      status: trial
+                      plan_id: null
+                      billing_interval: null
+                      renews_at: null
+                      cancel_at_period_end: false
+                    trial:
+                      type: time
+                      ends_at: 2026-11-11T09:00:00.000Z
+                      days_left: 0
+                      ended: true
+                    can_send: false
+                    upgrade_url: https://activitysmith.com/app/account?billing=upgrade
+                subscription:
+                  value:
+                    email: null
+                    is_account_owner: null
+                    plan:
+                      status: subscription
+                      plan_id: pro
+                      billing_interval: year
+                      renews_at: 2027-11-10T09:00:00.000Z
+                      cancel_at_period_end: false
+                    trial: null
+                    can_send: true
+                    upgrade_url: null
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+          description: Account plan and trial
+          headers:
+            RateLimit:
+              description: Current request quotas using IETF draft-8 structured fields.
+                Each named policy includes r (remaining requests) and t (seconds until
+                reset). Multiple policies may apply.
+              example: "\"public-api-ip:account\"; r=599; t=60, \"account:account\"\
+                ; r=59; t=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+            RateLimit-Policy:
+              description: Each named policy includes q (request quota) and w (window
+                in seconds). Reading the account has an IP limit of 600 requests and
+                an account limit of 60 requests per 60 seconds.
+              example: "\"public-api-ip:account\"; q=600; w=60, \"account:account\"\
+                ; q=60; w=60"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+          description: Rate limit exceeded
+      summary: Get account
+      tags:
+      - Account
+      x-codeSamples:
+      - lang: bash
+        label: cURL
+        source: |-
+          curl "https://activitysmith.com/api/account" \
+            -H "Authorization: Bearer $YOUR_API_KEY"
   /account/devices:
     get:
       description: "Lists the iPhones and iPads paired to the account, active devices\
@@ -4071,6 +4175,63 @@ components:
       - token_status
       - updated_at
       - user_email
+    AccountResponse:
+      description: "The account's plan and trial, and whether sends go through."
+      example:
+        can_send: true
+        is_account_owner: true
+        plan:
+          cancel_at_period_end: true
+          renews_at: 2000-01-23T04:56:07.000+00:00
+          billing_interval: billing_interval
+          plan_id: plan_id
+          status: trial
+        when_trial_ends: when_trial_ends
+        email: email
+        trial:
+          events_used: 0
+          days_left: 0
+          ended: true
+          ends_at: 2000-01-23T04:56:07.000+00:00
+          type: time
+          event_limit: 0
+        upgrade_url: https://openapi-generator.tech
+      properties:
+        email:
+          description: Email of the signed-in person. Null for API keys.
+          nullable: true
+          type: string
+        is_account_owner:
+          description: True when the signed-in person owns the account. Null for API
+            keys.
+          nullable: true
+          type: boolean
+        plan:
+          $ref: '#/components/schemas/AccountResponse_plan'
+        trial:
+          $ref: '#/components/schemas/AccountResponse_trial'
+        can_send:
+          description: "False when Push Notifications, Live Activities, App Icon Badge\
+            \ updates, and Lock Screen Widget values are paused until the account\
+            \ upgrades."
+          type: boolean
+        when_trial_ends:
+          description: What stops when the trial ends. Present only while a trial
+            is running.
+          type: string
+        upgrade_url:
+          description: "Where to upgrade. Set during a trial or without an active\
+            \ plan, otherwise null."
+          format: uri
+          nullable: true
+          type: string
+      required:
+      - can_send
+      - email
+      - is_account_owner
+      - plan
+      - trial
+      - upgrade_url
     AccountDeviceListResponse:
       example:
         devices:
@@ -4122,11 +4283,12 @@ components:
         \ or value with upper_limit. For metrics and stats include a non-empty metrics\
         \ array. For value include a string or number in value; strings preserve currency,\
         \ units, and other formatting. For alert include message. For timer include\
-        \ duration_seconds for countdowns, or set counts_down false without duration_seconds\
-        \ for an open-ended elapsed timer. Optional icon is supported by all Live\
-        \ Activity types. Optional badge is supported by alert, progress, segmented_progress,\
-        \ and value. For segmented_progress, number_of_steps is not locked and can\
-        \ be changed in later update or end calls."
+        \ duration_seconds or timer_end_at for countdowns, or set counts_down false\
+        \ without them for an open-ended elapsed timer. Add timer_start_at for a timer\
+        \ that started earlier. Optional icon is supported by all Live Activity types.\
+        \ Optional badge is supported by alert, progress, segmented_progress, and\
+        \ value. For segmented_progress, number_of_steps is not locked and can be\
+        \ changed in later update or end calls."
       example:
         duration_seconds: 5.637376656633329
         color: lime
@@ -4136,6 +4298,7 @@ components:
           color: lime
         upper_limit: 5.962133916683182
         title: title
+        timer_end_at: 2000-01-23T04:56:07.000+00:00
         message: message
         type: segmented_progress
         is_running: true
@@ -4148,6 +4311,7 @@ components:
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
+        timer_start_at: 2000-01-23T04:56:07.000+00:00
         metrics:
         - unit: unit
           color: lime
@@ -4174,6 +4338,8 @@ components:
         current_step: 0
       properties:
         title:
+          description: Title shown on the Live Activity. Send an empty string to show
+            no title.
           type: string
         subtitle:
           type: string
@@ -4202,8 +4368,22 @@ components:
           type: number
         duration_seconds:
           description: "Timer duration in seconds. For type=timer countdowns, required\
-            \ on start when counts_down is true or omitted."
+            \ on start when counts_down is true or omitted, unless you send timer_end_at.\
+            \ Counts from timer_start_at when you send it."
           type: number
+        timer_start_at:
+          description: "Use with type=timer. ISO 8601 date and time when the timer\
+            \ started. It can be in the past, so a countdown that started earlier\
+            \ shows the time already gone in its progress bar. Defaults to the request\
+            \ time. Must not be in the future."
+          format: date-time
+          type: string
+        timer_end_at:
+          description: "Use with type=timer. ISO 8601 date and time when the countdown\
+            \ ends. Must be after timer_start_at, or in the future when timer_start_at\
+            \ is omitted. Send duration_seconds or timer_end_at, not both."
+          format: date-time
+          type: string
         counts_down:
           default: true
           description: "Use with type=timer. When true or omitted, the timer counts\
@@ -4312,6 +4492,7 @@ components:
           color: lime
         upper_limit: 5.962133916683182
         title: title
+        timer_end_at: 2000-01-23T04:56:07.000+00:00
         message: message
         type: segmented_progress
         is_running: true
@@ -4324,6 +4505,7 @@ components:
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
+        timer_start_at: 2000-01-23T04:56:07.000+00:00
         metrics:
         - unit: unit
           color: lime
@@ -4350,6 +4532,8 @@ components:
         current_step: 0
       properties:
         title:
+          description: Title shown on the Live Activity. Send an empty string to show
+            no title.
           type: string
         subtitle:
           type: string
@@ -4377,9 +4561,23 @@ components:
           type: number
         duration_seconds:
           description: "Timer duration in seconds. For type=timer, sending duration_seconds\
-            \ resets the timer window from the update request time; omit it to preserve\
-            \ the existing timer window."
+            \ resets the timer window from the update request time, or from timer_start_at\
+            \ when you send it. Omit it to preserve the existing timer window."
           type: number
+        timer_start_at:
+          description: "Use with type=timer. ISO 8601 date and time when the timer\
+            \ started. It can be in the past, so a countdown that started earlier\
+            \ shows the time already gone in its progress bar. Defaults to the request\
+            \ time. Must not be in the future."
+          format: date-time
+          type: string
+        timer_end_at:
+          description: "Use with type=timer. ISO 8601 date and time when the countdown\
+            \ ends. Must be after timer_start_at, or in the future when timer_start_at\
+            \ is omitted. Send duration_seconds or timer_end_at, not both. Send timer_end_at\
+            \ alone to move the end and keep the current start."
+          format: date-time
+          type: string
         counts_down:
           default: true
           description: "Use with type=timer. When true or omitted, the timer counts\
@@ -4658,9 +4856,9 @@ components:
       description: "Current state for a managed Live Activity stream. Include type\
         \ on the first PUT, and whenever the stream may need to start a fresh activity.\
         \ Supports segmented_progress, progress, metrics, stats, alert, timer, and\
-        \ value types. For timer, send duration_seconds to start or reset a bounded\
-        \ timer; omit duration_seconds on later updates to preserve the existing timer\
-        \ window."
+        \ value types. For timer, send duration_seconds or timer_end_at to start or\
+        \ reset a bounded timer, and timer_start_at for a timer that started earlier.\
+        \ Omit them on later updates to preserve the existing timer window."
       example:
         duration_seconds: 5.637376656633329
         color: lime
@@ -4671,6 +4869,7 @@ components:
         auto_dismiss_minutes: 0
         upper_limit: 5.962133916683182
         title: title
+        timer_end_at: 2000-01-23T04:56:07.000+00:00
         type: segmented_progress
         message: message
         is_running: true
@@ -4683,6 +4882,7 @@ components:
         - lime
         subtitle: subtitle
         percentage: 14.658129805029452
+        timer_start_at: 2000-01-23T04:56:07.000+00:00
         metrics:
         - unit: unit
           color: lime
@@ -4710,6 +4910,8 @@ components:
         current_step: 0
       properties:
         title:
+          description: Title shown on the Live Activity. Send an empty string to show
+            no title.
           type: string
         subtitle:
           type: string
@@ -4736,9 +4938,25 @@ components:
           type: number
         duration_seconds:
           description: "Timer duration in seconds. For type=timer, send duration_seconds\
-            \ to start or reset the timer window; omit it on later stream updates\
-            \ to preserve the existing timer window."
+            \ to start or reset the timer window, counted from timer_start_at when\
+            \ you send it. Omit it on later stream updates to preserve the existing\
+            \ timer window."
           type: number
+        timer_start_at:
+          description: "Use with type=timer. ISO 8601 date and time when the timer\
+            \ started. It can be in the past, so a countdown that started earlier\
+            \ shows the time already gone in its progress bar. Defaults to the request\
+            \ time. Must not be in the future."
+          format: date-time
+          type: string
+        timer_end_at:
+          description: "Use with type=timer. ISO 8601 date and time when the countdown\
+            \ ends. Must be after timer_start_at, or in the future when timer_start_at\
+            \ is omitted. Send duration_seconds or timer_end_at, not both. On later\
+            \ stream updates, send timer_end_at alone to move the end and keep the\
+            \ current start."
+          format: date-time
+          type: string
         counts_down:
           default: true
           description: "Use with type=timer. When true or omitted, the timer counts\
@@ -5543,6 +5761,7 @@ components:
             color: lime
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           message: message
           type: segmented_progress
           is_running: true
@@ -5555,6 +5774,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
@@ -5710,6 +5930,7 @@ components:
           auto_dismiss_minutes: 0
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           type: segmented_progress
           message: message
           is_running: true
@@ -5722,6 +5943,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
@@ -5914,6 +6136,7 @@ components:
           auto_dismiss_minutes: 0
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           type: segmented_progress
           message: message
           is_running: true
@@ -5926,6 +6149,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
@@ -6391,6 +6615,7 @@ components:
             color: lime
           upper_limit: 5.962133916683182
           title: title
+          timer_end_at: 2000-01-23T04:56:07.000+00:00
           message: message
           type: segmented_progress
           is_running: true
@@ -6403,6 +6628,7 @@ components:
           - lime
           subtitle: subtitle
           percentage: 14.658129805029452
+          timer_start_at: 2000-01-23T04:56:07.000+00:00
           metrics:
           - unit: unit
             color: lime
@@ -6705,6 +6931,85 @@ components:
       oneOf:
       - $ref: '#/components/schemas/RateLimitError'
       - $ref: '#/components/schemas/LiveActivityLimitError'
+    AccountResponse_plan:
+      example:
+        cancel_at_period_end: true
+        renews_at: 2000-01-23T04:56:07.000+00:00
+        billing_interval: billing_interval
+        plan_id: plan_id
+        status: trial
+      properties:
+        status:
+          description: "trial: the free trial. subscription: a monthly or yearly plan.\
+            \ lifetime: a Lifetime Membership. grandfathered: an early account with\
+            \ free access. inactive: no trial and no active plan."
+          enum:
+          - trial
+          - subscription
+          - lifetime
+          - grandfathered
+          - inactive
+          type: string
+        plan_id:
+          description: "Plan ID, such as pro. Null during a trial or without a plan."
+          nullable: true
+          type: string
+        billing_interval:
+          description: "month or year for subscriptions, otherwise null."
+          nullable: true
+          type: string
+        renews_at:
+          description: "Next payment date of a subscription, otherwise null."
+          format: date-time
+          nullable: true
+          type: string
+        cancel_at_period_end:
+          description: True when the subscription ends at the end of the current period.
+          type: boolean
+      required:
+      - billing_interval
+      - cancel_at_period_end
+      - plan_id
+      - renews_at
+      - status
+    AccountResponse_trial:
+      description: "The trial while plan.status is trial, otherwise null. Time trials\
+        \ have ends_at and days_left. Older event trials have events_used and event_limit."
+      example:
+        events_used: 0
+        days_left: 0
+        ended: true
+        ends_at: 2000-01-23T04:56:07.000+00:00
+        type: time
+        event_limit: 0
+      properties:
+        type:
+          enum:
+          - time
+          - events
+          type: string
+        ends_at:
+          description: When a time trial ends.
+          format: date-time
+          type: string
+        days_left:
+          description: Days left in a time trial. 0 after it ends.
+          minimum: 0
+          type: integer
+        events_used:
+          description: Events used in an event trial.
+          minimum: 0
+          type: integer
+        event_limit:
+          description: Events included in an event trial.
+          minimum: 0
+          type: integer
+        ended:
+          description: True when the trial has ended or its events are used up.
+          type: boolean
+      required:
+      - ended
+      - type
     AccountDeviceListResponse_meta:
       example:
         total: 0
