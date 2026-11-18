@@ -201,6 +201,8 @@ type PushNotificationInput struct {
 	Actions           []PushNotificationAction
 	Channels          []string
 	Tags              []string
+	// Sound is a bundled sound id, "default", or "none". Empty plays the device's Push Notifications sound.
+	Sound string
 }
 
 func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest {
@@ -233,6 +235,9 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -641,6 +646,8 @@ type LiveActivityStartInput struct {
 	SecondaryAction *LiveActivityActionInput
 	Channels        []string
 	Tags            []string
+	// Sound is a bundled sound id, "default", or "none". Empty plays the device's Live Activities sound.
+	Sound string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -712,6 +719,9 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -804,6 +814,9 @@ type LiveActivityUpdateInput struct {
 	durationSecondsSet bool
 	countsDownSet      bool
 	Tags               []string
+	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
+	// A sound also expands the Live Activity on the Lock Screen.
+	Sound string
 }
 
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
@@ -868,6 +881,9 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -962,6 +978,9 @@ type LiveActivityEndInput struct {
 	countsDownSet         bool
 	autoDismissMinutesSet bool
 	Tags                  []string
+	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
+	// A sound also expands the Live Activity on the Lock Screen.
+	Sound string
 }
 
 func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
@@ -1029,6 +1048,9 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -1121,6 +1143,10 @@ type LiveActivityStreamInput struct {
 	Alert           *generated.AlertPayload
 	Channels        []string
 	Tags            []string
+	// Sound is a bundled sound id, "default", or "none". Empty plays the device's
+	// Live Activities sound when the stream starts a Live Activity and keeps updates silent.
+	// A sound on an update also expands the Live Activity on the Lock Screen.
+	Sound string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -1198,6 +1224,9 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -1278,6 +1307,9 @@ type LiveActivityStreamEndInput struct {
 	Action          *LiveActivityActionInput
 	SecondaryAction *LiveActivityActionInput
 	Alert           *generated.AlertPayload
+	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
+	// A sound also expands the Live Activity on the Lock Screen.
+	Sound string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -1292,6 +1324,9 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 	req := generated.NewLiveActivityStreamDeleteRequest()
 	if in.Tags != nil {
 		req.SetTags(in.Tags)
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	contentStateInput := in.ContentState
 	if !contentStateInput.isSet() && in.Title != "" {
