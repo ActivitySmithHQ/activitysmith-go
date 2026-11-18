@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"time"
 	"bytes"
 	"fmt"
 )
@@ -19,8 +20,9 @@ import (
 // checks if the ContentStateStart type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ContentStateStart{}
 
-// ContentStateStart Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer include duration_seconds for countdowns, or set counts_down false without duration_seconds for an open-ended elapsed timer. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
+// ContentStateStart Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer include duration_seconds or timer_end_at for countdowns, or set counts_down false without them for an open-ended elapsed timer. Add timer_start_at for a timer that started earlier. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
 type ContentStateStart struct {
+	// Title shown on the Live Activity. Send an empty string to show no title.
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Total number of steps. Use for type=segmented_progress. This value can be increased or decreased later when updating or ending the same activity.
@@ -33,8 +35,12 @@ type ContentStateStart struct {
 	Value *LiveActivityValue `json:"value,omitempty"`
 	// Maximum progress value. Use with value for type=progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
-	// Timer duration in seconds. For type=timer countdowns, required on start when counts_down is true or omitted.
+	// Timer duration in seconds. For type=timer countdowns, required on start when counts_down is true or omitted, unless you send timer_end_at. Counts from timer_start_at when you send it.
 	DurationSeconds *float32 `json:"duration_seconds,omitempty"`
+	// Use with type=timer. ISO 8601 date and time when the timer started. It can be in the past, so a countdown that started earlier shows the time already gone in its progress bar. Defaults to the request time. Must not be in the future.
+	TimerStartAt *time.Time `json:"timer_start_at,omitempty"`
+	// Use with type=timer. ISO 8601 date and time when the countdown ends. Must be after timer_start_at, or in the future when timer_start_at is omitted. Send duration_seconds or timer_end_at, not both.
+	TimerEndAt *time.Time `json:"timer_end_at,omitempty"`
 	// Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
 	CountsDown *bool `json:"counts_down,omitempty"`
 	// Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume.
@@ -331,6 +337,70 @@ func (o *ContentStateStart) HasDurationSeconds() bool {
 // SetDurationSeconds gets a reference to the given float32 and assigns it to the DurationSeconds field.
 func (o *ContentStateStart) SetDurationSeconds(v float32) {
 	o.DurationSeconds = &v
+}
+
+// GetTimerStartAt returns the TimerStartAt field value if set, zero value otherwise.
+func (o *ContentStateStart) GetTimerStartAt() time.Time {
+	if o == nil || IsNil(o.TimerStartAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.TimerStartAt
+}
+
+// GetTimerStartAtOk returns a tuple with the TimerStartAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateStart) GetTimerStartAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.TimerStartAt) {
+		return nil, false
+	}
+	return o.TimerStartAt, true
+}
+
+// HasTimerStartAt returns a boolean if a field has been set.
+func (o *ContentStateStart) HasTimerStartAt() bool {
+	if o != nil && !IsNil(o.TimerStartAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetTimerStartAt gets a reference to the given time.Time and assigns it to the TimerStartAt field.
+func (o *ContentStateStart) SetTimerStartAt(v time.Time) {
+	o.TimerStartAt = &v
+}
+
+// GetTimerEndAt returns the TimerEndAt field value if set, zero value otherwise.
+func (o *ContentStateStart) GetTimerEndAt() time.Time {
+	if o == nil || IsNil(o.TimerEndAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.TimerEndAt
+}
+
+// GetTimerEndAtOk returns a tuple with the TimerEndAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ContentStateStart) GetTimerEndAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.TimerEndAt) {
+		return nil, false
+	}
+	return o.TimerEndAt, true
+}
+
+// HasTimerEndAt returns a boolean if a field has been set.
+func (o *ContentStateStart) HasTimerEndAt() bool {
+	if o != nil && !IsNil(o.TimerEndAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetTimerEndAt gets a reference to the given time.Time and assigns it to the TimerEndAt field.
+func (o *ContentStateStart) SetTimerEndAt(v time.Time) {
+	o.TimerEndAt = &v
 }
 
 // GetCountsDown returns the CountsDown field value if set, zero value otherwise.
@@ -676,6 +746,12 @@ func (o ContentStateStart) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.DurationSeconds) {
 		toSerialize["duration_seconds"] = o.DurationSeconds
+	}
+	if !IsNil(o.TimerStartAt) {
+		toSerialize["timer_start_at"] = o.TimerStartAt
+	}
+	if !IsNil(o.TimerEndAt) {
+		toSerialize["timer_end_at"] = o.TimerEndAt
 	}
 	if !IsNil(o.CountsDown) {
 		toSerialize["counts_down"] = o.CountsDown
