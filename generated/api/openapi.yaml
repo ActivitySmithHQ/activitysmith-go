@@ -1792,7 +1792,7 @@ paths:
                     type: segmented_progress
                     number_of_steps: 4
                     current_step: 3
-                    color: red
+                    step_color: red
                   sound: glitch
             schema:
               $ref: '#/components/schemas/LiveActivityStreamRequest'
@@ -2723,7 +2723,7 @@ paths:
                     subtitle: Step 3 failed
                     number_of_steps: 4
                     current_step: 3
-                    color: red
+                    step_color: red
                   sound: glitch
             schema:
               $ref: '#/components/schemas/LiveActivityUpdateRequest'
@@ -5922,14 +5922,13 @@ components:
         sound:
           description: "Optional sound for this call. A call that starts a Live Activity\
             \ plays the Live Activities sound picked on the device unless you set\
-            \ one. Updates are silent unless you set one. A sound on an update also\
-            \ expands the Live Activity on the Lock Screen. Sounds bundled with the\
-            \ ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`, `callout`,\
-            \ `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`, `ember`,\
-            \ `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`, `nightfall`,\
-            \ `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`, `whoosh`,\
-            \ `zip`. Use `default` for the sound picked on the device, or `none` for\
-            \ no sound."
+            \ one. Updates are silent unless you set one. iOS plays an update sound\
+            \ only while the screen is on. Sounds bundled with the ActivitySmith app:\
+            \ `arrive`, `bell`, `bells`, `bitflip`, `bloom`, `callout`, `chime`, `coin`,\
+            \ `corrupt`, `crest`, `cue`, `ding`, `drop`, `ember`, `emblem`, `flourish`,\
+            \ `glimmer`, `glint`, `glitch`, `lantern`, `nightfall`, `nudge`, `pixel`,\
+            \ `pop`, `signal`, `streak`, `tally`, `wand`, `whoosh`, `zip`. Use `default`\
+            \ for the sound picked on the device, or `none` for no sound."
           maxLength: 50
           minLength: 1
           type: string
@@ -6127,13 +6126,13 @@ components:
           $ref: '#/components/schemas/AlertPayload'
         sound:
           description: "Optional sound for the end. Ends are silent unless you set\
-            \ one. A sound also expands the Live Activity on the Lock Screen. Sounds\
-            \ bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`,\
-            \ `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`,\
-            \ `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`,\
-            \ `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`,\
-            \ `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked\
-            \ on the device, or `none` for no sound."
+            \ one. iOS plays the sound only while the screen is on. Sounds bundled\
+            \ with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`,\
+            \ `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`,\
+            \ `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`,\
+            \ `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`,\
+            \ `whoosh`, `zip`. Use `default` for the sound picked on the device, or\
+            \ `none` for no sound."
           maxLength: 50
           minLength: 1
           type: string
@@ -6620,13 +6619,13 @@ components:
           $ref: '#/components/schemas/LiveActivityAction'
         sound:
           description: "Optional sound for this update. Updates are silent unless\
-            \ you set one. A sound also expands the Live Activity on the Lock Screen.\
-            \ Sounds bundled with the ActivitySmith app: `arrive`, `bell`, `bells`,\
-            \ `bitflip`, `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`,\
-            \ `cue`, `ding`, `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`,\
-            \ `glitch`, `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`,\
-            \ `streak`, `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound\
-            \ picked on the device, or `none` for no sound."
+            \ you set one. iOS plays the sound only while the screen is on. Sounds\
+            \ bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`,\
+            \ `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`,\
+            \ `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`,\
+            \ `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`,\
+            \ `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked\
+            \ on the device, or `none` for no sound."
           maxLength: 50
           minLength: 1
           type: string
@@ -6800,13 +6799,13 @@ components:
           $ref: '#/components/schemas/LiveActivityAction'
         sound:
           description: "Optional sound for the end. Ends are silent unless you set\
-            \ one. A sound also expands the Live Activity on the Lock Screen. Sounds\
-            \ bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`,\
-            \ `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`,\
-            \ `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`,\
-            \ `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`,\
-            \ `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked\
-            \ on the device, or `none` for no sound."
+            \ one. iOS plays the sound only while the screen is on. Sounds bundled\
+            \ with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`,\
+            \ `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`,\
+            \ `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`,\
+            \ `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`,\
+            \ `whoosh`, `zip`. Use `default` for the sound picked on the device, or\
+            \ `none` for no sound."
           maxLength: 50
           minLength: 1
           type: string
