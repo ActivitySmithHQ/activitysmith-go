@@ -33,6 +33,8 @@ type LiveActivityStreamRequest struct {
 	Target *ChannelTarget `json:"target,omitempty"`
 	// Optional tags to organize and filter notification history.
 	Tags []string `json:"tags,omitempty"`
+	// Optional sound for this call. A call that starts a Live Activity plays the Live Activities sound picked on the device unless you set one. Updates are silent unless you set one. A sound on an update also expands the Live Activity on the Lock Screen. Sounds bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked on the device, or `none` for no sound. Bundled sounds and `none` need iOS app 1.19.0 or later. Older apps play the iOS default sound instead.
+	Sound *string `json:"sound,omitempty"`
 }
 
 type _LiveActivityStreamRequest LiveActivityStreamRequest
@@ -303,6 +305,38 @@ func (o *LiveActivityStreamRequest) SetTags(v []string) {
 	o.Tags = v
 }
 
+// GetSound returns the Sound field value if set, zero value otherwise.
+func (o *LiveActivityStreamRequest) GetSound() string {
+	if o == nil || IsNil(o.Sound) {
+		var ret string
+		return ret
+	}
+	return *o.Sound
+}
+
+// GetSoundOk returns a tuple with the Sound field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LiveActivityStreamRequest) GetSoundOk() (*string, bool) {
+	if o == nil || IsNil(o.Sound) {
+		return nil, false
+	}
+	return o.Sound, true
+}
+
+// HasSound returns a boolean if a field has been set.
+func (o *LiveActivityStreamRequest) HasSound() bool {
+	if o != nil && !IsNil(o.Sound) {
+		return true
+	}
+
+	return false
+}
+
+// SetSound gets a reference to the given string and assigns it to the Sound field.
+func (o *LiveActivityStreamRequest) SetSound(v string) {
+	o.Sound = &v
+}
+
 func (o LiveActivityStreamRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -334,6 +368,9 @@ func (o LiveActivityStreamRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Tags) {
 		toSerialize["tags"] = o.Tags
+	}
+	if !IsNil(o.Sound) {
+		toSerialize["sound"] = o.Sound
 	}
 	return toSerialize, nil
 }
