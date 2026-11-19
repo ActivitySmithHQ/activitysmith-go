@@ -38,7 +38,7 @@ DismissPushNotification Dismiss a push notification
 
 Clears a Push Notification you already sent from the Lock Screen and Notification Center on every device it was sent to, using the `notification_id` from the send response. Notification history keeps it.
 
-Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet. Devices running an ActivitySmith app version before 1.17.0 show a silent notification titled "Push Notification dismissed" in its place until the user clears it.
+Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet.
 
 Calling this again for the same notification returns the same response and sends nothing. A dismissed notification cannot be replaced.
 

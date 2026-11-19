@@ -31,12 +31,13 @@ type PushNotificationRequest struct {
 	InterruptionLevel *PushInterruptionLevel `json:"interruption_level,omitempty"`
 	// Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
 	Media *string `json:"media,omitempty" validate:"regexp=^https:\\/\\/"`
-	// Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
+	// Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
 	Redirection *string `json:"redirection,omitempty" validate:"regexp=^[A-Za-z][A-Za-z0-9+.-]*:"`
 	// Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
 	Actions []PushNotificationAction `json:"actions,omitempty"`
 	Payload map[string]interface{} `json:"payload,omitempty"`
 	Badge *int32 `json:"badge,omitempty"`
+	// Optional sound for this Push Notification. Omit it to play the Push Notifications sound picked on the device. Passive Push Notifications play no sound. Sounds bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked on the device, or `none` for no sound.
 	Sound *string `json:"sound,omitempty"`
 	Target *ChannelTarget `json:"target,omitempty"`
 	// Optional tags to organize and filter notification history.

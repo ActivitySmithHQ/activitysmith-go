@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **Action** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) |  | [optional] 
 **SecondaryAction** | Pointer to [**LiveActivityAction**](LiveActivityAction.md) | Optional secondary action button. Supported for alert, progress, segmented_progress, and value Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action. | [optional] 
 **Alert** | Pointer to [**AlertPayload**](AlertPayload.md) |  | [optional] 
+**Sound** | Pointer to **string** | Optional sound for the end. Ends are silent unless you set one. A sound also expands the Live Activity on the Lock Screen. Sounds bundled with the ActivitySmith app: &#x60;arrive&#x60;, &#x60;bell&#x60;, &#x60;bells&#x60;, &#x60;bitflip&#x60;, &#x60;bloom&#x60;, &#x60;callout&#x60;, &#x60;chime&#x60;, &#x60;coin&#x60;, &#x60;corrupt&#x60;, &#x60;crest&#x60;, &#x60;cue&#x60;, &#x60;ding&#x60;, &#x60;drop&#x60;, &#x60;ember&#x60;, &#x60;emblem&#x60;, &#x60;flourish&#x60;, &#x60;glimmer&#x60;, &#x60;glint&#x60;, &#x60;glitch&#x60;, &#x60;lantern&#x60;, &#x60;nightfall&#x60;, &#x60;nudge&#x60;, &#x60;pixel&#x60;, &#x60;pop&#x60;, &#x60;signal&#x60;, &#x60;streak&#x60;, &#x60;tally&#x60;, &#x60;wand&#x60;, &#x60;whoosh&#x60;, &#x60;zip&#x60;. Use &#x60;default&#x60; for the sound picked on the device, or &#x60;none&#x60; for no sound. | [optional] 
 
 ## Methods
 
@@ -179,6 +180,31 @@ SetAlert sets Alert field to given value.
 `func (o *LiveActivityStreamDeleteRequest) HasAlert() bool`
 
 HasAlert returns a boolean if a field has been set.
+
+### GetSound
+
+`func (o *LiveActivityStreamDeleteRequest) GetSound() string`
+
+GetSound returns the Sound field if non-nil, zero value otherwise.
+
+### GetSoundOk
+
+`func (o *LiveActivityStreamDeleteRequest) GetSoundOk() (*string, bool)`
+
+GetSoundOk returns a tuple with the Sound field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSound
+
+`func (o *LiveActivityStreamDeleteRequest) SetSound(v string)`
+
+SetSound sets Sound field to given value.
+
+### HasSound
+
+`func (o *LiveActivityStreamDeleteRequest) HasSound() bool`
+
+HasSound returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

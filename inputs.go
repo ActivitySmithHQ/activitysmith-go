@@ -3,6 +3,7 @@ package activitysmith
 import (
 	"fmt"
 	"maps"
+	"time"
 
 	"github.com/ActivitySmithHQ/activitysmith-go/generated"
 )
@@ -75,6 +76,11 @@ func alertBadgeValue(badge LiveActivityAlertBadgeInput) *generated.LiveActivityA
 type timerContentState interface {
 	SetDurationSeconds(float32)
 	SetCountsDown(bool)
+}
+
+type timerDateContentState interface {
+	SetTimerStartAt(time.Time)
+	SetTimerEndAt(time.Time)
 }
 
 type alertContentState interface {
@@ -201,6 +207,8 @@ type PushNotificationInput struct {
 	Actions           []PushNotificationAction
 	Channels          []string
 	Tags              []string
+	// Sound is a bundled sound id, "default", or "none". Empty plays the device's Push Notifications sound.
+	Sound string
 }
 
 func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest {
@@ -233,6 +241,9 @@ func (in PushNotificationInput) toGenerated() generated.PushNotificationRequest 
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -314,6 +325,8 @@ type LiveActivityContentStateInput struct {
 	UpperLimit         float32
 	DurationSeconds    float32
 	CountsDown         bool
+	TimerStartAt       time.Time
+	TimerEndAt         time.Time
 	Type               string
 	Subtitle           string
 	Message            string
@@ -352,6 +365,8 @@ func (in LiveActivityContentStateInput) isSet() bool {
 		in.Value != nil ||
 		in.UpperLimit != 0 ||
 		in.DurationSeconds != 0 ||
+		!in.TimerStartAt.IsZero() ||
+		!in.TimerEndAt.IsZero() ||
 		in.AutoDismissSeconds != 0 ||
 		in.AutoDismissMinutes != 0 ||
 		len(in.Metrics) > 0 ||
@@ -378,6 +393,19 @@ func (in LiveActivityContentStateInput) applyTimerFields(state timerContentState
 
 func (in LiveActivityContentStateInput) applyAlertFields(state alertContentState) {
 	applyAlertContentStateFields(state, in.Message, in.Icon, in.Badge)
+}
+
+func (in LiveActivityContentStateInput) applyTimerDateFields(state timerDateContentState) {
+	applyTimerDateContentStateFields(state, in.TimerStartAt, in.TimerEndAt)
+}
+
+func applyTimerDateContentStateFields(state timerDateContentState, timerStartAt, timerEndAt time.Time) {
+	if !timerStartAt.IsZero() {
+		state.SetTimerStartAt(timerStartAt)
+	}
+	if !timerEndAt.IsZero() {
+		state.SetTimerEndAt(timerEndAt)
+	}
 }
 
 func applyTimerContentStateFields(
@@ -441,6 +469,7 @@ func (in LiveActivityContentStateInput) applyStart(state *generated.ContentState
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
 	in.applyTimerFields(state)
+	in.applyTimerDateFields(state)
 	in.applyAlertFields(state)
 }
 
@@ -476,6 +505,7 @@ func (in LiveActivityContentStateInput) applyUpdate(state *generated.ContentStat
 		state.SetMetrics(append([]generated.ActivityMetric{}, in.Metrics...))
 	}
 	in.applyTimerFields(state)
+	in.applyTimerDateFields(state)
 	in.applyAlertFields(state)
 }
 
@@ -559,6 +589,7 @@ func (in LiveActivityContentStateInput) applyStream(state *generated.StreamConte
 		state.SetAutoDismissSeconds(in.AutoDismissSeconds)
 	}
 	in.applyTimerFields(state)
+	in.applyTimerDateFields(state)
 	in.applyAlertFields(state)
 }
 
@@ -604,6 +635,18 @@ func (in LiveActivityContentStateInput) WithCountsDown(v bool) LiveActivityConte
 	return in
 }
 
+// WithTimerStartAt sets when the timer started. It can be in the past.
+func (in LiveActivityContentStateInput) WithTimerStartAt(v time.Time) LiveActivityContentStateInput {
+	in.TimerStartAt = v
+	return in
+}
+
+// WithTimerEndAt sets when a countdown timer ends. Send it or DurationSeconds, not both.
+func (in LiveActivityContentStateInput) WithTimerEndAt(v time.Time) LiveActivityContentStateInput {
+	in.TimerEndAt = v
+	return in
+}
+
 // WithAutoDismissSeconds includes stream dismissal seconds, including explicit zero.
 func (in LiveActivityContentStateInput) WithAutoDismissSeconds(v int32) LiveActivityContentStateInput {
 	in.AutoDismissSeconds = v
@@ -629,6 +672,8 @@ type LiveActivityStartInput struct {
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
+	TimerStartAt    time.Time
+	TimerEndAt      time.Time
 	Type            string
 	Subtitle        string
 	Message         string
@@ -641,6 +686,8 @@ type LiveActivityStartInput struct {
 	SecondaryAction *LiveActivityActionInput
 	Channels        []string
 	Tags            []string
+	// Sound is a bundled sound id, "default", or "none". Empty plays the device's Live Activities sound.
+	Sound string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -688,6 +735,7 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 		in.CountsDown,
 		in.countsDownSet,
 	)
+	applyTimerDateContentStateFields(&req.ContentState, in.TimerStartAt, in.TimerEndAt)
 	if in.Subtitle != "" {
 		req.ContentState.SetSubtitle(in.Subtitle)
 	}
@@ -712,6 +760,9 @@ func (in LiveActivityStartInput) toGenerated() generated.LiveActivityStartReques
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -762,6 +813,18 @@ func (in LiveActivityStartInput) WithCountsDown(v bool) LiveActivityStartInput {
 	return in
 }
 
+// WithTimerStartAt sets when the timer started. It can be in the past.
+func (in LiveActivityStartInput) WithTimerStartAt(v time.Time) LiveActivityStartInput {
+	in.TimerStartAt = v
+	return in
+}
+
+// WithTimerEndAt sets when a countdown timer ends. Send it or DurationSeconds, not both.
+func (in LiveActivityStartInput) WithTimerEndAt(v time.Time) LiveActivityStartInput {
+	in.TimerEndAt = v
+	return in
+}
+
 func (in LiveActivityStartInput) WithAction(v LiveActivityActionInput) LiveActivityStartInput {
 	in.Action = &v
 	return in
@@ -784,6 +847,8 @@ type LiveActivityUpdateInput struct {
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
+	TimerStartAt    time.Time
+	TimerEndAt      time.Time
 	Type            string
 	Subtitle        string
 	Message         string
@@ -804,6 +869,9 @@ type LiveActivityUpdateInput struct {
 	durationSecondsSet bool
 	countsDownSet      bool
 	Tags               []string
+	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
+	// A sound also expands the Live Activity on the Lock Screen.
+	Sound string
 }
 
 func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequest {
@@ -841,6 +909,7 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 		in.CountsDown,
 		in.countsDownSet,
 	)
+	applyTimerDateContentStateFields(&req.ContentState, in.TimerStartAt, in.TimerEndAt)
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
 	}
@@ -868,6 +937,9 @@ func (in LiveActivityUpdateInput) toGenerated() generated.LiveActivityUpdateRequ
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -918,6 +990,18 @@ func (in LiveActivityUpdateInput) WithCountsDown(v bool) LiveActivityUpdateInput
 	return in
 }
 
+// WithTimerStartAt sets when the timer started. It can be in the past.
+func (in LiveActivityUpdateInput) WithTimerStartAt(v time.Time) LiveActivityUpdateInput {
+	in.TimerStartAt = v
+	return in
+}
+
+// WithTimerEndAt sets when a countdown timer ends. Send it or DurationSeconds, not both.
+func (in LiveActivityUpdateInput) WithTimerEndAt(v time.Time) LiveActivityUpdateInput {
+	in.TimerEndAt = v
+	return in
+}
+
 func (in LiveActivityUpdateInput) WithAction(v LiveActivityActionInput) LiveActivityUpdateInput {
 	in.Action = &v
 	return in
@@ -962,6 +1046,9 @@ type LiveActivityEndInput struct {
 	countsDownSet         bool
 	autoDismissMinutesSet bool
 	Tags                  []string
+	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
+	// A sound also expands the Live Activity on the Lock Screen.
+	Sound string
 }
 
 func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
@@ -1029,6 +1116,9 @@ func (in LiveActivityEndInput) toGenerated() generated.LiveActivityEndRequest {
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -1108,6 +1198,8 @@ type LiveActivityStreamInput struct {
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
+	TimerStartAt    time.Time
+	TimerEndAt      time.Time
 	Type            string
 	Subtitle        string
 	Message         string
@@ -1121,6 +1213,10 @@ type LiveActivityStreamInput struct {
 	Alert           *generated.AlertPayload
 	Channels        []string
 	Tags            []string
+	// Sound is a bundled sound id, "default", or "none". Empty plays the device's
+	// Live Activities sound when the stream starts a Live Activity and keeps updates silent.
+	// A sound on an update also expands the Live Activity on the Lock Screen.
+	Sound string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -1168,6 +1264,7 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 		in.CountsDown,
 		in.countsDownSet,
 	)
+	applyTimerDateContentStateFields(&req.ContentState, in.TimerStartAt, in.TimerEndAt)
 	if in.Type != "" {
 		req.ContentState.SetType(in.Type)
 	}
@@ -1198,6 +1295,9 @@ func (in LiveActivityStreamInput) toGenerated() generated.LiveActivityStreamRequ
 	}
 	if in.Tags != nil {
 		req.SetTags(append([]string{}, in.Tags...))
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	return req
 }
@@ -1244,6 +1344,18 @@ func (in LiveActivityStreamInput) WithCountsDown(v bool) LiveActivityStreamInput
 	return in
 }
 
+// WithTimerStartAt sets when the timer started. It can be in the past.
+func (in LiveActivityStreamInput) WithTimerStartAt(v time.Time) LiveActivityStreamInput {
+	in.TimerStartAt = v
+	return in
+}
+
+// WithTimerEndAt sets when a countdown timer ends. Send it or DurationSeconds, not both.
+func (in LiveActivityStreamInput) WithTimerEndAt(v time.Time) LiveActivityStreamInput {
+	in.TimerEndAt = v
+	return in
+}
+
 func (in LiveActivityStreamInput) WithAction(v LiveActivityActionInput) LiveActivityStreamInput {
 	in.Action = &v
 	return in
@@ -1267,6 +1379,8 @@ type LiveActivityStreamEndInput struct {
 	UpperLimit      float32
 	DurationSeconds float32
 	CountsDown      bool
+	TimerStartAt    time.Time
+	TimerEndAt      time.Time
 	Type            string
 	Subtitle        string
 	Message         string
@@ -1278,6 +1392,9 @@ type LiveActivityStreamEndInput struct {
 	Action          *LiveActivityActionInput
 	SecondaryAction *LiveActivityActionInput
 	Alert           *generated.AlertPayload
+	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
+	// A sound also expands the Live Activity on the Lock Screen.
+	Sound string
 
 	numberOfStepsSet   bool
 	currentStepSet     bool
@@ -1292,6 +1409,9 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 	req := generated.NewLiveActivityStreamDeleteRequest()
 	if in.Tags != nil {
 		req.SetTags(in.Tags)
+	}
+	if in.Sound != "" {
+		req.SetSound(in.Sound)
 	}
 	contentStateInput := in.ContentState
 	if !contentStateInput.isSet() && in.Title != "" {
@@ -1328,6 +1448,7 @@ func (in LiveActivityStreamEndInput) toGenerated() generated.LiveActivityStreamD
 			in.CountsDown,
 			in.countsDownSet,
 		)
+		applyTimerDateContentStateFields(&contentState, in.TimerStartAt, in.TimerEndAt)
 		if in.Type != "" {
 			contentState.SetType(in.Type)
 		}
@@ -1397,6 +1518,18 @@ func (in LiveActivityStreamEndInput) WithDurationSeconds(v float32) LiveActivity
 func (in LiveActivityStreamEndInput) WithCountsDown(v bool) LiveActivityStreamEndInput {
 	in.CountsDown = v
 	in.countsDownSet = true
+	return in
+}
+
+// WithTimerStartAt sets when the timer started. It can be in the past.
+func (in LiveActivityStreamEndInput) WithTimerStartAt(v time.Time) LiveActivityStreamEndInput {
+	in.TimerStartAt = v
+	return in
+}
+
+// WithTimerEndAt sets when a countdown timer ends. Send it or DurationSeconds, not both.
+func (in LiveActivityStreamEndInput) WithTimerEndAt(v time.Time) LiveActivityStreamEndInput {
+	in.TimerEndAt = v
 	return in
 }
 

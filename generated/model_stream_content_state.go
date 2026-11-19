@@ -12,6 +12,7 @@ package generated
 
 import (
 	"encoding/json"
+	"time"
 	"bytes"
 	"fmt"
 )
@@ -19,8 +20,9 @@ import (
 // checks if the StreamContentState type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &StreamContentState{}
 
-// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, alert, timer, and value types. For timer, send duration_seconds to start or reset a bounded timer; omit duration_seconds on later updates to preserve the existing timer window.
+// StreamContentState Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, alert, timer, and value types. For timer, send duration_seconds or timer_end_at to start or reset a bounded timer, and timer_start_at for a timer that started earlier. Omit them on later updates to preserve the existing timer window.
 type StreamContentState struct {
+	// Title shown on the Live Activity. Send an empty string to show no title.
 	Title string `json:"title"`
 	Subtitle *string `json:"subtitle,omitempty"`
 	// Use for segmented_progress.
@@ -33,8 +35,12 @@ type StreamContentState struct {
 	Value *LiveActivityValue `json:"value,omitempty"`
 	// Maximum progress value. Use with value for progress.
 	UpperLimit *float32 `json:"upper_limit,omitempty"`
-	// Timer duration in seconds. For type=timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window.
+	// Timer duration in seconds. For type=timer, send duration_seconds to start or reset the timer window, counted from timer_start_at when you send it. Omit it on later stream updates to preserve the existing timer window.
 	DurationSeconds *float32 `json:"duration_seconds,omitempty"`
+	// Use with type=timer. ISO 8601 date and time when the timer started. It can be in the past, so a countdown that started earlier shows the time already gone in its progress bar. Defaults to the request time. Must not be in the future.
+	TimerStartAt *time.Time `json:"timer_start_at,omitempty"`
+	// Use with type=timer. ISO 8601 date and time when the countdown ends. Must be after timer_start_at, or in the future when timer_start_at is omitted. Send duration_seconds or timer_end_at, not both. On later stream updates, send timer_end_at alone to move the end and keep the current start.
+	TimerEndAt *time.Time `json:"timer_end_at,omitempty"`
 	// Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
 	CountsDown *bool `json:"counts_down,omitempty"`
 	// Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume.
@@ -335,6 +341,70 @@ func (o *StreamContentState) HasDurationSeconds() bool {
 // SetDurationSeconds gets a reference to the given float32 and assigns it to the DurationSeconds field.
 func (o *StreamContentState) SetDurationSeconds(v float32) {
 	o.DurationSeconds = &v
+}
+
+// GetTimerStartAt returns the TimerStartAt field value if set, zero value otherwise.
+func (o *StreamContentState) GetTimerStartAt() time.Time {
+	if o == nil || IsNil(o.TimerStartAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.TimerStartAt
+}
+
+// GetTimerStartAtOk returns a tuple with the TimerStartAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetTimerStartAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.TimerStartAt) {
+		return nil, false
+	}
+	return o.TimerStartAt, true
+}
+
+// HasTimerStartAt returns a boolean if a field has been set.
+func (o *StreamContentState) HasTimerStartAt() bool {
+	if o != nil && !IsNil(o.TimerStartAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetTimerStartAt gets a reference to the given time.Time and assigns it to the TimerStartAt field.
+func (o *StreamContentState) SetTimerStartAt(v time.Time) {
+	o.TimerStartAt = &v
+}
+
+// GetTimerEndAt returns the TimerEndAt field value if set, zero value otherwise.
+func (o *StreamContentState) GetTimerEndAt() time.Time {
+	if o == nil || IsNil(o.TimerEndAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.TimerEndAt
+}
+
+// GetTimerEndAtOk returns a tuple with the TimerEndAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StreamContentState) GetTimerEndAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.TimerEndAt) {
+		return nil, false
+	}
+	return o.TimerEndAt, true
+}
+
+// HasTimerEndAt returns a boolean if a field has been set.
+func (o *StreamContentState) HasTimerEndAt() bool {
+	if o != nil && !IsNil(o.TimerEndAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetTimerEndAt gets a reference to the given time.Time and assigns it to the TimerEndAt field.
+func (o *StreamContentState) SetTimerEndAt(v time.Time) {
+	o.TimerEndAt = &v
 }
 
 // GetCountsDown returns the CountsDown field value if set, zero value otherwise.
@@ -752,6 +822,12 @@ func (o StreamContentState) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.DurationSeconds) {
 		toSerialize["duration_seconds"] = o.DurationSeconds
+	}
+	if !IsNil(o.TimerStartAt) {
+		toSerialize["timer_start_at"] = o.TimerStartAt
+	}
+	if !IsNil(o.TimerEndAt) {
+		toSerialize["timer_end_at"] = o.TimerEndAt
 	}
 	if !IsNil(o.CountsDown) {
 		toSerialize["counts_down"] = o.CountsDown
