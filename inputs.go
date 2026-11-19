@@ -870,7 +870,7 @@ type LiveActivityUpdateInput struct {
 	countsDownSet      bool
 	Tags               []string
 	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
-	// A sound also expands the Live Activity on the Lock Screen.
+	// iOS plays the sound only while the screen is on.
 	Sound string
 }
 
@@ -1047,7 +1047,7 @@ type LiveActivityEndInput struct {
 	autoDismissMinutesSet bool
 	Tags                  []string
 	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
-	// A sound also expands the Live Activity on the Lock Screen.
+	// iOS plays the sound only while the screen is on.
 	Sound string
 }
 
@@ -1215,7 +1215,7 @@ type LiveActivityStreamInput struct {
 	Tags            []string
 	// Sound is a bundled sound id, "default", or "none". Empty plays the device's
 	// Live Activities sound when the stream starts a Live Activity and keeps updates silent.
-	// A sound on an update also expands the Live Activity on the Lock Screen.
+	// iOS plays an update sound only while the screen is on.
 	Sound string
 
 	numberOfStepsSet   bool
@@ -1393,7 +1393,7 @@ type LiveActivityStreamEndInput struct {
 	SecondaryAction *LiveActivityActionInput
 	Alert           *generated.AlertPayload
 	// Sound is a bundled sound id, "default", or "none". Empty keeps it silent.
-	// A sound also expands the Live Activity on the Lock Screen.
+	// iOS plays the sound only while the screen is on.
 	Sound string
 
 	numberOfStepsSet   bool

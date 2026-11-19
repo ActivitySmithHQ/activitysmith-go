@@ -670,7 +670,7 @@ activitysmith.LiveActivities.Stream(
 
 ### Live Activity Sounds
 
-Starting a Live Activity plays the Live Activities sound picked in the ActivitySmith app. Updates and ends are silent. Set `Sound` on a start, update, or end to choose its sound, with the same values as [Push Notification Sounds](#push-notification-sounds). A sound on an update or end also expands the Live Activity on the Lock Screen, so use it for moments that need attention, such as a failed step.
+Starting a Live Activity plays the Live Activities sound picked in the ActivitySmith app. Updates and ends are silent. Set `Sound` on a start, update, or end to choose its sound, with the same values as [Push Notification Sounds](#push-notification-sounds). A sound on an update or end plays only while the screen is on. Use it for moments that need attention, such as a failed step.
 
 ```go
 activitysmith.LiveActivities.Stream(
