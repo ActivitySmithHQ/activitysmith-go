@@ -1,3 +1,7 @@
+## 1.16.0
+
+Adds sounds for Push Notifications and Live Activities. Set `Sound` to one of the 30 sounds bundled with the ActivitySmith app, such as `coin` or `glitch`, to `default` for the sound picked in the app, or to `none` for no sound.
+
 ## 1.15.0
 
 Adds Push Notification dismissal. Pass a notification ID to `Notifications.Dismiss` to clear a Push Notification you already sent from the Lock Screen and Notification Center. History keeps it. Also adds `Metrics.Create` to create a Lock Screen Widget metric and set its label and format, such as currency or percent, and `Devices.List` to list the iPhones and iPads paired to your account.
