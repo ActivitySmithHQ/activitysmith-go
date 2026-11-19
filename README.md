@@ -447,6 +447,23 @@ For a countdown, send `DurationSeconds`. You can update `Title`, `Subtitle`, `Co
 
 To start at 00:00 and count up, set `CountsDown` to `false` and leave out `DurationSeconds`.
 
+To count down to a set time, send `TimerEndAt` instead of `DurationSeconds`. If the timer started earlier, also send `TimerStartAt`. The progress bar then shows the time already gone.
+
+```go
+startedAt := time.Date(2026, 11, 19, 1, 0, 0, 0, time.UTC)
+
+activitysmith.LiveActivities.Stream(
+	"nightly-backup",
+	activitysmithsdk.LiveActivityStreamInput{
+		Title:        "Nightly Backup",
+		Subtitle:     "uploading archive",
+		Type:         "timer",
+		TimerStartAt: startedAt,
+		TimerEndAt:   startedAt.Add(time.Hour),
+	},
+)
+```
+
 ### End Live Activity
 
 Call `EndStream(...)` with the same `streamKey` to dismiss the Live Activity. You can include final values before it is removed. Set `AutoDismissSeconds` or `AutoDismissMinutes` on `ContentState` to delay dismissal. Seconds take precedence when both are supplied. Use `WithAutoDismissSeconds(0)` or `WithAutoDismissMinutes(0)` for immediate dismissal.
